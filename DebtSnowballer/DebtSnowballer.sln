@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Server", "DebtSnowballer\Server\DebtSnowballer.Server.csproj", "{8079A65F-D7D2-48E2-ABCC-416B532FC8E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Server", "DebtSnowballer\Server\DebtSnowballer.Server.csproj", "{8079A65F-D7D2-48E2-ABCC-416B532FC8E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Client", "DebtSnowballer\Client\DebtSnowballer.Client.csproj", "{7741CD6A-3DEA-42E5-A888-3B06EDD7C28B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Client", "DebtSnowballer\Client\DebtSnowballer.Client.csproj", "{7741CD6A-3DEA-42E5-A888-3B06EDD7C28B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{D6724CF7-EE88-4503-9C47-EFBEDA1847E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{D6724CF7-EE88-4503-9C47-EFBEDA1847E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
