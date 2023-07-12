@@ -6,7 +6,13 @@
 
 <AuthorizeView>
 	<Authorized>
-		<span aria-hidden="true">Hello, @context.User.Identity.Name!</span>
+		<h4>
+		<span aria-hidden="true">Hello,
+			@if (context.User.Identity != null)
+			{
+				@context.User.Identity.Name
+			}
+			!</span>
 			<NavLink class="nav-link" href="#" @onclick="BeginSignOut">
 				<span class="oi oi-account-logout" aria-hidden="true"></span> Log out
 			</NavLink>

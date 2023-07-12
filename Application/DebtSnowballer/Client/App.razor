@@ -3,7 +3,7 @@
 @inject LazyAssemblyLoader LazyAssemblyLoader
 
 <CascadingAuthenticationState>
-	<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@lazyLoadedAssemblies" OnNavigateAsync="@OnNavigateAsync">
+	<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@lazyLoadedAssemblies">
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 				<Authorizing>
@@ -27,9 +27,4 @@
 
 @code {
 	private List<Assembly> lazyLoadedAssemblies = new List<Assembly>();
-
-	private async Task OnNavigateAsync(NavigationContext args)
-	{
-
-	}
 }
