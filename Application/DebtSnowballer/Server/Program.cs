@@ -3,12 +3,10 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
 builder.Services.AddDbContext<AppDbContext>(options => {
     options.UseSqlServer(
         builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
-*/
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -58,12 +56,10 @@ builder.Services.AddSwaggerGen();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
-    });
+    app.UseSwaggerUI();
+}
 
-    app.UseCors("Open");
+app.UseCors("Open");
 // end of what was added
 
 app.UseHttpsRedirection();
