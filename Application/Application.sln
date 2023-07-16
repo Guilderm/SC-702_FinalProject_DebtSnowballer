@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Server", "DebtSnowballer\Server\DebtSnowballer.Server.csproj", "{B3E039E3-2619-4457-A208-DC1141C9B843}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Server", "DebtSnowballer\Server\DebtSnowballer.Server.csproj", "{B3E039E3-2619-4457-A208-DC1141C9B843}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Client", "DebtSnowballer\Client\DebtSnowballer.Client.csproj", "{D0670B93-760E-4C50-B641-21E3D1692E2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Client", "DebtSnowballer\Client\DebtSnowballer.Client.csproj", "{D0670B93-760E-4C50-B641-21E3D1692E2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{838A0DF0-3E59-47D6-BECE-8DB1E877AD2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{838A0DF0-3E59-47D6-BECE-8DB1E877AD2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DebtSnowballer\DAL\DAL.csproj", "{8C4CB132-89A6-4219-83F2-F6BABF17D7C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{838A0DF0-3E59-47D6-BECE-8DB1E877AD2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{838A0DF0-3E59-47D6-BECE-8DB1E877AD2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{838A0DF0-3E59-47D6-BECE-8DB1E877AD2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C4CB132-89A6-4219-83F2-F6BABF17D7C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C4CB132-89A6-4219-83F2-F6BABF17D7C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C4CB132-89A6-4219-83F2-F6BABF17D7C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C4CB132-89A6-4219-83F2-F6BABF17D7C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
