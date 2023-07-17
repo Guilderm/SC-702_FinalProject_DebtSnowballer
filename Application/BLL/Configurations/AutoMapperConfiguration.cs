@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DAL.Models;
+using DebtSnowballer.Shared.DTOs;
 
 namespace BLL.Configurations;
 

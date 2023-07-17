@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DAL.Interfaces;
 using DAL.Models;
+using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers;

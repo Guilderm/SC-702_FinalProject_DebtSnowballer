@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DAL.Models;
+﻿namespace DebtSnowballer.Shared.DTOs;
 
 public partial class LoanDto
 {
