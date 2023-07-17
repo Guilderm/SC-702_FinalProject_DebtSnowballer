@@ -1,4 +1,28 @@
-﻿-- Create User table to store user information
+﻿-- Drop all foreign key constraints
+while(exists(select 1 from INFORMATION_SCHEMA.TABLE_CONSTRAINTS where CONSTRAINT_TYPE='FOREIGN KEY'))
+begin
+ declare @sql nvarchar(2000)
+ SELECT TOP 1 @sql=('ALTER TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME
+ + '] DROP CONSTRAINT [' + CONSTRAINT_NAME + ']')
+ FROM information_schema.table_constraints
+ WHERE CONSTRAINT_TYPE = 'FOREIGN KEY'
+ exec (@sql)
+ PRINT @sql
+end
+
+-- Drop all tables
+while(exists(select 1 from INFORMATION_SCHEMA.TABLES
+             where TABLE_NAME != '__MigrationHistory'
+             AND TABLE_TYPE = 'BASE TABLE'))
+begin
+ SELECT TOP 1 @sql=('DROP TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME
+ + ']')
+ FROM INFORMATION_SCHEMA.TABLES
+ WHERE TABLE_NAME != '__MigrationHistory' AND TABLE_TYPE = 'BASE TABLE'
+ exec (@sql)
+ PRINT @sql
+end
+
 CREATE TABLE [User] (
     [Id] INT IDENTITY(1,1) NOT NULL,
     [FirstName] NVARCHAR(50) NOT NULL,
@@ -133,3 +157,42 @@ ALTER TABLE [LoanCardinalOrder] ADD CONSTRAINT [FK_LoanCardinalOrder_PaymentStra
 
 ALTER TABLE [LoanCardinalOrder] ADD CONSTRAINT [FK_LoanCardinalOrder_LoanId_Loan_Id] FOREIGN KEY([LoanId])
     REFERENCES [Loan] ([Id]);
+
+
+-- Insert data into UserType
+INSERT INTO UserType (Type, CreatedAt, UpdatedAt)
+VALUES ('Type1', GETDATE(), NULL),
+       ('Type2', GETDATE(), NULL),
+       ('Type3', GETDATE(), NULL);
+
+-- Insert data into User
+INSERT INTO [User] (FirstName, LastName, Email, Password, UserTypeId, CreatedAt, UpdatedAt)
+VALUES ('John', 'Doe', 'john.doe@example.com', 'hashedpassword1', 1, GETDATE(), NULL),
+       ('Jane', 'Doe', 'jane.doe@example.com', 'hashedpassword2', 2, GETDATE(), NULL),
+       ('Jim', 'Doe', 'jim.doe@example.com', 'hashedpassword3', 3, GETDATE(), NULL);
+
+-- Insert data into StrategyType
+INSERT INTO StrategyType (Type, HasCustomStrategy, CreatedAt, UpdatedAt)
+VALUES ('Strategy1', 0, GETDATE(), NULL),
+       ('Strategy2', 1, GETDATE(), NULL),
+       ('Strategy3', 0, GETDATE(), NULL);
+
+-- Insert data into PaymentStrategyPlan
+INSERT INTO PaymentStrategyPlan (UserId, StrategyTypeId, GlobalMonthlyPayment, CreatedAt, UpdatedAt)
+VALUES (1, 1, 1000.00, GETDATE(), NULL),
+       (2, 2, 2000.00, GETDATE(), NULL),
+       (3, 3, 3000.00, GETDATE(), NULL);
+
+-- Insert data into Currency
+INSERT INTO Currency (FormalName, ShortName, Symbol, CreatedAt, UpdatedAt)
+VALUES ('United States Dollar', 'USD', '$', GETDATE(), NULL),
+       ('Euro', 'EUR', '€', GETDATE(), NULL),
+       ('British Pound', 'GBP', '£', GETDATE(), NULL);
+
+-- Insert data into Loan
+INSERT INTO Loan (LoanNickName, PaymentStrategy, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, Currency, CreatedAt, UpdatedAt)
+VALUES ('Loan 1', 1, 10000.00, 0.05, 100.00, 200.00, 60, 1, GETDATE(), NULL),
+       ('Loan 2', 2, 20000.00, 0.06, 200.00, 400.00, 48, 2, GETDATE(), NULL),
+       ('Loan 3', 3, 30000.00, 0.07, 300.00, 600.00, 36, 3, GETDATE(), NULL),
+       ('Loan 4', 1, 40000.00, 0.08, 400.00, 800.00, 24, 1, GETDATE(), NULL),
+       ('Loan 5', 2, 50000.00, 0.09, 500.00, 1000.00, 12, 2, GETDATE(), NULL);

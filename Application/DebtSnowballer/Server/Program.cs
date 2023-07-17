@@ -1,26 +1,32 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System;
+using BLL.Configurations;
 using Serilog;
 using DAL.Interfaces;
 using DAL.Repositories;
 using DAL.Models;
-
-//using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+//Configure AddAutoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
+
+// Add services for the DB.
+builder.Services.AddDbContext<DebtSnowballerContext>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 /*
 builder.Services.AddDbContext<AppDbContext>(options => {
     options.UseSqlServer(
         builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
 */
-
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
@@ -74,9 +80,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 */
 
-// Add services for the DB.
-builder.Services.AddDbContext<DebtSnowballerContext>();
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
