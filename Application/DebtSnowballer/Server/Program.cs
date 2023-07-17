@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 using System;
+using Serilog;
+
 //using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,10 +23,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
         c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
+        {
             ValidAudience = builder.Configuration["Auth0:Audience"],
             ValidIssuer = $"https://{builder.Configuration["Auth0:Domain"]}"
-            };
+        };
     });
 
 //This was added at the start of using data from an API module 5
@@ -44,21 +47,34 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-    {
+{
     app.UseWebAssemblyDebugging();
-    }
+}
 else
-    {
+{
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    }
+}
+
+// Insert services to the container.
+//builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
+
+/*
+// configures Serilog.
+Logger logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+*/
+
+//builder.Services.AddDbContext<NorthwindContext>();
+//builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
 app.UseCors("Open");
 
