@@ -1,5 +1,4 @@
-﻿//using System.Data.Entity.Core;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     private readonly DbSet<TEntity> _dbSet;
     private readonly ILogger<GenericRepository<TEntity>> _logger;
 
-    public GenericRepository(ILogger<GenericRepository<TEntity>> logger, NorthwindContext dbContex)
+    public GenericRepository(ILogger<GenericRepository<TEntity>> logger, DbContext dbContex)
     {
         _DbContext = dbContex;
         _dbSet = _DbContext.Set<TEntity>();

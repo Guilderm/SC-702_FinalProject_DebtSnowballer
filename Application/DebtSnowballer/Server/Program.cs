@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System;
 using Serilog;
+using DAL.Interfaces;
+using DAL.Repositories;
+using DAL.Models;
 
 //using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +16,10 @@ builder.Services.AddDbContext<AppDbContext>(options => {
         builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
 */
+
+// Add services for the DB.
+builder.Services.AddDbContext<DebtSnowballerContext>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
