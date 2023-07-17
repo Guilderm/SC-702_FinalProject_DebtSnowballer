@@ -1,4 +1,5 @@
 ﻿using DAL.Interfaces;
+using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -6,12 +7,12 @@ namespace DAL.Repositories;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
-    private readonly NorthwindContext _dbContext;
+    private readonly DebtSnowballerContext _dbContext;
     private readonly ILogger<UnitOfWork> _logger;
     private readonly ILoggerFactory _loggerFactory;
     private bool _disposed;
 
-    public UnitOfWork(ILogger<UnitOfWork> logger, NorthwindContext dbContext, ILoggerFactory loggerFactory)
+    public UnitOfWork(ILogger<UnitOfWork> logger, DebtSnowballerContext dbContext, ILoggerFactory loggerFactory)
     {
         _loggerFactory = loggerFactory;
         _logger = logger;
