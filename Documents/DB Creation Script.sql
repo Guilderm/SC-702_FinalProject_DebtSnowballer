@@ -3,7 +3,7 @@ CREATE TABLE [User] (
     [Id] INT IDENTITY(1,1) NOT NULL,
     [FirstName] NVARCHAR(50) NOT NULL,
     [LastName] NVARCHAR(50) NOT NULL,
-    [Email] NVARCHAR(MAX) NOT NULL,
+    [Email] NVARCHAR(256) NOT NULL,
     [Password] NVARCHAR(255) NOT NULL, -- This should store hashed and salted passwords, not plain text
     [UserTypeId] INT NOT NULL,
     [CreatedAt] DATETIME2 NOT NULL DEFAULT GETDATE(), -- Timestamp of when the record was created
@@ -130,8 +130,6 @@ ALTER TABLE [DebtSnowflake] ADD CONSTRAINT [FK_DebtSnowflake_PaymentStrategy_Pay
 
 ALTER TABLE [LoanCardinalOrder] ADD CONSTRAINT [FK_LoanCardinalOrder_PaymentStrategy_PaymentStrategyPlan_Id] FOREIGN KEY([PaymentStrategy])
     REFERENCES [PaymentStrategyPlan] ([Id]);
-
-ALTER TABLE [LoanCardinalOrder] ADD CONSTRAINT [FK_LoanCardinalOrder_LoanId_Loan_Id]
 
 ALTER TABLE [LoanCardinalOrder] ADD CONSTRAINT [FK_LoanCardinalOrder_LoanId_Loan_Id] FOREIGN KEY([LoanId])
     REFERENCES [Loan] ([Id]);
