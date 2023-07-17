@@ -31,7 +31,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     {
         try
         {
-            int rowsAffected = _dbContext.SaveChanges();
+            var rowsAffected = _dbContext.SaveChanges();
             _logger.LogInformation($"EF affected {rowsAffected} rows when saving changes.");
         }
         catch (DbUpdateException ex)
@@ -53,13 +53,11 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
-        {
             if (disposing)
             {
                 _dbContext.Dispose();
                 _logger.LogInformation("Disposed the Unit of Work instance");
             }
-        }
 
         _disposed = true;
     }

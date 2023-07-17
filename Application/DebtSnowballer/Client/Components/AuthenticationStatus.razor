@@ -5,33 +5,37 @@
 @inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
-	<Authorized>
-		<h4>
-		<span aria-hidden="true">Hello,
-			@if (context.User.Identity != null)
-			{
-				@context.User.Identity.Name
-			}
-			!</span>
-			<NavLink class="nav-link" href="#" @onclick="BeginSignOut">
-				<span class="oi oi-account-logout" aria-hidden="true"></span> Log out
-			</NavLink>
-		</h4>
-	</Authorized>
+    <Authorized>
+        <h4>
+            <span aria-hidden="true">
+                Hello,
+                @if (context.User.Identity != null)
+                {
+                    @context.User.Identity.Name
+                }
+                !
+            </span>
+            <NavLink class="nav-link" href="#" @onclick="BeginSignOut">
+                <span class="oi oi-account-logout" aria-hidden="true"></span> Log out
+            </NavLink>
+        </h4>
+    </Authorized>
 
     <NotAuthorized>
-	    <h4>
-		    <NavLink class="nav-link" href="authentication/login">
-			    <span class="oi oi-account-login" aria-hidden="true"></span> Log in
-		    </NavLink>
-	    </h4>
+        <h4>
+            <NavLink class="nav-link" href="authentication/login">
+                <span class="oi oi-account-login" aria-hidden="true"></span> Log in
+            </NavLink>
+        </h4>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
+
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }
+
 }

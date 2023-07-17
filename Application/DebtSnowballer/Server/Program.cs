@@ -17,9 +17,6 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 });
 */
 
-// Add services for the DB.
-builder.Services.AddDbContext<DebtSnowballerContext>();
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -77,8 +74,9 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 */
 
-//builder.Services.AddDbContext<NorthwindContext>();
-//builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+// Add services for the DB.
+builder.Services.AddDbContext<DebtSnowballerContext>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });

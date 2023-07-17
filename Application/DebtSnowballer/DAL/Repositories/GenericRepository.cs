@@ -43,12 +43,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public TEntity? Get(int id)
     {
         _logger.LogInformation($"will look for Entity with id {id}.");
-        TEntity? entity = _DbContext.Set<TEntity>().Find(id);
+        var entity = _DbContext.Set<TEntity>().Find(id);
 
-        if (entity == null)
-        {
-            _logger.LogError($"Entity of type {typeof(TEntity)}, with id {id} not found.");
-        }
+        if (entity == null) _logger.LogError($"Entity of type {typeof(TEntity)}, with id {id} not found.");
 
         return entity;
     }
@@ -88,7 +85,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         try
         {
-            TEntity? entity = _DbContext.Set<TEntity>().SingleOrDefault(predicate);
+            var entity = _DbContext.Set<TEntity>().SingleOrDefault(predicate);
             return entity ?? throw new InvalidOperationException($"Entity with id {predicate} not found.");
         }
         catch (Exception ex)
