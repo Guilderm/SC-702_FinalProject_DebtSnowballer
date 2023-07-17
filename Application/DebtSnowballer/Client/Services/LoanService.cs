@@ -34,6 +34,7 @@ public class LoanService : ILoanService
         return await response.Content.ReadFromJsonAsync<LoanDto>();
     }
 
+
     public async Task DeleteLoan(int id)
     {
         await _httpClient.DeleteAsync($"api/Loan/{id}");

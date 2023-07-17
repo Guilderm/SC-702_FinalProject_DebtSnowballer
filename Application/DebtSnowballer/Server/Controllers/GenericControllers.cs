@@ -48,19 +48,33 @@ public class GenericControllers<TEntity, TModel> : ControllerBase
 
     #region PUT|Update - Used to update an existing resource.
 
-    [HttpPut]
-    public IActionResult Put([FromBody] TModel requestDto)
+    [HttpPut("{id:int}")]
+    public IActionResult Put(int id, [FromBody] TModel requestDto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        TEntity? mappedResult = Mapper.Map<TEntity>(requestDto);
-        Repository.Update(mappedResult);
+        // Get the existing entity from the database
+        TEntity existingEntity = Repository.Get(id);
+        if (existingEntity == null)
+        {
+            // If the entity does not exist, return a 404 Not Found status
+            return NotFound();
+        }
+
+        // Map the request DTO to the existing entity
+        Mapper.Map(requestDto, existingEntity);
+
+        // Update the entity in the database
+        Repository.Update(existingEntity);
         UnitOfWork.SaveChanges();
 
-        return Ok(mappedResult);
+        // Map the updated entity back to a DTO to return in the response
+        TModel updatedDto = Mapper.Map<TModel>(existingEntity);
+
+        return Ok(updatedDto);
     }
 
     #endregion
