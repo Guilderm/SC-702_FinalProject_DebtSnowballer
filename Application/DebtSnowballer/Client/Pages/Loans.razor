@@ -38,6 +38,8 @@ else
         </tbody>
     </table>
 
+    <button class="btn btn-success" @onclick="NewLoan">Add New Loan</button>
+
     <h3>@(selectedLoan == null ? "Add Loan" : "Edit Loan")</h3>
 
     @if (selectedLoan != null)
@@ -59,6 +61,31 @@ else
             <div class="form-group">
                 <label for="InterestRate">Interest Rate:</label>
                 <InputNumber id="InterestRate" class="form-control" @bind-Value="selectedLoan.InterestRate" />
+            </div>
+
+            <div class="form-group">
+                <label for="MinimumPayment">Minimum Payment:</label>
+                <InputNumber id="MinimumPayment" class="form-control" @bind-Value="selectedLoan.MinimumPayment" />
+            </div>
+
+            <div class="form-group">
+                <label for="ExtraPayment">Extra Payment:</label>
+                <InputNumber id="ExtraPayment" class="form-control" @bind-Value="selectedLoan.ExtraPayment" />
+            </div>
+
+            <div class="form-group">
+                <label for="TermInMonths">Term In Months:</label>
+                <InputNumber id="TermInMonths" class="form-control" @bind-Value="selectedLoan.TermInMonths" />
+            </div>
+
+            <div class="form-group">
+                <label for="LoanOrder">Loan Order:</label>
+                <InputNumber id="LoanOrder" class="form-control" @bind-Value="selectedLoan.LoanOrder" />
+            </div>
+
+            <div class="form-group">
+                <label for="LoanDate">Loan Date:</label>
+                <InputDate id="LoanDate" class="form-control" @bind-Value="selectedLoan.LoanDate" />
             </div>
 
             <button type="submit" class="btn btn-success">@(selectedLoan.Id == 0 ? "Add" : "Update")</button>
