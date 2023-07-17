@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DebtSnowballer\DAL\DAL.csproj" />
     <ProjectReference Include="..\DebtSnowballer\Shared\DebtSnowballer.Shared.csproj" />
   </ItemGroup>
 

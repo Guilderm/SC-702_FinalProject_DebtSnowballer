@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DAL.Models;
 using DebtSnowballer.Shared.DTOs;
 
 namespace BLL.Configurations;
@@ -7,6 +8,6 @@ public class AutoMapperConfiguration : Profile
 {
 	public AutoMapperConfiguration()
 	{
-		CreateMap<LoanDto, LoanDto>().ReverseMap();
+		CreateMap<Loan, LoanDto>().ReverseMap();
 	}
 }
