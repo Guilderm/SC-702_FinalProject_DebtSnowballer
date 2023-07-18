@@ -42,11 +42,13 @@ else
         </tbody>
     </table>
 
-    <h3>@(selectedCrudItem == null ? "Add Item" : "Edit Item")</h3>
+    <button class="btn btn-success" @onclick="NewCrudItem">Create New Item</button>
 
     @if (selectedCrudItem != null)
         {
-        <EditForm Model="selectedCrudItem" OnValidSubmit="SaveCrudItem">
+        <h3>@(selectedCrudItem.Id == 0 ? "Add Item" : "Edit Item")</h3>
+
+        <EditForm Model="selectedCrudItem" OnValidSubmit="SaveCrudItem" @key="selectedCrudItem">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -87,7 +89,7 @@ else
 
 @code {
     private List<CrudDto> crudItems;
-    private CrudDto selectedCrudItem = new CrudDto();
+    private CrudDto selectedCrudItem;
 
     protected override async Task OnInitializedAsync()
         {
@@ -120,7 +122,7 @@ else
             await CrudService.UpdateCrudItem(selectedCrudItem);
             }
 
-        selectedCrudItem = new CrudDto();
+        selectedCrudItem = null;
 
         await LoadCrudItems();
         }
@@ -128,7 +130,6 @@ else
     private async Task DeleteCrudItem(int id)
         {
         await CrudService.DeleteCrudItem(id);
-
         await LoadCrudItems();
         }
 }
