@@ -8,36 +8,36 @@ namespace BackEnd.Controllers;
 
 public class LoanController : GenericControllers<Loan, LoanDto>
 {
-    private readonly ILogger<LoanController> _logger;
+	private readonly ILogger<LoanController> _logger;
 
-    public LoanController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<LoanController> logger) : base(
-        unitOfWork, mapper)
-    {
-        _logger = logger;
-    }
+	public LoanController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<LoanController> logger) : base(
+		unitOfWork, mapper)
+	{
+		_logger = logger;
+	}
 
-    #region POST|Create - Used to create a new resource.
+	#region POST|Create - Used to create a new resource.
 
-    [HttpPost]
-    public override IActionResult Post([FromBody] LoanDto requestDto)
-    {
-        _logger.LogInformation($"will look for Entity with of name {nameof(requestDto)} and see if we get it.");
+	[HttpPost]
+	public override IActionResult Post([FromBody] LoanDto requestDto)
+	{
+		_logger.LogInformation($"will look for Entity with of name {nameof(requestDto)} and see if we get it.");
 
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError($"Invalid POST attempt in {nameof(requestDto)}");
-            return BadRequest(ModelState);
-        }
+		if (!ModelState.IsValid)
+		{
+			_logger.LogError($"Invalid POST attempt in {nameof(requestDto)}");
+			return BadRequest(ModelState);
+		}
 
-        Loan mappedResult = Mapper.Map<Loan>(requestDto);
+		var mappedResult = Mapper.Map<Loan>(requestDto);
 
-        Repository.Insert(mappedResult);
-        UnitOfWork.SaveChanges();
+		Repository.Insert(mappedResult);
+		UnitOfWork.SaveChanges();
 
-        _logger.LogCritical($"The ID of Entity with of name {nameof(requestDto)} is {mappedResult.Id} .");
+		_logger.LogCritical($"The ID of Entity with of name {nameof(requestDto)} is {mappedResult.Id} .");
 
-        return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
-    }
+		return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
+	}
 
-    #endregion
+	#endregion
 }

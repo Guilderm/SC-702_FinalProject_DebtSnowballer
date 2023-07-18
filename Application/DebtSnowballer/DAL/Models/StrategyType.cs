@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DAL.Models;
 
-namespace DAL.Models
+public class StrategyType
 {
-    public partial class StrategyType
-    {
-        public StrategyType()
-        {
-            PaymentStrategyPlans = new HashSet<PaymentStrategyPlan>();
-        }
+	public StrategyType()
+	{
+		PaymentStrategyPlans = new HashSet<PaymentStrategyPlan>();
+	}
 
-        public int Id { get; set; }
-        public string Type { get; set; } = null!;
-        public bool HasCustomStrategy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+	public int Id { get; set; }
+	public string Type { get; set; } = null!;
+	public bool HasCustomStrategy { get; set; }
+	public DateTime CreatedAt { get; set; }
+	public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<PaymentStrategyPlan> PaymentStrategyPlans { get; set; }
-    }
+	public virtual ICollection<PaymentStrategyPlan> PaymentStrategyPlans { get; set; }
 }

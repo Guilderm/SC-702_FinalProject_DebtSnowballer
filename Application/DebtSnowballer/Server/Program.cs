@@ -1,12 +1,9 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging;
-using System;
 using BLL.Configurations;
-using Serilog;
 using DAL.Interfaces;
-using DAL.Repositories;
 using DAL.Models;
-using Microsoft.EntityFrameworkCore;
+using DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,22 +26,22 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 */
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
-    {
-        c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
-        c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidAudience = builder.Configuration["Auth0:Audience"],
-            ValidIssuer = $"https://{builder.Configuration["Auth0:Domain"]}"
-        };
-    });
+	.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+	{
+		c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+		c.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidAudience = builder.Configuration["Auth0:Audience"],
+			ValidIssuer = $"https://{builder.Configuration["Auth0:Domain"]}"
+		};
+	});
 
 //This was added at the start of using data from an API module 5
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+	options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 builder.Services.AddControllers();
@@ -58,13 +55,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
+	app.UseWebAssemblyDebugging();
 }
 else
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+	app.UseExceptionHandler("/Error");
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
 }
 
 // Insert services to the container.

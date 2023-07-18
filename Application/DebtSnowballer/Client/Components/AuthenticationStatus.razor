@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 
@@ -13,8 +11,12 @@
 					@authContext.User.Identity.Name
 				</a>
 				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-					<li><a class="dropdown-item" href="/profile">Profile</a></li>
-					<li><a class="dropdown-item" href="#" @onclick="BeginSignOut">Log out</a></li>
+					<li>
+						<a class="dropdown-item" href="/profile">Profile</a>
+					</li>
+					<li>
+						<a class="dropdown-item" href="#" @onclick="BeginSignOut">Log out</a>
+					</li>
 				</ul>
 			</li>
 		</ul>
@@ -29,9 +31,11 @@
 </AuthorizeView>
 
 @code {
+
 	private async Task BeginSignOut(MouseEventArgs args)
 	{
 		await SignOutManager.SetSignOutState();
 		Navigation.NavigateTo("authentication/logout");
 	}
+
 }
