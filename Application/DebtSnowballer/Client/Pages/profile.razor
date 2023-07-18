@@ -26,12 +26,7 @@ else
 			<p>@user.FindFirst(c => c.Type == "name").Value</p>
 		}
 		<br><br>
-		@if (user.HasClaim(c => c.Type == ClaimTypes.Email))
-		{
-			<h4>Email:</h4>
-			<p>@user.FindFirst(c => c.Type == ClaimTypes.Email).Value</p>
-		}
-		<br><br>
+
 		<h4>Claims:</h4>
 		@foreach (var claim in user.Claims)
 		{
