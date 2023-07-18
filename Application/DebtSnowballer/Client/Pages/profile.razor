@@ -2,8 +2,10 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
 
-<h3>User Profile</h3>
+<h3>User Profile </h3>
+<br>
 
 @if (user == null)
 {
@@ -23,13 +25,13 @@ else
 			<h4>Name:</h4>
 			<p>@user.FindFirst(c => c.Type == "name").Value</p>
 		}
-
+		<br><br>
 		@if (user.HasClaim(c => c.Type == ClaimTypes.Email))
 		{
 			<h4>Email:</h4>
 			<p>@user.FindFirst(c => c.Type == ClaimTypes.Email).Value</p>
 		}
-
+		<br><br>
 		<h4>Claims:</h4>
 		@foreach (var claim in user.Claims)
 		{
