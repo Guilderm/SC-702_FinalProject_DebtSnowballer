@@ -5,46 +5,33 @@
 @inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
-	<Authorized >
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<div class="container-fluid">
-				<span aria-hidden="true">
-					Hello,
-					@if (context.User.Identity != null)
-					{@context.User.Identity.Name}!
-				</span>
-
-				<ul class="navbar-nav">
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<img src="@context.User.FindFirst(c => c.Type == "picture")?.Value" alt="User Profile Image" class="rounded-circle" width="30" height="30">
-						</a>
-						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<span class="oi oi-person" aria-hidden="true"></span> Profile
-							<NavLink class="nav-link" href="#" @onclick="BeginSignOut">
-								<span class="oi oi-account-logout" aria-hidden="true"></span> Log out
-							</NavLink>
-						</ul>
-					</li>
+	<Authorized Context="authContext">
+		<ul class="navbar-nav">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<img src="@authContext.User.FindFirst(c => c.Type == "picture")?.Value" alt="User Profile Image" class="rounded-circle" width="30" height="30">
+					@authContext.User.Identity.Name
+				</a>
+				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+					<li><a class="dropdown-item" href="/profile">Profile</a></li>
+					<li><a class="dropdown-item" href="#" @onclick="BeginSignOut">Log out</a></li>
 				</ul>
-			</div>
-		</nav>
+			</li>
+		</ul>
 	</Authorized>
-	
 	<NotAuthorized>
-		<h4>
-			<NavLink class="nav-link" href="authentication/login">
-				<span class="oi oi-account-login" aria-hidden="true"></span> Log in
-			</NavLink>
-		</h4>
+		<ul class="navbar-nav">
+			<li class="nav-item">
+				<NavLink class="nav-link" href="authentication/login">Log in</NavLink>
+			</li>
+		</ul>
 	</NotAuthorized>
 </AuthorizeView>
 
-
 @code {
 	private async Task BeginSignOut(MouseEventArgs args)
-    {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
-    }
+	{
+		await SignOutManager.SetSignOutState();
+		Navigation.NavigateTo("authentication/logout");
+	}
 }
