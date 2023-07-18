@@ -219,3 +219,31 @@ VALUES ('Loan 1', 1, 10000.00, 0.05, 100.00, 200.00, 60, 1, GETDATE(), NULL),
        ('Loan 3', 3, 30000.00, 0.07, 300.00, 600.00, 36, 3, GETDATE(), NULL),
        ('Loan 4', 1, 40000.00, 0.08, 400.00, 800.00, 24, 1, GETDATE(), NULL),
        ('Loan 5', 2, 50000.00, 0.09, 500.00, 1000.00, 12, 2, GETDATE(), NULL);
+
+
+-- Create CRUD table with different column types for testing
+CREATE TABLE [CRUD]
+(
+    [Id]            INT IDENTITY (1,1) NOT NULL,
+    [LoanName]      NVARCHAR(50)       NOT NULL,
+    [Principal]     DECIMAL(18, 2)     NOT NULL,
+    [InterestRate]  DECIMAL(5, 2)      NOT NULL,
+    [TermMonths]    INT                NOT NULL,
+    [StartDate]     DATETIME2          NOT NULL,
+    [EndDate]       DATETIME2          NULL,
+    CONSTRAINT [PK_CRUD] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+-- Insert sample data into CRUD
+INSERT INTO [CRUD] (LoanName, Principal, InterestRate, TermMonths, StartDate)
+VALUES
+    ('Loan 1', 10000.00, 5.00, 60, GETDATE()),
+    ('Loan 2', 20000.00, 4.50, 48, GETDATE()),
+    ('Loan 3', 30000.00, 4.00, 36, GETDATE()),
+    ('Loan 4', 40000.00, 3.50, 24, GETDATE()),
+    ('Loan 5', 50000.00, 3.00, 12, GETDATE()),
+    ('Loan 6', 60000.00, 2.50, 60, GETDATE()),
+    ('Loan 7', 70000.00, 2.00, 48, GETDATE()),
+    ('Loan 8', 80000.00, 1.50, 36, GETDATE()),
+    ('Loan 9', 90000.00, 1.00, 24, GETDATE()),
+    ('Loan 10', 100000.00, 0.50, 12, GETDATE());

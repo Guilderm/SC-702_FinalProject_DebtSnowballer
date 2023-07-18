@@ -2,7 +2,6 @@
 
 public partial class LoanDto
 {
-
     public int Id { get; set; }
     public string LoanNickName { get; set; } = null!;
     public int PaymentStrategy { get; set; }

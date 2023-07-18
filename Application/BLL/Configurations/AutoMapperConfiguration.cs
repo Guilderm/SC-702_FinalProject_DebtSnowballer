@@ -9,5 +9,6 @@ public class AutoMapperConfiguration : Profile
 	public AutoMapperConfiguration()
 	{
 		CreateMap<Loan, LoanDto>().ReverseMap();
-	}
+        CreateMap<Crud, CrudDto>().ReverseMap();
+    }
 }

@@ -17,5 +17,6 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddScoped<ILoanService, LoanService>();
+builder.Services.AddScoped<ICrudService, CrudService>();
 
 await builder.Build().RunAsync();
