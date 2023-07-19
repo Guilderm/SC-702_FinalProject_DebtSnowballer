@@ -1,0 +1,57 @@
+﻿@using DebtSnowballer.Shared.DTOs
+@inject HttpClient HttpClient
+
+@if (LoanItems == null)
+{
+	<p>
+		<em>Loading...</em>
+	</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Loan Nickname</th>
+			<th>Principal</th>
+			<th>Interest Rate</th>
+			<th>Fees</th>
+			<th>Monthly Payment</th>
+			<th>Remaining Term</th>
+			<th>Currency ID</th>
+			<th>Cardinal Order</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var item in LoanItems)
+		{
+			<tr>
+				<td>@item.LoanNickName</td>
+				<td>@item.Principal</td>
+				<td>@item.InterestRate</td>
+				<td>@item.Fees</td>
+				<td>@item.MonthlyPayment</td>
+				<td>@item.RemainingTerm</td>
+				<td>@item.CurrencyID</td>
+				<td>@item.CardinalOrder</td>
+				<td>
+					<button class="btn btn-primary" @onclick="() => EditLoanItem.InvokeAsync(item.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteLoanItem.InvokeAsync(item.Id)">Delete</button>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}
+
+@code {
+	[Parameter]
+	public List<DebtDto> LoanItems { get; set; }
+
+	[Parameter]
+	public EventCallback<int> EditLoanItem { get; set; }
+
+	[Parameter]
+	public EventCallback<int> DeleteLoanItem { get; set; }
+}
