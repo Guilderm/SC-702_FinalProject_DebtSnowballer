@@ -1,17 +1,17 @@
 ﻿@page "/Debt"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-@using System.Security.Claims
 @inject HttpClient HttpClient
 @inject IConfiguration Configuration
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize]
 
 <h3>Manage Your Debt</h3>
 
 @if (loanItems == null)
     {
-    <p><em>Loading...</em></p>
+    <p>
+        <em>Loading...</em>
+    </p>
     }
 else
     {
@@ -51,122 +51,45 @@ else
     </table>
 
     <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
-    <br>
 
     @if (_selectedDebtItem != null)
         {
         <h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-        <EditForm Model="_selectedDebtItem" OnValidSubmit="SaveLoanItem" @key="_selectedDebtItem">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group">
-                <label for="LoanNickName">Loan Nickname</label>
-                <InputText id="LoanNickName" class="form-control" @bind-Value="_selectedDebtItem.LoanNickName" />
-            </div>
-
-            <div class="form-group">
-                <label for="Principal">Principal</label>
-                <InputNumber id="Principal" class="form-control" @bind-Value="_selectedDebtItem.Principal" />
-            </div>
-
-            <div class="form-group">
-                <label for="InterestRate">Interest Rate</label>
-                <InputNumber id="InterestRate" class="form-control" @bind-Value="_selectedDebtItem.InterestRate" />
-            </div>
-
-            <div class="form-group">
-                <label for="Fees">Fees</label>
-                <InputNumber id="Fees" class="form-control" @bind-Value="_selectedDebtItem.Fees" />
-            </div>
-
-            <div class="form-group">
-                <label for="MonthlyPayment">Monthly Payment</label>
-                <InputNumber id="MonthlyPayment" class="form-control" @bind-Value="_selectedDebtItem.MonthlyPayment" />
-            </div>
-
-            <div class="form-group">
-                <label for="RemainingTerm">Remaining Term</label>
-                <InputNumber id="RemainingTerm" class="form-control" @bind-Value="_selectedDebtItem.RemainingTerm" />
-            </div>
-
-            <div class="form-group">
-                <label for="CurrencyID">Currency ID</label>
-                <InputNumber id="CurrencyID" class="form-control" @bind-Value="_selectedDebtItem.CurrencyID" />
-            </div>
-
-            <div class="form-group">
-                <label for="CardinalOrder">Cardinal Order</label>
-                <InputNumber id="CardinalOrder" class="form-control" @bind-Value="_selectedDebtItem.CardinalOrder" />
-            </div>
-
-            <button type="submit" class="btn btn-success">@(_selectedDebtItem.Id == 0 ? "Add" : "Update")</button>
-        </EditForm>
+        <DebtForm DebtItem="_selectedDebtItem" OnSave="LoadLoanItems" />
         }
     }
 
 @code {
-	private List<DebtDto> loanItems;
-	private DebtDto _selectedDebtItem;
-	private IGenericService<DebtDto> LoanService;
-	private string userId;
+    private List<DebtDto> loanItems;
+    private DebtDto _selectedDebtItem;
+    private IGenericService<DebtDto> LoanService;
 
-	protected override async Task OnInitializedAsync()
-	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
+    protected override async Task OnInitializedAsync()
+        {
+        var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+        LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+        await LoadLoanItems();
+        }
 
-		if (user.Identity.IsAuthenticated)
-		{
-	// Debug line to print out all claims
-			Console.WriteLine(string.Join(", ", user.Claims.Select(c => $"{c.Type}: {c.Value}")));
+    private async Task LoadLoanItems()
+        {
+        loanItems = await LoanService.GetItems();
+        }
 
-			userId = user.Claims.First(c => c.Type == "sub").Value;
-		}
+    private void NewLoanItem()
+        {
+        _selectedDebtItem = new DebtDto();
+        }
 
-		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
-		await LoadLoanItems();
-	}
+    private async Task LoadLoanItem(int id)
+        {
+        _selectedDebtItem = await LoanService.GetItem(id);
+        }
 
-	private async Task LoadLoanItems()
-	{
-		loanItems = await LoanService.GetItems();
-	}
-
-	private void NewLoanItem()
-	{
-		_selectedDebtItem = new DebtDto();
-	}
-
-	private async Task LoadLoanItem(int id)
-	{
-		_selectedDebtItem = await LoanService.GetItem(id);
-	}
-
-	private async Task SaveLoanItem()
-	{
-		_selectedDebtItem.Auth0UserId = userId;
-
-		if (_selectedDebtItem.Id == 0)
-		{
-			await LoanService.AddItem(_selectedDebtItem);
-		}
-		else
-		{
-			await LoanService.UpdateItem(_selectedDebtItem);
-		}
-
-		_selectedDebtItem = null;
-
-		await LoadLoanItems();
-	}
-
-	private async Task DeleteLoanItem(int id)
-	{
-		await LoanService.DeleteItem(id);
-		await LoadLoanItems();
-	}
+    private async Task DeleteLoanItem(int id)
+        {
+        await LoanService.DeleteItem(id);
+        await LoadLoanItems();
+        }
 }
-

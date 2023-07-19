@@ -133,7 +133,11 @@ INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, Mont
                   CardinalOrder)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 1, 1),
        ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 2, 2),
-       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 1, 3);
+       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 1, 3),
+
+       ('google-oauth2|116471976465148595031', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 1, 1),
+       ('google-oauth2|116471976465148595031', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 2, 2),
+       ('google-oauth2|116471976465148595031', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 1, 3);
 
 -- Insert data into MonthlyExtraPayments
 INSERT INTO MonthlyExtraPayments (UserId, Amount)
