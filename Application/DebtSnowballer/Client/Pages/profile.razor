@@ -1,5 +1,4 @@
 ﻿@page "/profile"
-@using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize]
@@ -9,7 +8,9 @@
 
 @if (user == null)
 {
-	<p><em>Loading...</em></p>
+	<p>
+		<em>Loading...</em>
+	</p>
 }
 else
 {
@@ -17,13 +18,12 @@ else
 		@if (user.HasClaim(c => c.Type == "picture"))
 		{
 			<h4>Picture:</h4>
-			<img src="@user.FindFirst(c => c.Type == "picture").Value" alt="Profile picture" />
+			<img src="@user.FindFirst(c => c.Type == "picture").Value" alt="Profile picture"/>
 		}
 
 		@if (user.HasClaim(c => c.Type == "name"))
 		{
-			<h4>Name:</h4>
-			<p>@user.FindFirst(c => c.Type == "name").Value</p>
+			<h4>Name: @user.FindFirst(c => c.Type == "name").Value</h4>
 		}
 		<br><br>
 
@@ -43,4 +43,4 @@ else
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		user = authState.User;
 	}
-}
+	}
