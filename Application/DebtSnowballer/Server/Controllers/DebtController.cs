@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using DAL.Interfaces;
 using DAL.Models;
 using DebtSnowballer.Shared.DTOs;
@@ -16,28 +17,30 @@ public class DebtController : GenericControllers<Debt, DebtDto>
 		_logger = logger;
 	}
 
-	#region POST|Create - Used to create a new resource.
+    #region POST|Create - Used to create a new resource.
 
-	[HttpPost]
-	public override IActionResult Post([FromBody] DebtDto requestDto)
-	{
-		_logger.LogInformation($"will look for Entity with of name {nameof(requestDto)} and see if we get it.");
+    [HttpPost]
+    public override IActionResult Post([FromBody] DebtDto requestDto)
+    {
+        _logger.LogInformation($"Received POST request in {nameof(DebtController)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
-		if (!ModelState.IsValid)
-		{
-			_logger.LogError($"Invalid POST attempt in {nameof(requestDto)}");
-			return BadRequest(ModelState);
-		}
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError($"Invalid POST attempt in {nameof(DebtController)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+            return BadRequest(ModelState);
+        }
 
-		var mappedResult = Mapper.Map<Debt>(requestDto);
+        var mappedResult = Mapper.Map<Debt>(requestDto);
 
-		Repository.Insert(mappedResult);
-		UnitOfWork.SaveChanges();
+        Repository.Insert(mappedResult);
+        UnitOfWork.SaveChanges();
 
-		_logger.LogCritical($"The ID of Entity with of name {nameof(requestDto)} is {mappedResult.Id} .");
+        _logger.LogInformation($"Successfully created entity in {nameof(DebtController)}. Entity ID: {mappedResult.Id}");
 
-		return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
-	}
+        return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
+    }
 
-	#endregion
-}
+
+
+    #endregion
+    }

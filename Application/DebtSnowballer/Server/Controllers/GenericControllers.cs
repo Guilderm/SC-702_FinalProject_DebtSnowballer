@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace BackEnd.Controllers;
 
@@ -26,14 +27,14 @@ public class GenericControllers<TEntity, TModel> : ControllerBase
 	#region POST|Create - Used to create a new resource.
 
 	[HttpPost]
-	public virtual IActionResult Post([FromBody] TModel requestDto)
-	{
-		_logger.LogInformation($"Registration Attempt for {requestDto} ");
+public virtual IActionResult Post([FromBody] TModel requestDto)
+        {
+        _logger.LogInformation($"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
-		if (!ModelState.IsValid)
+        if (!ModelState.IsValid)
 		{
-			_logger.LogError($"Invalid POST attempt in {nameof(requestDto)}");
-			return BadRequest(ModelState);
+            _logger.LogError($"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+            return BadRequest(ModelState);
 		}
 
 		var mappedResult = Mapper.Map<TEntity>(requestDto);
@@ -50,11 +51,17 @@ public class GenericControllers<TEntity, TModel> : ControllerBase
 
 	[HttpPut("{id:int}")]
 	public IActionResult Put(int id, [FromBody] TModel requestDto)
-	{
-		if (!ModelState.IsValid) return BadRequest(ModelState);
+        {
+        _logger.LogInformation($"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
-		// Get the existing entity from the database
-		var existingEntity = Repository.Get(id);
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError($"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+            return BadRequest(ModelState);
+        }
+
+        // Get the existing entity from the database
+        var existingEntity = Repository.Get(id);
 		if (existingEntity == null)
 			// If the entity does not exist, return a 404 Not Found status
 			return NotFound();
@@ -82,45 +89,39 @@ public class GenericControllers<TEntity, TModel> : ControllerBase
 		throw new NotImplementedException();
 	}
 
-	#endregion
+    #endregion
 
-	#region DELETE|Delete - Used to delete a resource.
+    #region DELETE|Delete - Used to delete a resource.
 
-	[HttpDelete("{id:int}")]
-	public IActionResult Delete(int id)
-	{
-		if (!ModelState.IsValid) return BadRequest(ModelState);
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        var dbResult = Repository.Get(id);
+        Repository.Remove(dbResult);
+        UnitOfWork.SaveChanges();
 
-		var dbResult = Repository.Get(id);
-		Repository.Remove(dbResult);
-		UnitOfWork.SaveChanges();
+        return NoContent();
+    }
 
-		return NoContent();
-	}
+    #endregion
 
-	#endregion
+    #region GET|Read - Used to retrieve a resource or a collection of resources.
 
-	#region GET|Read - Used to retrieve a resource or a collection of resources.
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var dbResult = Repository.GetAll();
+        var mappedResult = Mapper.Map<IList<TModel>>(dbResult);
+        return Ok(mappedResult);
+    }
 
-	[HttpGet]
-	public IActionResult Get()
-	{
-		if (!ModelState.IsValid) return BadRequest(ModelState);
+    [HttpGet("{id:int}")]
+    public IActionResult Get(int id)
+    {
+        var dbResult = Repository.Get(id);
+        var mappedResult = Mapper.Map<TModel>(dbResult);
+        return Ok(mappedResult);
+    }
 
-		var dbResult = Repository.GetAll();
-		var mappedResult = Mapper.Map<IList<TModel>>(dbResult);
-		return Ok(mappedResult);
-	}
-
-	[HttpGet("{id:int}")]
-	public IActionResult Get(int id)
-	{
-		if (!ModelState.IsValid) return BadRequest(ModelState);
-
-		var dbResult = Repository.Get(id);
-		var mappedResult = Mapper.Map<TModel>(dbResult);
-		return Ok(mappedResult);
-	}
-
-	#endregion
-}
+    #endregion
+    }
