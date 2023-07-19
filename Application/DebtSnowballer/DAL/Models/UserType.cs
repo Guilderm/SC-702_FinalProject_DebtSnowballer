@@ -1,16 +1,11 @@
-﻿namespace DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class UserType
+namespace DAL.Models
 {
-	public UserType()
-	{
-		Users = new HashSet<User>();
-	}
-
-	public int Id { get; set; }
-	public string Type { get; set; } = null!;
-	public DateTime CreatedAt { get; set; }
-	public DateTime? UpdatedAt { get; set; }
-
-	public virtual ICollection<User> Users { get; set; }
+    public partial class UserType
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = null!;
+    }
 }

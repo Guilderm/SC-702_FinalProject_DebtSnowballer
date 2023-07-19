@@ -1,0 +1,114 @@
+﻿@page "/loans"
+@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Client.Services
+@inject HttpClient HttpClient
+@inject IConfiguration Configuration
+
+<h3>Manage Your Loans</h3>
+
+@if (loanItems == null)
+    {
+    <p>
+        <em>Loading...</em>
+    </p>
+    }
+
+else
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Loan Name</th>
+                <th>Principal</th>
+                <th>Interest Rate</th>
+                <th>Term (Months)</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in loanItems)
+                {
+                <tr>
+                    <td>@item.LoanName</td>
+                    <td>@item.Principal</td>
+                    <td>@item.InterestRate</td>
+                    <td>@item.TermMonths</td>
+                    <td>@item.StartDate.ToShortDateString()</td>
+                    <td>@(item.EndDate.HasValue ? item.EndDate.Value.ToShortDateString() : "N/A")</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => LoadLoanItem(item.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteLoanItem(item.Id)">Delete</button>
+                    </td>
+                </tr>
+                }
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
+
+    @if (selectedLoanItem != null)
+        {
+        <h3>@(selectedLoanItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
+
+        <EditForm Model="selectedLoanItem" OnValidSubmit="SaveLoanItem" @key="selectedLoanItem">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Your form fields go here -->
+
+            <button type="submit" class="btn btn-success">@(selectedLoanItem.Id == 0 ? "Add" : "Update")</button>
+        </EditForm>
+        }
+    }
+
+@code {
+    private List<LoanDto> loanItems;
+    private LoanDto selectedLoanItem;
+    private IGenericService<LoanDto> LoanService;
+
+    protected override async Task OnInitializedAsync()
+        {
+        var fullUrl = Configuration["ApiEndpoint:Url"] + "loans";
+        LoanService = new GenericService<LoanDto>(HttpClient, fullUrl);
+        await LoadLoanItems();
+        }
+
+    private async Task LoadLoanItems()
+        {
+        loanItems = await LoanService.GetItems();
+        }
+
+    private void NewLoanItem()
+        {
+        selectedLoanItem = new LoanDto();
+        }
+
+    private async Task LoadLoanItem(int id)
+        {
+        selectedLoanItem = await LoanService.GetItem(id);
+        }
+
+    private async Task SaveLoanItem()
+        {
+        if (selectedLoanItem.Id == 0)
+            {
+            await LoanService.AddItem(selectedLoanItem);
+            }
+        else
+            {
+            await LoanService.UpdateItem(selectedLoanItem);
+            }
+
+        selectedLoanItem = null;
+
+        await LoadLoanItems();
+        }
+
+    private async Task DeleteLoanItem(int id)
+        {
+        await LoanService.DeleteItem(id);
+        await LoadLoanItems();
+        }
+}

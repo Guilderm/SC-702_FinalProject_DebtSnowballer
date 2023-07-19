@@ -1,212 +1,169 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace DAL.Models;
-
-public partial class DebtSnowballerContext : DbContext
+namespace DAL.Models
 {
-	public DebtSnowballerContext()
-	{
-	}
+    public partial class DebtSnowballerContext : DbContext
+    {
+        public DebtSnowballerContext()
+        {
+        }
 
-	public DebtSnowballerContext(DbContextOptions<DebtSnowballerContext> options)
-		: base(options)
-	{
-	}
+        public DebtSnowballerContext(DbContextOptions<DebtSnowballerContext> options)
+            : base(options)
+        {
+        }
 
-	public virtual DbSet<Crud> Cruds { get; set; } = null!;
-	public virtual DbSet<Currency> Currencies { get; set; } = null!;
-	public virtual DbSet<DebtSnowflake> DebtSnowflakes { get; set; } = null!;
-	public virtual DbSet<Loan> Loans { get; set; } = null!;
-	public virtual DbSet<LoanCardinalOrder> LoanCardinalOrders { get; set; } = null!;
-	public virtual DbSet<PaymentStrategyPlan> PaymentStrategyPlans { get; set; } = null!;
-	public virtual DbSet<SessionLog> SessionLogs { get; set; } = null!;
-	public virtual DbSet<StrategyType> StrategyTypes { get; set; } = null!;
-	public virtual DbSet<User> Users { get; set; } = null!;
-	public virtual DbSet<UserType> UserTypes { get; set; } = null!;
+        public virtual DbSet<AppUser> AppUsers { get; set; } = null!;
+        public virtual DbSet<Crud> Cruds { get; set; } = null!;
+        public virtual DbSet<Currency> Currencies { get; set; } = null!;
+        public virtual DbSet<Loan> Loans { get; set; } = null!;
+        public virtual DbSet<MonthlyExtraPayment> MonthlyExtraPayments { get; set; } = null!;
+        public virtual DbSet<OnetimeExtraPayment> OnetimeExtraPayments { get; set; } = null!;
+        public virtual DbSet<SessionLog> SessionLogs { get; set; } = null!;
+        public virtual DbSet<UserType> UserTypes { get; set; } = null!;
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlServer("Name=AzureBDConnection");
-	}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Name=AzureBDConnection");
+            }
+        }
 
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
-		modelBuilder.Entity<Crud>(entity =>
-		{
-			entity.ToTable("CRUD");
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AppUser>(entity =>
+            {
+                entity.ToTable("AppUser");
 
-			entity.Property(e => e.InterestRate).HasColumnType("decimal(5, 2)");
+                entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F4290234781BB")
+                    .IsUnique();
 
-			entity.Property(e => e.LoanName).HasMaxLength(50);
+                entity.Property(e => e.Auth0UserId).HasMaxLength(125);
 
-			entity.Property(e => e.Principal).HasColumnType("decimal(18, 2)");
-		});
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
-		modelBuilder.Entity<Currency>(entity =>
-		{
-			entity.ToTable("Currency");
+                entity.Property(e => e.Email).HasMaxLength(256);
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.FirstName).HasMaxLength(50);
 
-			entity.Property(e => e.FormalName).HasMaxLength(50);
+                entity.Property(e => e.LastName).HasMaxLength(50);
 
-			entity.Property(e => e.ShortName).HasMaxLength(20);
+                entity.Property(e => e.UserTypeId).HasDefaultValueSql("((1))");
+            });
 
-			entity.Property(e => e.Symbol).HasMaxLength(10);
-		});
+            modelBuilder.Entity<Crud>(entity =>
+            {
+                entity.ToTable("CRUD");
 
-		modelBuilder.Entity<DebtSnowflake>(entity =>
-		{
-			entity.ToTable("DebtSnowflake");
+                entity.Property(e => e.InterestRate).HasColumnType("decimal(5, 2)");
 
-			entity.Property(e => e.Amount).HasColumnType("decimal(10, 3)");
+                entity.Property(e => e.LoanName).HasMaxLength(50);
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.Principal).HasColumnType("decimal(18, 2)");
+            });
 
-			entity.Property(e => e.Date).HasColumnType("date");
+            modelBuilder.Entity<Currency>(entity =>
+            {
+                entity.ToTable("Currency");
 
-			entity.HasOne(d => d.PaymentStrategyNavigation)
-				.WithMany(p => p.DebtSnowflakes)
-				.HasForeignKey(d => d.PaymentStrategy)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_DebtSnowflake_PaymentStrategy_PaymentStrategyPlan_Id");
-		});
+                entity.Property(e => e.FormalName).HasMaxLength(50);
 
-		modelBuilder.Entity<Loan>(entity =>
-		{
-			entity.ToTable("Loan");
+                entity.Property(e => e.ShortName).HasMaxLength(20);
 
-			entity.HasIndex(e => e.LoanNickName, "UC_Loan_LoanNickName")
-				.IsUnique();
+                entity.Property(e => e.Symbol).HasMaxLength(10);
+            });
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            modelBuilder.Entity<Loan>(entity =>
+            {
+                entity.ToTable("Loan");
 
-			entity.Property(e => e.Fees).HasColumnType("decimal(10, 3)");
+                entity.Property(e => e.Auth0UserId).HasMaxLength(125);
 
-			entity.Property(e => e.InterestRate).HasColumnType("decimal(5, 5)");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
-			entity.Property(e => e.LoanNickName).HasMaxLength(50);
+                entity.Property(e => e.CurrencyId)
+                    .HasColumnName("CurrencyID")
+                    .HasDefaultValueSql("((1))");
 
-			entity.Property(e => e.MonthlyPayment).HasColumnType("decimal(10, 3)");
+                entity.Property(e => e.Fees).HasColumnType("decimal(10, 3)");
 
-			entity.Property(e => e.Principal).HasColumnType("decimal(10, 3)");
+                entity.Property(e => e.InterestRate).HasColumnType("decimal(5, 5)");
 
-			entity.HasOne(d => d.CurrencyNavigation)
-				.WithMany(p => p.Loans)
-				.HasForeignKey(d => d.Currency)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_Loan_Currency_Currency_Id");
+                entity.Property(e => e.LoanNickName).HasMaxLength(50);
 
-			entity.HasOne(d => d.PaymentStrategyNavigation)
-				.WithMany(p => p.Loans)
-				.HasForeignKey(d => d.PaymentStrategy)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_Loan_PaymentStrategy_PaymentStrategyPlan_Id");
-		});
+                entity.Property(e => e.MonthlyPayment).HasColumnType("decimal(10, 3)");
 
-		modelBuilder.Entity<LoanCardinalOrder>(entity =>
-		{
-			entity.ToTable("LoanCardinalOrder");
+                entity.Property(e => e.Principal).HasColumnType("decimal(10, 3)");
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.HasOne(d => d.Auth0User)
+                    .WithMany(p => p.Loans)
+                    .HasPrincipalKey(p => p.Auth0UserId)
+                    .HasForeignKey(d => d.Auth0UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Loan__Auth0UserI__08162EEB");
 
-			entity.HasOne(d => d.Loan)
-				.WithMany(p => p.LoanCardinalOrders)
-				.HasForeignKey(d => d.LoanId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_LoanCardinalOrder_LoanId_Loan_Id");
+                entity.HasOne(d => d.Currency)
+                    .WithMany(p => p.Loans)
+                    .HasForeignKey(d => d.CurrencyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Loan__CurrencyID__090A5324");
+            });
 
-			entity.HasOne(d => d.PaymentStrategyNavigation)
-				.WithMany(p => p.LoanCardinalOrders)
-				.HasForeignKey(d => d.PaymentStrategy)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_LoanCardinalOrder_PaymentStrategy_PaymentStrategyPlan_Id");
-		});
+            modelBuilder.Entity<MonthlyExtraPayment>(entity =>
+            {
+                entity.Property(e => e.Amount).HasColumnType("decimal(10, 3)");
 
-		modelBuilder.Entity<PaymentStrategyPlan>(entity =>
-		{
-			entity.ToTable("PaymentStrategyPlan");
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.MonthlyExtraPayments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MonthlyEx__UserI__0DCF0841");
+            });
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            modelBuilder.Entity<OnetimeExtraPayment>(entity =>
+            {
+                entity.Property(e => e.Amount).HasColumnType("decimal(10, 3)");
 
-			entity.Property(e => e.GlobalMonthlyPayment).HasColumnType("decimal(10, 3)");
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.OnetimeExtraPayments)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__OnetimeEx__UserI__10AB74EC");
+            });
 
-			entity.HasOne(d => d.StrategyType)
-				.WithMany(p => p.PaymentStrategyPlans)
-				.HasForeignKey(d => d.StrategyTypeId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_PaymentStrategyPlan_StrategyTypeId_StrategyType_Id");
+            modelBuilder.Entity<SessionLog>(entity =>
+            {
+                entity.ToTable("SessionLog");
 
-			entity.HasOne(d => d.User)
-				.WithMany(p => p.PaymentStrategyPlans)
-				.HasForeignKey(d => d.UserId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_PaymentStrategyPlan_UserId_User_Id");
-		});
+                entity.Property(e => e.ClientSoftware).HasMaxLength(50);
 
-		modelBuilder.Entity<SessionLog>(entity =>
-		{
-			entity.ToTable("SessionLog");
+                entity.Property(e => e.LogonTimeStamp).HasDefaultValueSql("(getdate())");
 
-			entity.Property(e => e.ClientSoftware).HasMaxLength(50);
+                entity.Property(e => e.OperatingSystem).HasMaxLength(50);
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.RemoteIpAddress).HasMaxLength(50);
 
-			entity.Property(e => e.OperatingSystem).HasMaxLength(50);
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.SessionLogs)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__SessionLo__UserI__025D5595");
+            });
 
-			entity.Property(e => e.RemoteIpAddress).HasMaxLength(50);
+            modelBuilder.Entity<UserType>(entity =>
+            {
+                entity.ToTable("UserType");
 
-			entity.HasOne(d => d.User)
-				.WithMany(p => p.SessionLogs)
-				.HasForeignKey(d => d.UserId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_SessionLog_UserId_User_Id");
-		});
+                entity.Property(e => e.Type).HasMaxLength(20);
+            });
 
-		modelBuilder.Entity<StrategyType>(entity =>
-		{
-			entity.ToTable("StrategyType");
+            OnModelCreatingPartial(modelBuilder);
+        }
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-			entity.Property(e => e.Type).HasMaxLength(20);
-		});
-
-		modelBuilder.Entity<User>(entity =>
-		{
-			entity.ToTable("User");
-
-			entity.HasIndex(e => e.Email, "UC_User_Email")
-				.IsUnique();
-
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-			entity.Property(e => e.Email).HasMaxLength(256);
-
-			entity.Property(e => e.FirstName).HasMaxLength(50);
-
-			entity.Property(e => e.LastName).HasMaxLength(50);
-
-			entity.Property(e => e.Password).HasMaxLength(255);
-
-			entity.HasOne(d => d.UserType)
-				.WithMany(p => p.Users)
-				.HasForeignKey(d => d.UserTypeId)
-				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK_User_UserTypeId_UserType_Id");
-		});
-
-		modelBuilder.Entity<UserType>(entity =>
-		{
-			entity.ToTable("UserType");
-
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
-			entity.Property(e => e.Type).HasMaxLength(20);
-		});
-
-		OnModelCreatingPartial(modelBuilder);
-	}
-
-	partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    }
 }

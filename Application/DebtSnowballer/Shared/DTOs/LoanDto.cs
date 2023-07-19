@@ -1,16 +1,29 @@
-﻿namespace DebtSnowballer.Shared.DTOs;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-public class LoanDto
+namespace DebtSnowballer.Shared.DTOs
 {
-	public int Id { get; set; }
-	public string LoanNickName { get; set; } = null!;
-	public int PaymentStrategy { get; set; }
-	public decimal Principal { get; set; }
-	public decimal InterestRate { get; set; }
-	public decimal Fees { get; set; }
-	public decimal MonthlyPayment { get; set; }
-	public int RemainingTerm { get; set; }
-	public int Currency { get; set; }
-	public DateTime CreatedAt { get; set; }
-	public DateTime? UpdatedAt { get; set; }
+    public class LoanDto
+    {
+        public int Id { get; set; }
+
+
+
+        [Required]
+        public string LoanName { get; set; }
+
+       
+        public decimal Principal { get; set; }
+
+      
+        public decimal InterestRate { get; set; }
+
+      
+        public int TermMonths { get; set; }
+
+      
+        public DateTime StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
+    }
 }

@@ -1,25 +1,24 @@
-﻿namespace DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Loan
+namespace DAL.Models
 {
-	public Loan()
-	{
-		LoanCardinalOrders = new HashSet<LoanCardinalOrder>();
-	}
+    public partial class Loan
+    {
+        public int Id { get; set; }
+        public string Auth0UserId { get; set; } = null!;
+        public string LoanNickName { get; set; } = null!;
+        public decimal Principal { get; set; }
+        public decimal InterestRate { get; set; }
+        public decimal Fees { get; set; }
+        public decimal MonthlyPayment { get; set; }
+        public int RemainingTerm { get; set; }
+        public int CurrencyId { get; set; }
+        public int CardinalOrder { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
-	public int Id { get; set; }
-	public string LoanNickName { get; set; } = null!;
-	public int PaymentStrategy { get; set; }
-	public decimal Principal { get; set; }
-	public decimal InterestRate { get; set; }
-	public decimal Fees { get; set; }
-	public decimal MonthlyPayment { get; set; }
-	public int RemainingTerm { get; set; }
-	public int Currency { get; set; }
-	public DateTime CreatedAt { get; set; }
-	public DateTime? UpdatedAt { get; set; }
-
-	public virtual Currency CurrencyNavigation { get; set; } = null!;
-	public virtual PaymentStrategyPlan PaymentStrategyNavigation { get; set; } = null!;
-	public virtual ICollection<LoanCardinalOrder> LoanCardinalOrders { get; set; }
+        public virtual AppUser Auth0User { get; set; } = null!;
+        public virtual Currency Currency { get; set; } = null!;
+    }
 }

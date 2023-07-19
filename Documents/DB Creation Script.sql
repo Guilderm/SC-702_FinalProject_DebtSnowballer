@@ -27,27 +27,25 @@ while(exists(select 1
         PRINT @sql
     end
 
-CREATE TABLE [User]
+
+CREATE TABLE [AppUser]
 (
-    [Id]         INT IDENTITY (1,1) NOT NULL,
-    [FirstName]  NVARCHAR(50)       NOT NULL,
-    [LastName]   NVARCHAR(50)       NOT NULL,
-    [Email]      NVARCHAR(256)      NOT NULL,
-    [Password]   NVARCHAR(255)      NOT NULL,                   -- This should store hashed and salted passwords, not plain text
-    [UserTypeId] INT                NOT NULL,
-    [CreatedAt]  DATETIME2          NOT NULL DEFAULT GETDATE(), -- Timestamp of when the record was created
-    [UpdatedAt]  DATETIME2,                                     -- Timestamp of the last update to the record
-    CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [UC_User_Email] UNIQUE ([Email])                 -- Ensure that each email is unique
+    [Id]          INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId] NVARCHAR(125) NOT NULL UNIQUE, -- Make this column non-nullable
+    [FirstName]   NVARCHAR(50)       NOT NULL,
+    [LastName]    NVARCHAR(50)       NOT NULL,
+    [Email]       NVARCHAR(256)      NOT NULL,
+    [UserTypeId]  INT                NOT NULL DEFAULT 1,
+    [CreatedAt]   DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [UpdatedAt]   DATETIME2,
+    CONSTRAINT [PK_AppUser] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 -- Create UserType table to store different types of users
 CREATE TABLE [UserType]
 (
-    [Id]        INT IDENTITY (1,1) NOT NULL,
-    [Type]      NVARCHAR(20)       NOT NULL,
-    [CreatedAt] DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt] DATETIME2,
+    [Id]   INT IDENTITY (1,1) NOT NULL,
+    [Type] NVARCHAR(20)       NOT NULL,
     CONSTRAINT [PK_UserType] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -55,45 +53,13 @@ CREATE TABLE [UserType]
 CREATE TABLE [SessionLog]
 (
     [Id]              INT IDENTITY (1,1) NOT NULL,
-    [UserId]          INT                NOT NULL,
-    [LogonTimeStamp]  DATETIME2          NOT NULL,
-    [LogoffTimeStamp] DATETIME2          NOT NULL,
+    [UserId]          INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [LogonTimeStamp]  DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [LogoffTimeStamp] DATETIME2,
     [OperatingSystem] NVARCHAR(50)       NOT NULL,
     [ClientSoftware]  NVARCHAR(50)       NOT NULL,
     [RemoteIpAddress] NVARCHAR(50)       NOT NULL,
-    [CreatedAt]       DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]       DATETIME2,
     CONSTRAINT [PK_SessionLog] PRIMARY KEY CLUSTERED ([Id] ASC)
-);
-
--- Create PaymentStrategyPlan table to store information about each user's payment strategy
-CREATE TABLE [PaymentStrategyPlan]
-(
-    [Id]                   INT IDENTITY (1,1) NOT NULL,
-    [UserId]               INT                NOT NULL,
-    [StrategyTypeId]       INT                NOT NULL,
-    [GlobalMonthlyPayment] DECIMAL(10, 3)     NOT NULL, -- The total amount the user is able to pay across all loans each month
-    [CreatedAt]            DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]            DATETIME2,
-    CONSTRAINT [PK_PaymentStrategyPlan] PRIMARY KEY CLUSTERED ([Id] ASC)
-);
-
--- Create Loan table to store information about each loan
-CREATE TABLE [Loan]
-(
-    [Id]              INT IDENTITY (1,1) NOT NULL,
-    [LoanNickName]    NVARCHAR(50)       NOT NULL,
-    [PaymentStrategy] INT                NOT NULL,
-    [Principal]       DECIMAL(10, 3)     NOT NULL,
-    [InterestRate]    DECIMAL(5, 5)      NOT NULL,
-    [Fees]            DECIMAL(10, 3)     NOT NULL,
-    [MonthlyPayment]  DECIMAL(10, 3)     NOT NULL,
-    [RemainingTerm]   INT                NOT NULL,
-    [Currency]        INT                NOT NULL,
-    [CreatedAt]       DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]       DATETIME2,
-    CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [UC_Loan_LoanNickName] UNIQUE ([LoanNickName]) -- Ensure that each loan nickname is unique
 );
 
 -- Create Currency table to store different types of currencies
@@ -103,147 +69,113 @@ CREATE TABLE [Currency]
     [FormalName] NVARCHAR(50)       NOT NULL,
     [ShortName]  NVARCHAR(20)       NOT NULL,
     [Symbol]     NVARCHAR(10)       NOT NULL,
-    [CreatedAt]  DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]  DATETIME2,
     CONSTRAINT [PK_Currency] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
--- Create DebtSnowflake table to store information about extra payments on the debts
-CREATE TABLE [DebtSnowflake]
+-- Create Loan table to store information about each loan
+CREATE TABLE [Loan]
 (
-    [Id]              INT IDENTITY (1,1) NOT NULL,
-    [Date]            DATE               NOT NULL,
-    [Amount]          DECIMAL(10, 3)     NOT NULL,
-    [PaymentStrategy] INT                NOT NULL,
-    [CreatedAt]       DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]       DATETIME2,
-    CONSTRAINT [PK_DebtSnowflake] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Id]             INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId]    NVARCHAR(125)                 NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
+    [LoanNickName]   NVARCHAR(50)       NOT NULL,
+    [Principal]      DECIMAL(10, 3)     NOT NULL,
+    [InterestRate]   DECIMAL(5, 5)      NOT NULL,
+    [Fees]           DECIMAL(10, 3)     NOT NULL,
+    [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
+    [RemainingTerm]  INT                NOT NULL,
+    [CurrencyID]     INT                NOT NULL FOREIGN KEY REFERENCES [Currency] (ID) DEFAULT 1,
+    [CardinalOrder]  INT                NOT NULL, -- The order in which the loan should be paid off
+    [CreatedAt]      DATETIME2          NOT NULL                                        DEFAULT GETDATE(),
+    [UpdatedAt]      DATETIME2,
+    CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
--- Create StrategyType table to store different types of payment strategies
-CREATE TABLE [StrategyType]
+-- Create PaymentStrategyPlan table to store information about each user's payment strategy
+CREATE TABLE [MonthlyExtraPayments]
 (
-    [Id]                INT IDENTITY (1,1) NOT NULL,
-    [Type]              NVARCHAR(20)       NOT NULL,
-    [HasCustomStrategy] BIT                NOT NULL, -- Indicates whether the strategy is custom or not
-    [CreatedAt]         DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]         DATETIME2,
-    CONSTRAINT [PK_StrategyType] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Id]     INT IDENTITY (1,1) NOT NULL,
+    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [Amount] DECIMAL(10, 3)     NOT NULL,
+    CONSTRAINT [PK_MonthlyExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
--- Create LoanCardinalOrder table to store the order in which loans should be paid off
-CREATE TABLE [LoanCardinalOrder]
+CREATE TABLE [OnetimeExtraPayments]
 (
-    [Id]              INT IDENTITY (1,1) NOT NULL,
-    [PaymentStrategy] INT                NOT NULL,
-    [LoanId]          INT                NOT NULL,
-    [CardinalOrder]   INT                NOT NULL, -- The order in which the loan should be paid off
-    [CreatedAt]       DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]       DATETIME2,
-    CONSTRAINT [PK_LoanCardinalOrder] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Id]     INT IDENTITY (1,1) NOT NULL,
+    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [Amount] DECIMAL(10, 3)     NOT NULL,
+    [Date]   DATETIME2          NOT NULL,
+    CONSTRAINT [PK_OnetimeExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-
--- Add foreign key constraints to ensure data integrity
-ALTER TABLE [User]
-    ADD CONSTRAINT [FK_User_UserTypeId_UserType_Id] FOREIGN KEY ([UserTypeId])
-        REFERENCES [UserType] ([Id]);
-
-ALTER TABLE [SessionLog]
-    ADD CONSTRAINT [FK_SessionLog_UserId_User_Id] FOREIGN KEY ([UserId])
-        REFERENCES [User] ([Id]);
-
-ALTER TABLE [PaymentStrategyPlan]
-    ADD CONSTRAINT [FK_PaymentStrategyPlan_UserId_User_Id] FOREIGN KEY ([UserId])
-        REFERENCES [User] ([Id]);
-
-ALTER TABLE [PaymentStrategyPlan]
-    ADD CONSTRAINT [FK_PaymentStrategyPlan_StrategyTypeId_StrategyType_Id] FOREIGN KEY ([StrategyTypeId])
-        REFERENCES [StrategyType] ([Id]);
-
-ALTER TABLE [Loan]
-    ADD CONSTRAINT [FK_Loan_PaymentStrategy_PaymentStrategyPlan_Id] FOREIGN KEY ([PaymentStrategy])
-        REFERENCES [PaymentStrategyPlan] ([Id]);
-
-ALTER TABLE [Loan]
-    ADD CONSTRAINT [FK_Loan_Currency_Currency_Id] FOREIGN KEY ([Currency])
-        REFERENCES [Currency] ([Id]);
-
-ALTER TABLE [DebtSnowflake]
-    ADD CONSTRAINT [FK_DebtSnowflake_PaymentStrategy_PaymentStrategyPlan_Id] FOREIGN KEY ([PaymentStrategy])
-        REFERENCES [PaymentStrategyPlan] ([Id]);
-
-ALTER TABLE [LoanCardinalOrder]
-    ADD CONSTRAINT [FK_LoanCardinalOrder_PaymentStrategy_PaymentStrategyPlan_Id] FOREIGN KEY ([PaymentStrategy])
-        REFERENCES [PaymentStrategyPlan] ([Id]);
-
-ALTER TABLE [LoanCardinalOrder]
-    ADD CONSTRAINT [FK_LoanCardinalOrder_LoanId_Loan_Id] FOREIGN KEY ([LoanId])
-        REFERENCES [Loan] ([Id]);
 
 
 -- Insert data into UserType
-INSERT INTO UserType (Type, CreatedAt, UpdatedAt)
-VALUES ('Type1', GETDATE(), NULL),
-       ('Type2', GETDATE(), NULL),
-       ('Type3', GETDATE(), NULL);
+INSERT INTO UserType (Type)
+VALUES ('Type1'),
+       ('Type2'),
+       ('Type3');
 
--- Insert data into User
-INSERT INTO [User] (FirstName, LastName, Email, Password, UserTypeId, CreatedAt, UpdatedAt)
-VALUES ('John', 'Doe', 'john.doe@example.com', 'hashedpassword1', 1, GETDATE(), NULL),
-       ('Jane', 'Doe', 'jane.doe@example.com', 'hashedpassword2', 2, GETDATE(), NULL),
-       ('Jim', 'Doe', 'jim.doe@example.com', 'hashedpassword3', 3, GETDATE(), NULL);
-
--- Insert data into StrategyType
-INSERT INTO StrategyType (Type, HasCustomStrategy, CreatedAt, UpdatedAt)
-VALUES ('Strategy1', 0, GETDATE(), NULL),
-       ('Strategy2', 1, GETDATE(), NULL),
-       ('Strategy3', 0, GETDATE(), NULL);
-
--- Insert data into PaymentStrategyPlan
-INSERT INTO PaymentStrategyPlan (UserId, StrategyTypeId, GlobalMonthlyPayment, CreatedAt, UpdatedAt)
-VALUES (1, 1, 1000.00, GETDATE(), NULL),
-       (2, 2, 2000.00, GETDATE(), NULL),
-       (3, 3, 3000.00, GETDATE(), NULL);
+-- Insert data into AppUser
+INSERT INTO AppUser (auth0UserId, FirstName, LastName, Email, UserTypeId)
+VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com', 1),
+       ('auth0|60d7b7f29b14170068e32450', 'Jane', 'Doe', 'jane.doe@example.com', 2),
+       ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Currency
-INSERT INTO Currency (FormalName, ShortName, Symbol, CreatedAt, UpdatedAt)
-VALUES ('United States Dollar', 'USD', '$', GETDATE(), NULL),
-       ('Euro', 'EUR', '€', GETDATE(), NULL),
-       ('British Pound', 'GBP', '£', GETDATE(), NULL);
+INSERT INTO Currency (FormalName, ShortName, Symbol)
+VALUES ('United States Dollar', 'USD', '$'),
+       ('Costa Rican Colon', 'CRC', '₡');
 
 -- Insert data into Loan
-INSERT INTO Loan (LoanNickName, PaymentStrategy, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, Currency,
-                  CreatedAt, UpdatedAt)
-VALUES ('Loan 1', 1, 10000.00, 0.05, 100.00, 200.00, 60, 1, GETDATE(), NULL),
-       ('Loan 2', 2, 20000.00, 0.06, 200.00, 400.00, 48, 2, GETDATE(), NULL),
-       ('Loan 3', 3, 30000.00, 0.07, 300.00, 600.00, 36, 3, GETDATE(), NULL),
-       ('Loan 4', 1, 40000.00, 0.08, 400.00, 800.00, 24, 1, GETDATE(), NULL),
-       ('Loan 5', 2, 50000.00, 0.09, 500.00, 1000.00, 12, 2, GETDATE(), NULL);
+INSERT INTO Loan (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyID,
+                  CardinalOrder)
+VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 1, 1),
+       ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 2, 2),
+       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 1, 3);
+
+-- Insert data into MonthlyExtraPayments
+INSERT INTO MonthlyExtraPayments (UserId, Amount)
+VALUES (1, 100.00),
+       (2, 200.00),
+       (3, 300.00);
+
+-- Insert data into OnetimeExtraPayments
+INSERT INTO OnetimeExtraPayments (UserId, Amount, Date)
+VALUES (1, 1000.00, '2023-07-18'),
+       (2, 2000.00, '2023-07-18'),
+       (3, 3000.00, '2023-07-18');
+
+
+
+-------------
+--TO DELETE--
+-------------
+
 
 
 -- Create CRUD table with different column types for testing
 CREATE TABLE [CRUD]
 (
-    [Id]            INT IDENTITY (1,1) NOT NULL,
-    [LoanName]      NVARCHAR(50)       NOT NULL,
-    [Principal]     DECIMAL(18, 2)     NOT NULL,
-    [InterestRate]  DECIMAL(5, 2)      NOT NULL,
-    [TermMonths]    INT                NOT NULL,
-    [StartDate]     DATETIME2          NOT NULL,
-    [EndDate]       DATETIME2          NULL,
+    [Id]           INT IDENTITY (1,1) NOT NULL,
+    [LoanName]     NVARCHAR(50)       NOT NULL,
+    [Principal]    DECIMAL(18, 2)     NOT NULL,
+    [InterestRate] DECIMAL(5, 2)      NOT NULL,
+    [TermMonths]   INT                NOT NULL,
+    [StartDate]    DATETIME2          NOT NULL,
+    [EndDate]      DATETIME2,
     CONSTRAINT [PK_CRUD] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 -- Insert sample data into CRUD
 INSERT INTO [CRUD] (LoanName, Principal, InterestRate, TermMonths, StartDate)
-VALUES
-    ('Loan 1', 10000.00, 5.00, 60, GETDATE()),
-    ('Loan 2', 20000.00, 4.50, 48, GETDATE()),
-    ('Loan 3', 30000.00, 4.00, 36, GETDATE()),
-    ('Loan 4', 40000.00, 3.50, 24, GETDATE()),
-    ('Loan 5', 50000.00, 3.00, 12, GETDATE()),
-    ('Loan 6', 60000.00, 2.50, 60, GETDATE()),
-    ('Loan 7', 70000.00, 2.00, 48, GETDATE()),
-    ('Loan 8', 80000.00, 1.50, 36, GETDATE()),
-    ('Loan 9', 90000.00, 1.00, 24, GETDATE()),
-    ('Loan 10', 100000.00, 0.50, 12, GETDATE());
+VALUES ('Loan 1', 10000.00, 5.00, 60, GETDATE()),
+       ('Loan 2', 20000.00, 4.50, 48, GETDATE()),
+       ('Loan 3', 30000.00, 4.00, 36, GETDATE()),
+       ('Loan 4', 40000.00, 3.50, 24, GETDATE()),
+       ('Loan 5', 50000.00, 3.00, 12, GETDATE()),
+       ('Loan 6', 60000.00, 2.50, 60, GETDATE()),
+       ('Loan 7', 70000.00, 2.00, 48, GETDATE()),
+
+       ('Loan 8', 80000.00, 1.50, 36, GETDATE()),
+       ('Loan 9', 90000.00, 1.00, 24, GETDATE()),
+       ('Loan 10', 100000.00, 0.50, 12, GETDATE());
