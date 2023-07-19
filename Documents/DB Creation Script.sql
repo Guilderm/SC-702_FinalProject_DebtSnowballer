@@ -31,7 +31,7 @@ while(exists(select 1
 CREATE TABLE [AppUser]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId] NVARCHAR(125) NOT NULL UNIQUE, -- Make this column non-nullable
+    [Auth0UserId] NVARCHAR(125)      NOT NULL UNIQUE, -- Make this column non-nullable
     [FirstName]   NVARCHAR(50)       NOT NULL,
     [LastName]    NVARCHAR(50)       NOT NULL,
     [Email]       NVARCHAR(256)      NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE [Currency]
 CREATE TABLE [Debt]
 (
     [Id]             INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId]    NVARCHAR(125)                 NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
+    [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
     [LoanNickName]   NVARCHAR(50)       NOT NULL,
     [Principal]      DECIMAL(10, 3)     NOT NULL,
     [InterestRate]   DECIMAL(5, 5)      NOT NULL,
@@ -150,7 +150,6 @@ VALUES (1, 1000.00, '2023-07-18'),
 -------------
 --TO DELETE--
 -------------
-
 
 
 -- Create CRUD table with different column types for testing
