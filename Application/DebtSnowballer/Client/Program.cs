@@ -2,6 +2,8 @@ using DebtSnowballer.Client;
 using DebtSnowballer.Client.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.Net.Http;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,7 +18,6 @@ builder.Services.AddOidcAuthentication(options =>
 	options.ProviderOptions.AdditionalProviderParameters.Add("audience", builder.Configuration["Auth0:Audience"]);
 });
 
-builder.Services.AddScoped<ILoanService, LoanService>();
-builder.Services.AddScoped<ICrudService, CrudService>();
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 await builder.Build().RunAsync();
