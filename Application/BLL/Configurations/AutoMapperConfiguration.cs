@@ -6,9 +6,9 @@ namespace BLL.Configurations;
 
 public class AutoMapperConfiguration : Profile
 {
-    public AutoMapperConfiguration()
-    {
-        CreateMap<Debt, DebtDto>().ReverseMap();
-        CreateMap<Crud, CrudDto>().ReverseMap();
-    }
+	public AutoMapperConfiguration()
+	{
+		CreateMap<Debt, DebtDto>().ReverseMap();
+		CreateMap<Crud, CrudDto>().ReverseMap();
+	}
 }

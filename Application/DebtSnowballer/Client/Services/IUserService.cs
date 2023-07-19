@@ -1,7 +1,6 @@
-﻿namespace DebtSnowballer.Client.Services
+﻿namespace DebtSnowballer.Client.Services;
+
+public interface IUserService
 {
-	public interface IUserService
-	{
-		Task<string> GetUserSUD();
-	}
+	Task<string> GetUserSUD();
 }

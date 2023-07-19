@@ -31,7 +31,6 @@
 
 	private async Task LoadLoanItems()
 	{
-
 		loanItems = (await DebtService.GetDebtbySUD(_userSud)).ToList();
 	}
 
@@ -50,4 +49,5 @@
 		await DebtService.DeleteItem(id);
 		await LoadLoanItems();
 	}
+
 }
