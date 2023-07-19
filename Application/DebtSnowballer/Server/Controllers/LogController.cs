@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace DebtSnowballer.Server.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class LogController : ControllerBase
@@ -44,4 +45,3 @@ public class LogController : ControllerBase
 		return Ok();
 	}
 }
-

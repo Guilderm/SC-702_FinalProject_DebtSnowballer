@@ -5,8 +5,8 @@ namespace DebtSnowballer.Client.Infrastructure;
 
 public class ServerSideLoggerProvider : ILoggerProvider
 {
-	private readonly Uri _serverUri;
 	private readonly HttpClient _httpClient;
+	private readonly Uri _serverUri;
 
 	public ServerSideLoggerProvider(Uri serverUri)
 	{
@@ -27,9 +27,9 @@ public class ServerSideLoggerProvider : ILoggerProvider
 
 public class ServerSideLogger : ILogger
 {
+	private readonly string _categoryName;
 	private readonly HttpClient _httpClient;
 	private readonly Uri _serverUri;
-	private readonly string _categoryName;
 
 	public ServerSideLogger(HttpClient httpClient, Uri serverUri, string categoryName)
 	{
@@ -50,7 +50,8 @@ public class ServerSideLogger : ILogger
 		return true;
 	}
 
-	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+		Func<TState, Exception, string> formatter)
 	{
 		var logMessage = new
 		{
