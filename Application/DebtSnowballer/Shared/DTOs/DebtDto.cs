@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿namespace DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Shared.DTOs;
 public class DebtDto
 {
     public int Id { get; set; }

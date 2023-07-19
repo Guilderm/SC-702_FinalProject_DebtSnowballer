@@ -8,88 +8,89 @@
 <h3>Manage Your Debt</h3>
 
 @if (loanItems == null)
-    {
-    <p>
-        <em>Loading...</em>
-    </p>
-    }
+{
+	<p>
+		<em>Loading...</em>
+	</p>
+}
 else
-    {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Loan Nickname</th>
-                <th>Principal</th>
-                <th>Interest Rate</th>
-                <th>Fees</th>
-                <th>Monthly Payment</th>
-                <th>Remaining Term</th>
-                <th>Currency ID</th>
-                <th>Cardinal Order</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in loanItems)
-                {
-                <tr>
-                    <td>@item.LoanNickName</td>
-                    <td>@item.Principal</td>
-                    <td>@item.InterestRate</td>
-                    <td>@item.Fees</td>
-                    <td>@item.MonthlyPayment</td>
-                    <td>@item.RemainingTerm</td>
-                    <td>@item.CurrencyID</td>
-                    <td>@item.CardinalOrder</td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() => LoadLoanItem(item.Id)">Edit</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteLoanItem(item.Id)">Delete</button>
-                    </td>
-                </tr>
-                }
-        </tbody>
-    </table>
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Loan Nickname</th>
+			<th>Principal</th>
+			<th>Interest Rate</th>
+			<th>Fees</th>
+			<th>Monthly Payment</th>
+			<th>Remaining Term</th>
+			<th>Currency ID</th>
+			<th>Cardinal Order</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var item in loanItems)
+		{
+			<tr>
+				<td>@item.LoanNickName</td>
+				<td>@item.Principal</td>
+				<td>@item.InterestRate</td>
+				<td>@item.Fees</td>
+				<td>@item.MonthlyPayment</td>
+				<td>@item.RemainingTerm</td>
+				<td>@item.CurrencyID</td>
+				<td>@item.CardinalOrder</td>
+				<td>
+					<button class="btn btn-primary" @onclick="() => LoadLoanItem(item.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteLoanItem(item.Id)">Delete</button>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
 
-    <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
+	<button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
-    @if (_selectedDebtItem != null)
-        {
-        <h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
+	@if (_selectedDebtItem != null)
+	{
+		<h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-        <DebtForm DebtItem="_selectedDebtItem" OnSave="LoadLoanItems" />
-        }
-    }
+		<DebtForm DebtItem="_selectedDebtItem" OnSave="LoadLoanItems"/>
+	}
+}
 
 @code {
-    private List<DebtDto> loanItems;
-    private DebtDto _selectedDebtItem;
-    private IGenericService<DebtDto> LoanService;
+	private List<DebtDto> loanItems;
+	private DebtDto _selectedDebtItem;
+	private IGenericService<DebtDto> LoanService;
 
-    protected override async Task OnInitializedAsync()
-        {
-        var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-        LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
-        await LoadLoanItems();
-        }
+	protected override async Task OnInitializedAsync()
+	{
+		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+		await LoadLoanItems();
+	}
 
-    private async Task LoadLoanItems()
-        {
-        loanItems = await LoanService.GetItems();
-        }
+	private async Task LoadLoanItems()
+	{
+		loanItems = await LoanService.GetItems();
+	}
 
-    private void NewLoanItem()
-        {
-        _selectedDebtItem = new DebtDto();
-        }
+	private void NewLoanItem()
+	{
+		_selectedDebtItem = new DebtDto();
+	}
 
-    private async Task LoadLoanItem(int id)
-        {
-        _selectedDebtItem = await LoanService.GetItem(id);
-        }
+	private async Task LoadLoanItem(int id)
+	{
+		_selectedDebtItem = await LoanService.GetItem(id);
+	}
 
-    private async Task DeleteLoanItem(int id)
-        {
-        await LoanService.DeleteItem(id);
-        await LoadLoanItems();
-        }
+	private async Task DeleteLoanItem(int id)
+	{
+		await LoanService.DeleteItem(id);
+		await LoadLoanItems();
+	}
+
 }

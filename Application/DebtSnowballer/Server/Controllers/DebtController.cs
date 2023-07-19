@@ -9,20 +9,21 @@ namespace BackEnd.Controllers;
 
 public class DebtController : GenericControllers<Debt, DebtDto>
 {
-	private readonly ILogger<DebtController> _logger;
+    private readonly ILogger<DebtController> _logger;
 
-	public DebtController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DebtController> logger) : base(
-		unitOfWork, mapper)
-	{
-		_logger = logger;
-	}
+    public DebtController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DebtController> logger) : base(
+        unitOfWork, mapper)
+    {
+        _logger = logger;
+    }
 
     #region POST|Create - Used to create a new resource.
 
     [HttpPost]
     public override IActionResult Post([FromBody] DebtDto requestDto)
     {
-        _logger.LogInformation($"Received POST request in {nameof(DebtController)} with DTO: {JsonSerializer.Serialize(requestDto)}");
+        _logger.LogInformation(
+            $"Received POST request in {nameof(DebtController)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
         if (!ModelState.IsValid)
         {
@@ -35,7 +36,8 @@ public class DebtController : GenericControllers<Debt, DebtDto>
             var errorMessages = string.Join("; ", errors);
 
             // Log the error with a clear message, including the controller name, the serialized ModelState, and the error messages
-            _logger.LogError($"Invalid POST attempt in {nameof(DebtController)}. The model state is invalid. ModelState: {JsonSerializer.Serialize(ModelState)}. Error Messages: {errorMessages}");
+            _logger.LogError(
+                $"Invalid POST attempt in {nameof(DebtController)}. The model state is invalid. ModelState: {JsonSerializer.Serialize(ModelState)}. Error Messages: {errorMessages}");
 
             return BadRequest(ModelState);
         }
@@ -45,12 +47,11 @@ public class DebtController : GenericControllers<Debt, DebtDto>
         Repository.Insert(mappedResult);
         UnitOfWork.SaveChanges();
 
-        _logger.LogInformation($"Successfully created entity in {nameof(DebtController)}. Entity ID: {mappedResult.Id}");
+        _logger.LogInformation(
+            $"Successfully created entity in {nameof(DebtController)}. Entity ID: {mappedResult.Id}");
 
         return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
     }
 
-
-
     #endregion
-    }
+}

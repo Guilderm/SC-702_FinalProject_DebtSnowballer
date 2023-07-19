@@ -5,17 +5,15 @@ using DAL.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Serilog.Formatting.Compact;
-
 
 try
-    {
-        var builder = WebApplication.CreateBuilder(args);
-    
-        // Configure Serilog
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .CreateLogger();
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Configure Serilog
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
 
     Log.Information("Starting up");
 
@@ -35,10 +33,10 @@ try
         {
             c.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
             c.TokenValidationParameters = new TokenValidationParameters
-                {
+            {
                 ValidAudience = builder.Configuration["Auth0:Audience"],
                 ValidIssuer = $"https://{builder.Configuration["Auth0:Domain"]}"
-                };
+            };
         });
 
     //This was added at the start of using data from an API module 5
@@ -61,15 +59,15 @@ try
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
-        {
+    {
         app.UseWebAssemblyDebugging();
-        }
+    }
     else
-        {
+    {
         app.UseExceptionHandler("/Error");
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
-        }
+    }
 
     app.UseSwagger();
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
@@ -91,12 +89,12 @@ try
     app.MapFallbackToFile("index.html");
 
     app.Run();
-    }
+}
 catch (Exception ex)
-    {
+{
     Log.Fatal(ex, "Application start-up failed");
-    }
+}
 finally
-    {
+{
     Log.CloseAndFlush();
-    }
+}

@@ -1,93 +1,97 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace BackEnd.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class GenericControllers<TEntity, TModel> : ControllerBase
-	where TEntity : class, new()
-	where TModel : class, new()
+    where TEntity : class, new()
+    where TModel : class, new()
 {
-	private readonly ILogger<GenericControllers<TEntity, TModel>> _logger;
-	protected readonly IMapper Mapper;
-	protected readonly IGenericRepository<TEntity> Repository;
-	protected readonly IUnitOfWork UnitOfWork;
+    private readonly ILogger<GenericControllers<TEntity, TModel>> _logger;
+    protected readonly IMapper Mapper;
+    protected readonly IGenericRepository<TEntity> Repository;
+    protected readonly IUnitOfWork UnitOfWork;
 
-	public GenericControllers(IUnitOfWork unitOfWork, IMapper mapper)
-	{
-		UnitOfWork = unitOfWork;
-		Repository = UnitOfWork.GetRepository<TEntity>();
-		Mapper = mapper;
-		_logger = new LoggerFactory().CreateLogger<GenericControllers<TEntity, TModel>>();
-	}
+    public GenericControllers(IUnitOfWork unitOfWork, IMapper mapper)
+    {
+        UnitOfWork = unitOfWork;
+        Repository = UnitOfWork.GetRepository<TEntity>();
+        Mapper = mapper;
+        _logger = new LoggerFactory().CreateLogger<GenericControllers<TEntity, TModel>>();
+    }
 
-	#region POST|Create - Used to create a new resource.
+    #region POST|Create - Used to create a new resource.
 
-	[HttpPost]
-public virtual IActionResult Post([FromBody] TModel requestDto)
-        {
-        _logger.LogInformation($"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
+    [HttpPost]
+    public virtual IActionResult Post([FromBody] TModel requestDto)
+    {
+        _logger.LogInformation(
+            $"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
         if (!ModelState.IsValid)
-		{
-            _logger.LogError($"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+        {
+            _logger.LogError(
+                $"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
             return BadRequest(ModelState);
-		}
+        }
 
-		var mappedResult = Mapper.Map<TEntity>(requestDto);
+        var mappedResult = Mapper.Map<TEntity>(requestDto);
 
-		Repository.Insert(mappedResult);
-		UnitOfWork.SaveChanges();
+        Repository.Insert(mappedResult);
+        UnitOfWork.SaveChanges();
 
-		return Ok(mappedResult);
-	}
+        return Ok(mappedResult);
+    }
 
-	#endregion
+    #endregion
 
-	#region PUT|Update - Used to update an existing resource.
+    #region PUT|Update - Used to update an existing resource.
 
-	[HttpPut("{id:int}")]
-	public IActionResult Put(int id, [FromBody] TModel requestDto)
-        {
-        _logger.LogInformation($"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
+    [HttpPut("{id:int}")]
+    public IActionResult Put(int id, [FromBody] TModel requestDto)
+    {
+        _logger.LogInformation(
+            $"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
 
         if (!ModelState.IsValid)
         {
-            _logger.LogError($"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+            _logger.LogError(
+                $"Invalid POST attempt in {nameof(GenericControllers<TEntity, TModel>)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
             return BadRequest(ModelState);
         }
 
         // Get the existing entity from the database
         var existingEntity = Repository.Get(id);
-		if (existingEntity == null)
-			// If the entity does not exist, return a 404 Not Found status
-			return NotFound();
+        if (existingEntity == null)
+            // If the entity does not exist, return a 404 Not Found status
+            return NotFound();
 
-		// Map the request DTO to the existing entity
-		Mapper.Map(requestDto, existingEntity);
+        // Map the request DTO to the existing entity
+        Mapper.Map(requestDto, existingEntity);
 
-		// Update the entity in the database
-		Repository.Update(existingEntity);
-		UnitOfWork.SaveChanges();
+        // Update the entity in the database
+        Repository.Update(existingEntity);
+        UnitOfWork.SaveChanges();
 
-		// Map the updated entity back to a DTO to return in the response
-		var updatedDto = Mapper.Map<TModel>(existingEntity);
+        // Map the updated entity back to a DTO to return in the response
+        var updatedDto = Mapper.Map<TModel>(existingEntity);
 
-		return Ok(updatedDto);
-	}
+        return Ok(updatedDto);
+    }
 
-	#endregion
+    #endregion
 
-	#region PATCH|Update - Used to partially update an existing resource.
+    #region PATCH|Update - Used to partially update an existing resource.
 
-	[HttpPatch]
-	public IActionResult Patch()
-	{
-		throw new NotImplementedException();
-	}
+    [HttpPatch]
+    public IActionResult Patch()
+    {
+        throw new NotImplementedException();
+    }
 
     #endregion
 
@@ -124,4 +128,4 @@ public virtual IActionResult Post([FromBody] TModel requestDto)
     }
 
     #endregion
-    }
+}

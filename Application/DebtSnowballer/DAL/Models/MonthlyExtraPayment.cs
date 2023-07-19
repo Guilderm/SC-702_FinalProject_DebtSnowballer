@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DAL.Models;
 
-namespace DAL.Models
+public class MonthlyExtraPayment
 {
-    public partial class MonthlyExtraPayment
-    {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public decimal Amount { get; set; }
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public decimal Amount { get; set; }
 
-        public virtual AppUser User { get; set; } = null!;
-    }
+    public virtual AppUser User { get; set; } = null!;
 }
