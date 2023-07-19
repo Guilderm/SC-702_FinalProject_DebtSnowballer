@@ -7,7 +7,6 @@ namespace DAL.Models
     {
         public AppUser()
         {
-            Debts = new HashSet<Debt>();
             MonthlyExtraPayments = new HashSet<MonthlyExtraPayment>();
             OnetimeExtraPayments = new HashSet<OnetimeExtraPayment>();
             SessionLogs = new HashSet<SessionLog>();
@@ -22,7 +21,6 @@ namespace DAL.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual ICollection<Debt> Debts { get; set; }
         public virtual ICollection<MonthlyExtraPayment> MonthlyExtraPayments { get; set; }
         public virtual ICollection<OnetimeExtraPayment> OnetimeExtraPayments { get; set; }
         public virtual ICollection<SessionLog> SessionLogs { get; set; }

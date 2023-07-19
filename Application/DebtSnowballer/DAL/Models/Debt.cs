@@ -18,7 +18,6 @@ namespace DAL.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public virtual AppUser Auth0User { get; set; } = null!;
         public virtual Currency Currency { get; set; } = null!;
     }
 }

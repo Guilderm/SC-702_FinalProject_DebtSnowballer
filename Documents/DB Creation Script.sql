@@ -76,7 +76,9 @@ CREATE TABLE [Currency]
 CREATE TABLE [Debt]
 (
     [Id]             INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
+    -- TODO: reconfigure the foren key:
+    -- [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
+    [Auth0UserId]    NVARCHAR(125)      NOT NULL,
     [LoanNickName]   NVARCHAR(50)       NOT NULL,
     [Principal]      DECIMAL(10, 3)     NOT NULL,
     [InterestRate]   DECIMAL(5, 5)      NOT NULL,
