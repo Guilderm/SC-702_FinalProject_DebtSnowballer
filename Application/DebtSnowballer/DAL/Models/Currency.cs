@@ -7,7 +7,7 @@ namespace DAL.Models
     {
         public Currency()
         {
-            Loans = new HashSet<Loan>();
+            Debts = new HashSet<Debt>();
         }
 
         public int Id { get; set; }
@@ -15,6 +15,6 @@ namespace DAL.Models
         public string ShortName { get; set; } = null!;
         public string Symbol { get; set; } = null!;
 
-        public virtual ICollection<Loan> Loans { get; set; }
+        public virtual ICollection<Debt> Debts { get; set; }
     }
 }

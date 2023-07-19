@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DAL.Models
 {
-    public partial class Loan
+    public partial class Debt
     {
         public int Id { get; set; }
         public string Auth0UserId { get; set; } = null!;

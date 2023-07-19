@@ -19,7 +19,7 @@ namespace DAL.Models
         public virtual DbSet<AppUser> AppUsers { get; set; } = null!;
         public virtual DbSet<Crud> Cruds { get; set; } = null!;
         public virtual DbSet<Currency> Currencies { get; set; } = null!;
-        public virtual DbSet<Loan> Loans { get; set; } = null!;
+        public virtual DbSet<Debt> Debts { get; set; } = null!;
         public virtual DbSet<MonthlyExtraPayment> MonthlyExtraPayments { get; set; } = null!;
         public virtual DbSet<OnetimeExtraPayment> OnetimeExtraPayments { get; set; } = null!;
         public virtual DbSet<SessionLog> SessionLogs { get; set; } = null!;
@@ -39,7 +39,7 @@ namespace DAL.Models
             {
                 entity.ToTable("AppUser");
 
-                entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F4290234781BB")
+                entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F4290CFC0E983")
                     .IsUnique();
 
                 entity.Property(e => e.Auth0UserId).HasMaxLength(125);
@@ -77,9 +77,9 @@ namespace DAL.Models
                 entity.Property(e => e.Symbol).HasMaxLength(10);
             });
 
-            modelBuilder.Entity<Loan>(entity =>
+            modelBuilder.Entity<Debt>(entity =>
             {
-                entity.ToTable("Loan");
+                entity.ToTable("Debt");
 
                 entity.Property(e => e.Auth0UserId).HasMaxLength(125);
 
@@ -100,17 +100,17 @@ namespace DAL.Models
                 entity.Property(e => e.Principal).HasColumnType("decimal(10, 3)");
 
                 entity.HasOne(d => d.Auth0User)
-                    .WithMany(p => p.Loans)
+                    .WithMany(p => p.Debts)
                     .HasPrincipalKey(p => p.Auth0UserId)
                     .HasForeignKey(d => d.Auth0UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Loan__Auth0UserI__08162EEB");
+                    .HasConstraintName("FK__Debt__Auth0UserI__39AD8A7F");
 
                 entity.HasOne(d => d.Currency)
-                    .WithMany(p => p.Loans)
+                    .WithMany(p => p.Debts)
                     .HasForeignKey(d => d.CurrencyId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Loan__CurrencyID__090A5324");
+                    .HasConstraintName("FK__Debt__CurrencyID__3AA1AEB8");
             });
 
             modelBuilder.Entity<MonthlyExtraPayment>(entity =>
@@ -121,7 +121,7 @@ namespace DAL.Models
                     .WithMany(p => p.MonthlyExtraPayments)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__MonthlyEx__UserI__0DCF0841");
+                    .HasConstraintName("FK__MonthlyEx__UserI__3F6663D5");
             });
 
             modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -132,7 +132,7 @@ namespace DAL.Models
                     .WithMany(p => p.OnetimeExtraPayments)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__OnetimeEx__UserI__10AB74EC");
+                    .HasConstraintName("FK__OnetimeEx__UserI__4242D080");
             });
 
             modelBuilder.Entity<SessionLog>(entity =>
@@ -151,7 +151,7 @@ namespace DAL.Models
                     .WithMany(p => p.SessionLogs)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SessionLo__UserI__025D5595");
+                    .HasConstraintName("FK__SessionLo__UserI__33F4B129");
             });
 
             modelBuilder.Entity<UserType>(entity =>

@@ -1,10 +1,10 @@
-﻿@page "/loans"
+﻿@page "/Debt"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
 @inject HttpClient HttpClient
 @inject IConfiguration Configuration
 
-<h3>Manage Your Loans</h3>
+<h3>Manage Your Debt</h3>
 
 @if (loanItems == null)
     {
@@ -18,12 +18,14 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Loan Name</th>
+                <th>Loan Nickname</th>
                 <th>Principal</th>
                 <th>Interest Rate</th>
-                <th>Term (Months)</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th>Fees</th>
+                <th>Monthly Payment</th>
+                <th>Remaining Term</th>
+                <th>Currency ID</th>
+                <th>Cardinal Order</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -31,12 +33,14 @@ else
             @foreach (var item in loanItems)
                 {
                 <tr>
-                    <td>@item.LoanName</td>
+                    <td>@item.LoanNickName</td>
                     <td>@item.Principal</td>
                     <td>@item.InterestRate</td>
-                    <td>@item.TermMonths</td>
-                    <td>@item.StartDate.ToShortDateString()</td>
-                    <td>@(item.EndDate.HasValue ? item.EndDate.Value.ToShortDateString() : "N/A")</td>
+                    <td>@item.Fees</td>
+                    <td>@item.MonthlyPayment</td>
+                    <td>@item.RemainingTerm</td>
+                    <td>@item.CurrencyID</td>
+                    <td>@item.CardinalOrder</td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => LoadLoanItem(item.Id)">Edit</button>
                         <button class="btn btn-danger" @onclick="() => DeleteLoanItem(item.Id)">Delete</button>
@@ -48,30 +52,30 @@ else
 
     <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
-    @if (selectedLoanItem != null)
+    @if (_selectedDebtItem != null)
         {
-        <h3>@(selectedLoanItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
+        <h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-        <EditForm Model="selectedLoanItem" OnValidSubmit="SaveLoanItem" @key="selectedLoanItem">
+        <EditForm Model="_selectedDebtItem" OnValidSubmit="SaveLoanItem" @key="_selectedDebtItem">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <!-- Your form fields go here -->
 
-            <button type="submit" class="btn btn-success">@(selectedLoanItem.Id == 0 ? "Add" : "Update")</button>
+            <button type="submit" class="btn btn-success">@(_selectedDebtItem.Id == 0 ? "Add" : "Update")</button>
         </EditForm>
         }
     }
 
 @code {
-    private List<LoanDto> loanItems;
-    private LoanDto selectedLoanItem;
-    private IGenericService<LoanDto> LoanService;
+    private List<DebtDto> loanItems;
+    private DebtDto _selectedDebtItem;
+    private IGenericService<DebtDto> LoanService;
 
     protected override async Task OnInitializedAsync()
         {
-        var fullUrl = Configuration["ApiEndpoint:Url"] + "loans";
-        LoanService = new GenericService<LoanDto>(HttpClient, fullUrl);
+        var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+        LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
         await LoadLoanItems();
         }
 
@@ -82,26 +86,26 @@ else
 
     private void NewLoanItem()
         {
-        selectedLoanItem = new LoanDto();
+        _selectedDebtItem = new DebtDto();
         }
 
     private async Task LoadLoanItem(int id)
         {
-        selectedLoanItem = await LoanService.GetItem(id);
+        _selectedDebtItem = await LoanService.GetItem(id);
         }
 
     private async Task SaveLoanItem()
         {
-        if (selectedLoanItem.Id == 0)
+        if (_selectedDebtItem.Id == 0)
             {
-            await LoanService.AddItem(selectedLoanItem);
+            await LoanService.AddItem(_selectedDebtItem);
             }
         else
-            {
-            await LoanService.UpdateItem(selectedLoanItem);
+            {  
+            await LoanService.UpdateItem(_selectedDebtItem);
             }
 
-        selectedLoanItem = null;
+        _selectedDebtItem = null;
 
         await LoadLoanItems();
         }

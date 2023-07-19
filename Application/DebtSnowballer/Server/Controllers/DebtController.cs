@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackEnd.Controllers;
 
-public class LoanController : GenericControllers<Loan, LoanDto>
+public class DebtController : GenericControllers<Debt, DebtDto>
 {
-	private readonly ILogger<LoanController> _logger;
+	private readonly ILogger<DebtController> _logger;
 
-	public LoanController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<LoanController> logger) : base(
+	public DebtController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DebtController> logger) : base(
 		unitOfWork, mapper)
 	{
 		_logger = logger;
@@ -19,7 +19,7 @@ public class LoanController : GenericControllers<Loan, LoanDto>
 	#region POST|Create - Used to create a new resource.
 
 	[HttpPost]
-	public override IActionResult Post([FromBody] LoanDto requestDto)
+	public override IActionResult Post([FromBody] DebtDto requestDto)
 	{
 		_logger.LogInformation($"will look for Entity with of name {nameof(requestDto)} and see if we get it.");
 
@@ -29,7 +29,7 @@ public class LoanController : GenericControllers<Loan, LoanDto>
 			return BadRequest(ModelState);
 		}
 
-		var mappedResult = Mapper.Map<Loan>(requestDto);
+		var mappedResult = Mapper.Map<Debt>(requestDto);
 
 		Repository.Insert(mappedResult);
 		UnitOfWork.SaveChanges();

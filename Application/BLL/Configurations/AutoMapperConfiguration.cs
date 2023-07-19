@@ -8,7 +8,7 @@ public class AutoMapperConfiguration : Profile
 {
 	public AutoMapperConfiguration()
 	{
-		CreateMap<Loan, LoanDto>().ReverseMap();
+		CreateMap<Debt, DebtDto>().ReverseMap();
 		CreateMap<Crud, CrudDto>().ReverseMap();
 	}
 }

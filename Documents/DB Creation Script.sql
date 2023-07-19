@@ -73,7 +73,7 @@ CREATE TABLE [Currency]
 );
 
 -- Create Loan table to store information about each loan
-CREATE TABLE [Loan]
+CREATE TABLE [Debt]
 (
     [Id]             INT IDENTITY (1,1) NOT NULL,
     [Auth0UserId]    NVARCHAR(125)                 NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
@@ -127,7 +127,7 @@ VALUES ('United States Dollar', 'USD', '$'),
        ('Costa Rican Colon', 'CRC', '₡');
 
 -- Insert data into Loan
-INSERT INTO Loan (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyID,
+INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyID,
                   CardinalOrder)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 1, 1),
        ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 2, 2),
