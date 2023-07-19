@@ -26,7 +26,17 @@ public class DebtController : GenericControllers<Debt, DebtDto>
 
         if (!ModelState.IsValid)
         {
-            _logger.LogError($"Invalid POST attempt in {nameof(DebtController)}. ModelState: {JsonSerializer.Serialize(ModelState)}");
+            var errors = ModelState
+                .SelectMany(m => m.Value.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+
+            // Create a formatted string of all the error messages
+            var errorMessages = string.Join("; ", errors);
+
+            // Log the error with a clear message, including the controller name, the serialized ModelState, and the error messages
+            _logger.LogError($"Invalid POST attempt in {nameof(DebtController)}. The model state is invalid. ModelState: {JsonSerializer.Serialize(ModelState)}. Error Messages: {errorMessages}");
+
             return BadRequest(ModelState);
         }
 

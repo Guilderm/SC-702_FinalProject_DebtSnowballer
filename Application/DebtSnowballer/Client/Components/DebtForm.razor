@@ -1,7 +1,9 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
+@using System.Security.Claims
 @inject HttpClient HttpClient
 @inject IConfiguration Configuration
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
     <DataAnnotationsValidator />
@@ -51,31 +53,36 @@
 </EditForm>
 
 @code {
-    [Parameter]
-    public DebtDto DebtItem { get; set; }
+	[Parameter]
+	public DebtDto DebtItem { get; set; }
 
-    [Parameter]
-    public EventCallback OnSave { get; set; }
+	[Parameter]
+	public EventCallback OnSave { get; set; }
 
-    private IGenericService<DebtDto> LoanService;
+	private IGenericService<DebtDto> LoanService;
 
-    protected override void OnInitialized()
-        {
-        var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-        LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
-        }
+	protected override void OnInitialized()
+	{
+		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+	}
 
-    private async Task SaveLoanItem()
-        {
-        if (DebtItem.Id == 0)
-            {
-            await LoanService.AddItem(DebtItem);
-            }
-        else
-            {
-            await LoanService.UpdateItem(DebtItem);
-            }
+	private async Task SaveLoanItem()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var userId = authState.User.Claims.First(c => c.Type == "sub").Value;
 
-        await OnSave.InvokeAsync(null);
-        }
+		DebtItem.Auth0UserId = userId;
+
+		if (DebtItem.Id == 0)
+		{
+			await LoanService.AddItem(DebtItem);
+		}
+		else
+		{
+			await LoanService.UpdateItem(DebtItem);
+		}
+
+		await OnSave.InvokeAsync(null);
+	}
 }
