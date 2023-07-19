@@ -1,4 +1,5 @@
 using DebtSnowballer.Client;
+using DebtSnowballer.Client.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -16,5 +17,7 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDebtService, DebtService>();
 
 await builder.Build().RunAsync();

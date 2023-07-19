@@ -4,6 +4,7 @@ using DAL.Interfaces;
 using DAL.Models;
 using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BackEnd.Controllers;
 
@@ -52,6 +53,17 @@ public class DebtController : GenericControllers<Debt, DebtDto>
 
         return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
     }
+	#endregion
 
+	#region GET|Read - Used to retrieve a resource or a collection of resources.
+
+	[HttpGet("{Auth0SUD}")]
+	public IActionResult GetDebtbySUD(string Auth0SUD)
+    {
+        var debts = Repository.GetAll().Where(debt => debt.Auth0UserId == Auth0SUD);
+        var mappedDebts = Mapper.Map<IList<DebtDto>>(debts);
+        return Ok(mappedDebts);
+    }
     #endregion
-}
+
+    }

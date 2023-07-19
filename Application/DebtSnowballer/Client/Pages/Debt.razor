@@ -1,8 +1,8 @@
 ﻿@page "/Debt"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-@inject HttpClient HttpClient
-@inject IConfiguration Configuration
+@inject IDebtService DebtService
+@inject IUserService UserService
 @attribute [Authorize]
 
 <h3>Manage Your Debt</h3>
@@ -21,18 +21,18 @@
 @code {
 	private List<DebtDto> loanItems;
 	private DebtDto _selectedDebtItem;
-	private IGenericService<DebtDto> LoanService;
+	private string _userSud;
 
 	protected override async Task OnInitializedAsync()
 	{
-		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+		_userSud = await UserService.GetUserSUD();
 		await LoadLoanItems();
 	}
 
 	private async Task LoadLoanItems()
 	{
-		loanItems = await LoanService.GetItems();
+
+		loanItems = (await DebtService.GetDebtbySUD(_userSud)).ToList();
 	}
 
 	private void NewLoanItem()
@@ -42,13 +42,12 @@
 
 	private async Task LoadLoanItem(int id)
 	{
-		_selectedDebtItem = await LoanService.GetItem(id);
+		_selectedDebtItem = await DebtService.GetItem(id);
 	}
 
 	private async Task DeleteLoanItem(int id)
 	{
-		await LoanService.DeleteItem(id);
+		await DebtService.DeleteItem(id);
 		await LoadLoanItems();
 	}
-
 }

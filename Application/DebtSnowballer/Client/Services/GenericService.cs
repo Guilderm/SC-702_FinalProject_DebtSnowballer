@@ -5,8 +5,8 @@ namespace DebtSnowballer.Client.Services;
 
 public class GenericService<T> : IGenericService<T> where T : class
 {
-    private readonly string _APIURL;
-    private readonly HttpClient _httpClient;
+	protected readonly string _APIURL;
+    protected readonly HttpClient _httpClient;
 
     public GenericService(HttpClient httpClient, string APIURL)
     {
