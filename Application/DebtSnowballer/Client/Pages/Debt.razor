@@ -7,7 +7,7 @@
 
 <h3>Manage Your Debt</h3>
 
-<DebtTable LoanItems="loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem" />
+<DebtTable LoanItems="loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 
 <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
@@ -50,4 +50,5 @@
 		await LoanService.DeleteItem(id);
 		await LoadLoanItems();
 	}
+
 }
