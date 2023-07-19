@@ -1,7 +1,10 @@
+using Blazor.Extensions.Logging;
 using DebtSnowballer.Client;
 using DebtSnowballer.Client.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -20,4 +23,14 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDebtService, DebtService>();
 
-await builder.Build().RunAsync();
+// Configure logging
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.AddBrowserConsole();
+
+var host = builder.Build();
+
+// Log a message when the application starts up
+var logger = host.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Application starting up");
+
+await host.RunAsync();

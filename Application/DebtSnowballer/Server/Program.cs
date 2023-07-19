@@ -15,7 +15,7 @@ try
 		.ReadFrom.Configuration(builder.Configuration)
 		.CreateLogger();
 
-	Log.Information("Starting up");
+	Log.Information("App server is starting up");
 
 	// Add services to the container.
 	builder.Services.AddControllersWithViews();
