@@ -22,13 +22,13 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDebtService, DebtService>();
 
 // Configure logging
-builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 builder.Logging.AddBrowserConsole();
 
 var host = builder.Build();
 
 // Log a message when the application starts up
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
-logger.LogInformation("Application starting up");
+logger.LogInformation("App client is starting up");
 
 await host.RunAsync();
