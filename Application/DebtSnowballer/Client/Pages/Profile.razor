@@ -6,7 +6,7 @@
 <h3>User Profile </h3>
 <br>
 
-@if (_user == null)
+@if (user == null)
 {
 	<p>
 		<em>Loading...</em>
@@ -15,20 +15,20 @@
 else
 {
 	<div>
-		@if (_user.HasClaim(c => c.Type == "picture"))
+		@if (user.HasClaim(c => c.Type == "picture"))
 		{
 			<h4>Picture:</h4>
-			<img src="@_user.FindFirst(c => c.Type == "picture").Value" alt="Profile picture"/>
+			<img src="@user.FindFirst(c => c.Type == "picture").Value" alt="Profile picture"/>
 		}
 
-		@if (_user.HasClaim(c => c.Type == "name"))
+		@if (user.HasClaim(c => c.Type == "name"))
 		{
-			<h4>Name: @_user.FindFirst(c => c.Type == "name").Value</h4>
+			<h4>Name: @user.FindFirst(c => c.Type == "name").Value</h4>
 		}
 		<br><br>
 
 		<h4>Claims:</h4>
-		@foreach (var claim in _user.Claims)
+		@foreach (var claim in user.Claims)
 		{
 			<p>@claim.Type: @claim.Value</p>
 		}
@@ -36,12 +36,12 @@ else
 }
 
 @code {
-	private ClaimsPrincipal _user;
+	private ClaimsPrincipal user;
 
 	protected override async Task OnInitializedAsync()
 	{
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		_user = authState.User;
+		user = authState.User;
 	}
 
 }
