@@ -1,4 +1,8 @@
-﻿namespace Server.UIL.Controllers;
+﻿using DebtSnowballer.Shared.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+namespace Server.UIL.Controllers;
 
 [ApiController]
 [Route("[controller]")]
