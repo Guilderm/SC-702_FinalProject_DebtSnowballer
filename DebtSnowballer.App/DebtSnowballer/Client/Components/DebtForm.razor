@@ -1,0 +1,90 @@
+﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Client.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject HttpClient HttpClient
+@inject IConfiguration Configuration
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
+
+	<div class="form-group">
+		<label for="LoanNickName">Loan Nickname</label>
+		<InputText id="LoanNickName" class="form-control" @bind-Value="DebtItem.LoanNickName"/>
+	</div>
+
+	<div class="form-group">
+		<label for="Principal">Principal</label>
+		<InputNumber id="Principal" class="form-control" @bind-Value="DebtItem.Principal"/>
+	</div>
+
+	<div class="form-group">
+		<label for="InterestRate">Interest Rate</label>
+		<InputNumber id="InterestRate" class="form-control" @bind-Value="DebtItem.InterestRate"/>
+	</div>
+
+	<div class="form-group">
+		<label for="Fees">Fees</label>
+		<InputNumber id="Fees" class="form-control" @bind-Value="DebtItem.Fees"/>
+	</div>
+
+	<div class="form-group">
+		<label for="MonthlyPayment">Monthly Payment</label>
+		<InputNumber id="MonthlyPayment" class="form-control" @bind-Value="DebtItem.MonthlyPayment"/>
+	</div>
+
+	<div class="form-group">
+		<label for="RemainingTerm">Remaining Term</label>
+		<InputNumber id="RemainingTerm" class="form-control" @bind-Value="DebtItem.RemainingTerm"/>
+	</div>
+
+	<div class="form-group">
+		<label for="CurrencyID">Currency ID</label>
+		<InputNumber id="CurrencyID" class="form-control" @bind-Value="DebtItem.CurrencyID"/>
+	</div>
+
+	<div class="form-group">
+		<label for="CardinalOrder">Cardinal Order</label>
+		<InputNumber id="CardinalOrder" class="form-control" @bind-Value="DebtItem.CardinalOrder"/>
+	</div>
+
+	<button type="submit" class="btn btn-success">@(DebtItem.Id == 0 ? "Add" : "Update")</button>
+</EditForm>
+
+@code {
+
+	[Parameter]
+	public DebtDto DebtItem { get; set; }
+
+	[Parameter]
+	public EventCallback OnSave { get; set; }
+
+	private IGenericService<DebtDto> LoanService;
+
+	protected override void OnInitialized()
+	{
+		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+	}
+
+	private async Task SaveLoanItem()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var userId = authState.User.Claims.First(c => c.Type == "sub").Value;
+
+		DebtItem.Auth0UserId = userId;
+
+		if (DebtItem.Id == 0)
+		{
+			await LoanService.AddItem(DebtItem);
+		}
+		else
+		{
+			await LoanService.UpdateItem(DebtItem);
+		}
+
+		await OnSave.InvokeAsync(null);
+	}
+
+}

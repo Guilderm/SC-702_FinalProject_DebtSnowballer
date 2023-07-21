@@ -1,9 +1,16 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Welcome to Debt Free Planner!</h1>
 
-Welcome to your new app.
+<AuthorizeView>
+	<Authorized>
+		<p>Start planning your journey to financial freedom today. Add your loans, choose a payoff strategy, and track your progress towards being debt free.</p>
+	</Authorized>
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+
+	<NotAuthorized>
+		<p>Please log in to start planning your journey to financial freedom.</p>
+	</NotAuthorized>
+</AuthorizeView>
