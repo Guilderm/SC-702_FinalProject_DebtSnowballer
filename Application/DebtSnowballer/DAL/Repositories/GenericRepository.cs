@@ -40,7 +40,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 		}
 	}
 
-	public TEntity? Get(int id)
+	public TEntity Get(int id)
 	{
 		_logger.LogInformation($"will look for Entity with id {id}.");
 		var entity = _DbContext.Set<TEntity>().Find(id);

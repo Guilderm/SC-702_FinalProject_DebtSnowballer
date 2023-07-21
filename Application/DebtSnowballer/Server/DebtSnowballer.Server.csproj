@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
@@ -28,10 +28,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\BLL\BLL.csproj" />
-        <ProjectReference Include="..\Client\DebtSnowballer.Client.csproj" />
         <ProjectReference Include="..\DAL\DAL.csproj" />
         <ProjectReference Include="..\Shared\DebtSnowballer.Shared.csproj" />
+        <ProjectReference Include="..\Client\DebtSnowballer.Client.csproj" />
     </ItemGroup>
-
-
 </Project>

@@ -11,6 +11,6 @@ public interface IGenericRepository<TEntity>
 	IEnumerable<TEntity> GetAll();
 	bool Remove(TEntity entity);
 	void RemoveRange(IEnumerable<TEntity> entities);
-	TEntity? SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
+	TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
 	bool Update(TEntity entity);
 }
