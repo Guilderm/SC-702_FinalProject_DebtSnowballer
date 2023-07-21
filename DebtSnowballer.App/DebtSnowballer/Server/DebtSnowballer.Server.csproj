@@ -31,9 +31,5 @@
     <ProjectReference Include="..\Shared\DebtSnowballer.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 
 </Project>
