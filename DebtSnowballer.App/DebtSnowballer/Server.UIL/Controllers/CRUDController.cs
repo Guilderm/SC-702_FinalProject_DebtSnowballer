@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using System.Text.Json;
-using System.Collections.Generic;
+using DebtSnowballer.Shared.DTOs;
 
 namespace Server.UIL.Controllers
 	{

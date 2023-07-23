@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using System.Text.Json;
 
+namespace DebtSnowballer.Client.Infrastructure;
+
 public class ServerSideLogger : ILogger
 {
 	private readonly string _categoryName;
