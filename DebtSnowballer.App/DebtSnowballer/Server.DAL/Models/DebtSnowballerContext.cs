@@ -33,7 +33,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("AppUser");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F42906AD92B5C")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F42905414DE5C")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(125);
@@ -97,7 +97,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.Debts)
 				.HasForeignKey(d => d.CurrencyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Debt__CurrencyID__536D5C82");
+				.HasConstraintName("FK__Debt__CurrencyID__6C390A4C");
 		});
 
 		modelBuilder.Entity<MonthlyExtraPayment>(entity =>
@@ -108,7 +108,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__5832119F");
+				.HasConstraintName("FK__MonthlyEx__UserI__70FDBF69");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -119,7 +119,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__5B0E7E4A");
+				.HasConstraintName("FK__OnetimeEx__UserI__73DA2C14");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -138,7 +138,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__4DB4832C");
+				.HasConstraintName("FK__SessionLo__UserI__668030F6");
 		});
 
 		modelBuilder.Entity<UserType>(entity =>
