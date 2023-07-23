@@ -18,7 +18,7 @@ else
 			<th>Fees</th>
 			<th>Monthly Payment</th>
 			<th>Remaining Term</th>
-			<th>Currency ID</th>
+
 			<th>Cardinal Order</th>
 			<th>Actions</th>
 		</tr>
@@ -33,7 +33,6 @@ else
 				<td>@item.Fees</td>
 				<td>@item.MonthlyPayment</td>
 				<td>@item.RemainingTerm</td>
-				<td>@item.CurrencyID</td>
 				<td>@item.CardinalOrder</td>
 				<td>
 					<button class="btn btn-primary" @onclick="() => EditLoanItem.InvokeAsync(item.Id)">Edit</button>
