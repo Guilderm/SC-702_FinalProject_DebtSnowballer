@@ -36,6 +36,20 @@ namespace Server.DAL.Repositories
 				}
 			}
 
+
+		public new IEnumerable<Debt> Get()
+		{
+			try
+			{
+				return _DbContext.Set<Debt>().ToList();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error occurred while getting all Debt entities for Auth0UserId ");
+				return Enumerable.Empty<Debt>();
+			}
+		}
+
 		public new bool Remove(int id, string auth0UserId)
 			{
 			try
