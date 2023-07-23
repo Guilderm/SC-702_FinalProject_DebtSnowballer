@@ -7,9 +7,9 @@ namespace Server.DAL.Repositories;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-	private readonly DbContext _DbContext;
-	private readonly DbSet<TEntity> _dbSet;
-	private readonly ILogger<GenericRepository<TEntity>> _logger;
+	protected readonly DbContext _DbContext;
+	protected readonly DbSet<TEntity> _dbSet;
+	protected readonly ILogger<GenericRepository<TEntity>> _logger;
 
 	public GenericRepository(ILogger<GenericRepository<TEntity>> logger, DbContext dbContext)
 	{

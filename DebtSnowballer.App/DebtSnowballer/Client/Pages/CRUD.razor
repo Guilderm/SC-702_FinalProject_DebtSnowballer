@@ -98,7 +98,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		var fullUrl = Configuration["ApiEndpoint:Url"] + "crud";
+		var fullUrl = Configuration["ApiEndpoint:Url"] + "/crud";
 		CrudService = new GenericService<CrudDto>(HttpClient, fullUrl);
 		await LoadCrudItems();
 	}

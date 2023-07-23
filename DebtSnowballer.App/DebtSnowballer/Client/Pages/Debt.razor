@@ -31,7 +31,7 @@
 
 	private async Task LoadLoanItems()
 	{
-		loanItems = (await DebtService.GetDebtbySUD(_userSud)).ToList();
+		loanItems = (await DebtService.GetDebtbyAuth0UserId(_userSud)).ToList();
 	}
 
 	private void NewLoanItem()
