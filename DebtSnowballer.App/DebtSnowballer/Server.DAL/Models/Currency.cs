@@ -1,16 +1,20 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Currency
+namespace Server.DAL.Models
 {
-	public Currency()
-	{
-		Debts = new HashSet<Debt>();
-	}
+    public partial class Currency
+    {
+        public Currency()
+        {
+            Debts = new HashSet<Debt>();
+        }
 
-	public int Id { get; set; }
-	public string FormalName { get; set; } = null!;
-	public string ShortName { get; set; } = null!;
-	public string Symbol { get; set; } = null!;
+        public int Id { get; set; }
+        public string FormalName { get; set; } = null!;
+        public string ShortName { get; set; } = null!;
+        public string Symbol { get; set; } = null!;
 
-	public virtual ICollection<Debt> Debts { get; set; }
+        public virtual ICollection<Debt> Debts { get; set; }
+    }
 }

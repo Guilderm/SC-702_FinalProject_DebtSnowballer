@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.BLL.Configurations;
@@ -25,7 +26,9 @@ try
 	builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 
 	// Add services for the DB.
-	builder.Services.AddDbContext<DebtSnowballerContext>();
+	builder.Services.AddDbContext<DebtSnowballerContext>(options =>
+		options.UseSqlServer(builder.Configuration.GetConnectionString("AzureBDConnection")));
+
 	builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

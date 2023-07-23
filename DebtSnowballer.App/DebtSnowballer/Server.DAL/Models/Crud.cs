@@ -1,12 +1,16 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Crud
+namespace Server.DAL.Models
 {
-	public int Id { get; set; }
-	public string LoanName { get; set; } = null!;
-	public decimal Principal { get; set; }
-	public decimal InterestRate { get; set; }
-	public int TermMonths { get; set; }
-	public DateTime StartDate { get; set; }
-	public DateTime? EndDate { get; set; }
+    public partial class Crud
+    {
+        public int Id { get; set; }
+        public string LoanName { get; set; } = null!;
+        public decimal Principal { get; set; }
+        public decimal InterestRate { get; set; }
+        public int TermMonths { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
 }
