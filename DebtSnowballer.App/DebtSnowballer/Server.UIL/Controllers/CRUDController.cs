@@ -5,57 +5,57 @@ using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace Server.UIL.Controllers
-{
+	{
 	[ApiController]
 	[Route("api/[controller]")]
 	public class CrudController : ControllerBase
-	{
+		{
 		private readonly ILogger<CrudController> _logger;
 		protected readonly IMapper Mapper;
 		protected readonly IGenericRepository<Crud> Repository;
 		protected readonly IUnitOfWork UnitOfWork;
 
 		public CrudController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<CrudController> logger)
-		{
+			{
 			UnitOfWork = unitOfWork;
 			Repository = UnitOfWork.GetRepository<Crud>();
 			Mapper = mapper;
 			_logger = logger;
-		}
+			}
 
 		#region POST|Create - Used to create a new resource.
 		[HttpPost]
 		public IActionResult Post([FromBody] CrudDto requestDto)
-		{
-			_logger.LogInformation($"Attempting to create a new Crud item with name {nameof(requestDto)}.");
+			{
+			_logger.LogInformation("Received POST request in {ControllerName} with DTO: {Dto}.", nameof(CrudController), JsonSerializer.Serialize(requestDto));
 
 			if (!ModelState.IsValid)
-			{
-				_logger.LogError($"Invalid POST attempt in {nameof(requestDto)}");
+				{
+				_logger.LogError("Invalid POST attempt in {ControllerName}. ModelState: {ModelState}.", nameof(CrudController), JsonSerializer.Serialize(ModelState));
 				return BadRequest(ModelState);
-			}
+				}
 
 			var mappedResult = Mapper.Map<Crud>(requestDto);
 
 			Repository.Insert(mappedResult);
 			UnitOfWork.SaveChanges();
 
-			_logger.LogCritical($"The ID of Crud item with name {nameof(requestDto)} is {mappedResult.Id} .");
+			_logger.LogInformation("Created new Crud item with ID {CrudId} in {ControllerName}.", mappedResult.Id, nameof(CrudController));
 
 			return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
-		}
+			}
 
 		#endregion
 
 		#region PUT|Update - Used to update an existing resource.
 
 		[HttpPut("{id:int}")]
-		public IActionResult Put(int id, [FromBody] TModel requestDto)
+		public IActionResult Put(int id, [FromBody] CrudDto requestDto)
 			{
-			_logger.LogInformation(
-				$"Received POST request in {nameof(GenericControllers<TEntity, TModel>)} with DTO: {JsonSerializer.Serialize(requestDto)}");
+			_logger.LogInformation("Received PUT request in {ControllerName} with ID: {Id} and DTO: {Dto}.", nameof(CrudController), id, JsonSerializer.Serialize(requestDto));
 
 			if (!ModelState.IsValid)
 				{
@@ -68,8 +68,7 @@ namespace Server.UIL.Controllers
 				var errorMessages = string.Join("; ", errors);
 
 				// Log the error with a clear message, including the controller name, the serialized ModelState, and the error messages
-				_logger.LogError(
-					$"Invalid POST attempt in {nameof(DebtController)}. The model state is invalid. ModelState: {JsonSerializer.Serialize(ModelState)}. Error Messages: {errorMessages}");
+				_logger.LogError("Invalid PUT attempt in {ControllerName}. ModelState: {ModelState}. Error Messages: {ErrorMessages}.", nameof(CrudController), JsonSerializer.Serialize(ModelState), errorMessages);
 
 				return BadRequest(ModelState);
 				}
@@ -88,7 +87,9 @@ namespace Server.UIL.Controllers
 			UnitOfWork.SaveChanges();
 
 			// Map the updated entity back to a DTO to return in the response
-			var updatedDto = Mapper.Map<TModel>(existingEntity);
+			var updatedDto = Mapper.Map<CrudDto>(existingEntity);
+
+			_logger.LogInformation("Updated Crud item with ID {CrudId} in {ControllerName}.", id, nameof(CrudController));
 
 			return Ok(updatedDto);
 			}
@@ -100,6 +101,8 @@ namespace Server.UIL.Controllers
 		[HttpPatch]
 		public IActionResult Patch()
 			{
+			_logger.LogInformation("Received PATCH request in {ControllerName}.", nameof(CrudController));
+			_logger.LogError("PATCH method is not implemented in {ControllerName}.", nameof(CrudController));
 			throw new NotImplementedException();
 			}
 
@@ -110,9 +113,13 @@ namespace Server.UIL.Controllers
 		[HttpDelete("{id:int}")]
 		public IActionResult Delete(int id)
 			{
+			_logger.LogInformation("Received DELETE request in {ControllerName} with ID: {Id}.", nameof(CrudController), id);
+
 			var dbResult = Repository.Get(id);
 			Repository.Remove(dbResult);
 			UnitOfWork.SaveChanges();
+
+			_logger.LogInformation("Deleted Crud item with ID {CrudId} in {ControllerName}.", id, nameof(CrudController));
 
 			return NoContent();
 			}
@@ -124,16 +131,26 @@ namespace Server.UIL.Controllers
 		[HttpGet]
 		public IActionResult Get()
 			{
+			_logger.LogInformation("Received GET request in {ControllerName}.", nameof(CrudController));
+
 			var dbResult = Repository.GetAll();
-			var mappedResult = Mapper.Map<IList<TModel>>(dbResult);
+			var mappedResult = Mapper.Map<IList<CrudDto>>(dbResult);
+
+			_logger.LogInformation("Returned {Count} Crud items from {ControllerName}.", mappedResult.Count, nameof(CrudController));
+
 			return Ok(mappedResult);
 			}
 
 		[HttpGet("{id:int}")]
 		public IActionResult Get(int id)
 			{
+			_logger.LogInformation("Received GET request in {ControllerName} with ID: {Id}.", nameof(CrudController), id);
+
 			var dbResult = Repository.Get(id);
-			var mappedResult = Mapper.Map<TModel>(dbResult);
+			var mappedResult = Mapper.Map<CrudDto>(dbResult);
+
+			_logger.LogInformation("Returned Crud item with ID {CrudId} from {ControllerName}.", id, nameof(CrudController));
+
 			return Ok(mappedResult);
 			}
 
