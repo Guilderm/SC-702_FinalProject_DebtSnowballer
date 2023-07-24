@@ -1,16 +1,22 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
 
-namespace Server.DAL.Interfaces;
-
-public interface IGenericRepository<TEntity>
+namespace Server.DAL.Interfaces
 {
-	void Insert(TEntity entity);
-	void AddRange(IEnumerable<TEntity> entities);
-	IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
-	TEntity Get(int id);
-	IEnumerable<TEntity> GetAll();
-	bool Remove(TEntity entity);
-	void RemoveRange(IEnumerable<TEntity> entities);
-	TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
-	bool Update(TEntity entity);
+	public interface IGenericRepository<TEntity> where TEntity : class
+	{
+		Task Insert(TEntity entity);
+		Task InsertRange(IEnumerable<TEntity> entities);
+		Task<TEntity> Get(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null);
+		Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>> expression = null,
+			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null);
+		Task Delete(int id);
+		void DeleteRange(IEnumerable<TEntity> entities);
+		void Update(TEntity entity);
+	}
 }

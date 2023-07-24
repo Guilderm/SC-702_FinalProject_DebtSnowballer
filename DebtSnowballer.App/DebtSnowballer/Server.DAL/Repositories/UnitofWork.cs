@@ -3,61 +3,49 @@ using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 
-namespace Server.DAL.Repositories;
-
-public class UnitOfWork : IUnitOfWork, IDisposable
+namespace Server.DAL.Repositories
 {
-	private readonly DebtSnowballerContext _dbContext;
-	private readonly ILogger<UnitOfWork> _logger;
-	private readonly ILoggerFactory _loggerFactory;
-	private bool _disposed;
-
-	public UnitOfWork(ILogger<UnitOfWork> logger, DebtSnowballerContext dbContext, ILoggerFactory loggerFactory)
+	public class UnitOfWork : IUnitOfWork
 	{
-		_loggerFactory = loggerFactory;
-		_logger = logger;
-		_dbContext = dbContext;
-		_logger.LogInformation("Created a new {UnitOfWork} instance", nameof(UnitOfWork));
-	}
+		private readonly DbContext _context;
+		private readonly ILogger<UnitOfWork> _logger;
+		private IGenericRepository<Debt> _debts;
+		private IGenericRepository<Crud> _CRUDs;
+		// Add more fields here for other repositories as needed
 
-	public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
-	{
-		return new GenericRepository<TEntity>(
-			_loggerFactory.CreateLogger<GenericRepository<TEntity>>(), _dbContext);
-	}
-
-	public void SaveChanges()
-	{
-		try
+		public UnitOfWork(DbContext context, ILogger<UnitOfWork> logger)
 		{
-			var rowsAffected = _dbContext.SaveChanges();
-			_logger.LogInformation("EF affected {RowsAffected} rows when saving changes", rowsAffected);
+			_context = context;
+			_logger = logger;
 		}
-		catch (DbUpdateException ex)
-		{
-			_logger.LogError(ex, "We got a {DbUpdateException}", nameof(DbUpdateException));
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "We got a {Exception}", nameof(Exception));
-		}
-	}
 
-	public void Dispose()
-	{
-		Dispose(true);
-		GC.SuppressFinalize(this);
-	}
+		public IGenericRepository<Crud> CRUDs => _CRUDs ??= new GenericRepository<Crud>(_logger, _context);
+		public IGenericRepository<Debt> Debts => _debts ??= new GenericRepository<Debt>(_logger, _context);
 
-	protected virtual void Dispose(bool disposing)
-	{
-		if (!_disposed)
-			if (disposing)
+		public async Task Save()
+		{
+			_logger.LogInformation("Saving changes to the {DbContextName}.", nameof(_context));
+
+			try
 			{
-				_dbContext.Dispose();
-				_logger.LogInformation("Disposed the {UnitOfWork} instance", nameof(UnitOfWork));
+				await _context.SaveChangesAsync();
+				_logger.LogInformation("Changes saved to the database.");
 			}
+			catch (DbUpdateException ex)
+			{
+				_logger.LogError(ex, "We got a DbUpdateException");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occurred while saving changes to the {DbContextName}.", nameof(_context));
+				throw;
+			}
+		}
 
-		_disposed = true;
+		public void Dispose()
+		{
+			_logger.LogInformation("Disposing the DbContext.");
+			_context.Dispose();
+		}
 	}
 }

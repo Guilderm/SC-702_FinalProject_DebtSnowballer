@@ -1,115 +1,104 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 
-namespace Server.DAL.Repositories;
-
-public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
-{
-	protected readonly DbContext _DbContext;
-	protected readonly DbSet<TEntity> _dbSet;
-	protected readonly ILogger<GenericRepository<TEntity>> _logger;
-
-	public GenericRepository(ILogger<GenericRepository<TEntity>> logger, DbContext dbContext)
+namespace Server.DAL.Repositories
 	{
-		_DbContext = dbContext;
-		_dbSet = _DbContext.Set<TEntity>();
-		_logger = logger;
-	}
-
-	public void Insert(TEntity entity)
-	{
-		_dbSet.Add(entity);
-	}
-
-	public void AddRange(IEnumerable<TEntity> entities)
-	{
-		_DbContext.Set<TEntity>().AddRange(entities);
-	}
-
-	public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
-	{
-		try
+	public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 		{
-			return _DbContext.Set<TEntity>().Where(predicate);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error occurred while finding entities with predicate {Predicate}", predicate);
-			return Enumerable.Empty<TEntity>();
-		}
-	}
+		protected readonly DbContext _DbContext;
+		protected readonly DbSet<TEntity> _dbSet;
+		protected readonly ILogger<GenericRepository<TEntity>> _logger;
 
-	public TEntity Get(int id)
-	{
-		_logger.LogInformation("Looking for entity of type {EntityType} with id {Id}", typeof(TEntity), id);
-		var entity = _DbContext.Set<TEntity>().Find(id);
+		public GenericRepository(ILogger<GenericRepository<TEntity>> logger, DbContext dbContext)
+			{
+			_DbContext = dbContext;
+			_dbSet = _DbContext.Set<TEntity>();
+			_logger = logger;
+			}
 
-		if (entity == null)
-			_logger.LogError("Entity of type {EntityType} with id {Id} not found", typeof(TEntity), id);
+		public async Task Insert(TEntity entity)
+			{
+			_logger.LogInformation($"Inserting an entity of type {typeof(TEntity).Name} into the database.");
+			await _dbSet.AddAsync(entity);
+			_logger.LogInformation($"Entity inserted: {entity}");
+			}
 
-		return entity;
-	}
+		public async Task InsertRange(IEnumerable<TEntity> entities)
+			{
+			_logger.LogInformation($"Inserting entities of type {typeof(TEntity).Name} into the database.");
+			await _dbSet.AddRangeAsync(entities);
+			_logger.LogInformation($"Entities inserted: {entities}");
+			}
 
-	public IEnumerable<TEntity> GetAll()
-	{
-		try
-		{
-			return _DbContext.Set<TEntity>().ToList();
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error occurred while getting all entities of type {EntityType}", typeof(TEntity));
-			return Enumerable.Empty<TEntity>();
-		}
-	}
+		public async Task<TEntity> Get(Expression<Func<TEntity, bool>> expression, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+			{
+			_logger.LogInformation($"Getting an entity of type {typeof(TEntity).Name} from the database.");
+			IQueryable<TEntity> query = _dbSet;
+			if (include != null)
+				{
+				query = include(query);
+				}
 
-	public bool Remove(TEntity entity)
-	{
-		try
-		{
-			_DbContext.Set<TEntity>().Attach(entity);
-			_DbContext.Set<TEntity>().Remove(entity);
-			return true;
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error occurred while removing entity of type {EntityType}", typeof(TEntity));
-			return false;
-		}
-	}
+			var entity = await query.AsNoTracking().FirstOrDefaultAsync(expression);
+			_logger.LogInformation($"Entity retrieved: {entity}");
+			return entity;
+			}
 
-	public void RemoveRange(IEnumerable<TEntity> entities)
-	{
-		_DbContext.Set<TEntity>().RemoveRange(entities);
-	}
+		public async Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>> expression = null,
+			Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+			{
+			_logger.LogInformation($"Getting all entities of type {typeof(TEntity).Name} from the database.");
+			IQueryable<TEntity> query = _dbSet;
 
-	public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
-	{
-		try
-		{
-			var entity = _DbContext.Set<TEntity>().SingleOrDefault(predicate);
-			return entity ?? throw new InvalidOperationException($"Entity with id {predicate} not found.");
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error retrieving entity with predicate {Predicate}", predicate);
-			throw;
-		}
-	}
+			if (expression != null)
+				{
+				query = query.Where(expression);
+				}
 
-	public bool Update(TEntity entity)
-	{
-		try
-		{
+			if (include != null)
+				{
+				query = include(query);
+				}
+
+			if (orderBy != null)
+				{
+				query = orderBy(query);
+				}
+
+			var entities = await query.AsNoTracking().ToListAsync();
+			_logger.LogInformation($"Entities retrieved: {entities}");
+			return entities;
+			}
+
+		public async Task Delete(int id)
+			{
+			_logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
+			var entity = await _dbSet.FindAsync(id);
+			_dbSet.Remove(entity);
+			_logger.LogInformation($"Entity deleted: {entity}");
+			}
+
+		public void DeleteRange(IEnumerable<TEntity> entities)
+			{
+			_logger.LogInformation($"Deleting entities of type {typeof(TEntity).Name} from the database.");
+			_dbSet.RemoveRange(entities);
+			_logger.LogInformation($"Entities deleted: {entities}");
+			}
+
+		public void Update(TEntity entity)
+			{
+			_logger.LogInformation($"Updating an entity of type {typeof(TEntity).Name} in the database.");
+			_dbSet.Attach(entity);
 			_DbContext.Entry(entity).State = EntityState.Modified;
-			return true;
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error occurred while updating entity of type {EntityType}", typeof(TEntity));
-			return false;
+			_logger.LogInformation($"Entity updated: {entity}");
+			}
 		}
 	}
-}
