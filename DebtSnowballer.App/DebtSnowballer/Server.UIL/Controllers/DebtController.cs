@@ -24,6 +24,7 @@ public class DebtController : ControllerBase
 		_logger = logger;
 	}
 
+
 	#region POST|Create - Used to create a new resource.
 
 	[HttpPost]
