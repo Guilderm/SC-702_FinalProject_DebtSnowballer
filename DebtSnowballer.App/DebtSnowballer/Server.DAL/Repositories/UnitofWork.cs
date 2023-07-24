@@ -10,7 +10,7 @@ namespace Server.DAL.Repositories
 		private readonly DbContext _context;
 		private readonly ILogger<UnitOfWork> _logger;
 		private IGenericRepository<Debt> _debts;
-		private IGenericRepository<Crud> _CRUDs;
+		private IGenericRepository<Crud> CRUDs;
 		// Add more fields here for other repositories as needed
 
 		public UnitOfWork(DbContext context, ILogger<UnitOfWork> logger)
@@ -19,8 +19,8 @@ namespace Server.DAL.Repositories
 			_logger = logger;
 		}
 
-		public IGenericRepository<Crud> CRUDs => _CRUDs ??= new GenericRepository<Crud>(_logger, _context);
-		public IGenericRepository<Debt> Debts => _debts ??= new GenericRepository<Debt>(_logger, _context);
+		public IGenericRepository<Crud> CrudRepository => CRUDs ??= new GenericRepository<Crud>(_logger, _context);
+		public IGenericRepository<Debt> DebtRepository => _debts ??= new GenericRepository<Debt>(_logger, _context);
 
 		public async Task Save()
 		{
