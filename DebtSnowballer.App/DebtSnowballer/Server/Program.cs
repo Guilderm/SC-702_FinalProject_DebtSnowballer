@@ -29,7 +29,7 @@ try
 	builder.Services.AddDbContext<DebtSnowballerContext>(options =>
 		options.UseSqlServer(builder.Configuration.GetConnectionString("AzureBDConnection")));
 
-	builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>

@@ -9,14 +9,14 @@ namespace Server.DAL.Repositories
 	{
 	public class UnitOfWork : IUnitOfWork
 		{
-		private readonly DbContext _context;
+		private readonly DebtSnowballerContext  _context;
 		private readonly ILogger<UnitOfWork> _logger;
 		private readonly ILoggerFactory _loggerFactory;
 		private IGenericRepository<Debt> _debts;
 		private IGenericRepository<Crud> _cruds;
 		// Add more fields here for other repositories as needed
 
-		public UnitOfWork(DbContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
+		public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 			{
 			_context = context;
 			_logger = logger;
