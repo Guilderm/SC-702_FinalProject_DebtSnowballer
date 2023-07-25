@@ -1,0 +1,47 @@
+﻿@page "/profile"
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
+
+<h3>User Profile </h3>
+<br>
+
+@if (_user == null)
+{
+	<p>
+		<em>Loading...</em>
+	</p>
+}
+else
+{
+	<div>
+		@if (_user.HasClaim(c => c.Type == "picture"))
+		{
+			<h4>Picture:</h4>
+			<img src="@_user.FindFirst(c => c.Type == "picture").Value" alt="Profile picture"/>
+		}
+
+		@if (_user.HasClaim(c => c.Type == "name"))
+		{
+			<h4>Name: @_user.FindFirst(c => c.Type == "name").Value</h4>
+		}
+		<br><br>
+
+		<h4>Claims:</h4>
+		@foreach (Claim claim in _user.Claims)
+		{
+			<p>@claim.Type: @claim.Value</p>
+		}
+	</div>
+}
+
+@code {
+	private ClaimsPrincipal _user;
+
+	protected override async Task OnInitializedAsync()
+	{
+		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		_user = authState.User;
+	}
+
+}

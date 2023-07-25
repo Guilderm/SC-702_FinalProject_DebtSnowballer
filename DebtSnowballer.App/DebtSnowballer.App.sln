@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Server", "DebtSnowballer\Server\DebtSnowballer.Server.csproj", "{C4787090-968B-4877-9E51-3F411A50B2D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Client", "DebtSnowballer\Client\DebtSnowballer.Client.csproj", "{30DB525E-468C-4C04-8AD4-9D77DA7AB290}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{8F1D35F3-88C0-4C88-9811-AE381BC377E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.BLL", "DebtSnowballer\Server.BLL\Server.BLL.csproj", "{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.UIL", "DebtSnowballer\Server.UIL\Server.UIL.csproj", "{0823AA9D-1829-403C-88C5-0BD480B879AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.DAL", "DebtSnowballer\Server.DAL\Server.DAL.csproj", "{5631C4CC-C94D-46B7-99C6-6D300875054E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4787090-968B-4877-9E51-3F411A50B2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4787090-968B-4877-9E51-3F411A50B2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4787090-968B-4877-9E51-3F411A50B2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4787090-968B-4877-9E51-3F411A50B2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30DB525E-468C-4C04-8AD4-9D77DA7AB290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30DB525E-468C-4C04-8AD4-9D77DA7AB290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30DB525E-468C-4C04-8AD4-9D77DA7AB290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30DB525E-468C-4C04-8AD4-9D77DA7AB290}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F1D35F3-88C0-4C88-9811-AE381BC377E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F1D35F3-88C0-4C88-9811-AE381BC377E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F1D35F3-88C0-4C88-9811-AE381BC377E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F1D35F3-88C0-4C88-9811-AE381BC377E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0823AA9D-1829-403C-88C5-0BD480B879AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0823AA9D-1829-403C-88C5-0BD480B879AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0823AA9D-1829-403C-88C5-0BD480B879AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0823AA9D-1829-403C-88C5-0BD480B879AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5631C4CC-C94D-46B7-99C6-6D300875054E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5631C4CC-C94D-46B7-99C6-6D300875054E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5631C4CC-C94D-46B7-99C6-6D300875054E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5631C4CC-C94D-46B7-99C6-6D300875054E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {466710BE-5F4F-45F8-8C76-1DB16D90DAB1}
+	EndGlobalSection
+EndGlobal
