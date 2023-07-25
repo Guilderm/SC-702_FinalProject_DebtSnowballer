@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using DebtSnowballer.Shared.DTOs;
+﻿using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Server.DAL.Interfaces;
-using Server.DAL.Models;
+using Server.BLL.Services;
 
 namespace Server.UIL.Controllers;
 
@@ -11,112 +9,63 @@ namespace Server.UIL.Controllers;
 [Route("api/[controller]")]
 public class DebtController : ControllerBase
 {
+	private readonly DebtManagement _debtManagement;
 	private readonly ILogger<DebtController> _logger;
-	protected readonly IMapper Mapper;
-	private readonly IGenericRepository<Debt> _repository;
-	private readonly IUnitOfWork _unitOfWork;
 
-	public DebtController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DebtController> logger)
+	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
 	{
-		_unitOfWork = unitOfWork;
-		Mapper = mapper;
+		_debtManagement = debtManagement;
 		_logger = logger;
-		_repository = _unitOfWork.DebtRepository;
 	}
-
-	#region POST|Create - Used to create a new resource.
 
 	[HttpPost]
 	public IActionResult Post([FromBody] DebtDto requestDto, [FromHeader] string auth0UserId)
 	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with DTO: {RequestDto}", "POST",
+		_logger.LogInformation("Received POST request in {ControllerName} with DTO: {RequestDto}",
 			nameof(DebtController), requestDto);
 
 		if (!ModelState.IsValid)
 		{
-			_logger.LogError("Invalid {HttpMethod} attempt in {ControllerName} with DTO: {RequestDto}", "POST",
-				nameof(DebtController), requestDto);
+			_logger.LogError("Invalid POST attempt in {ControllerName} with DTO: {RequestDto}", nameof(DebtController),
+				requestDto);
 			return BadRequest(ModelState);
 		}
 
-		Debt? mappedResult = Mapper.Map<Debt>(requestDto);
-		_repository.Insert(mappedResult);
-		_unitOfWork.Save();
+		DebtDto createdDebt = _debtManagement.CreateDebt(requestDto).Result;
 
 		_logger.LogInformation("Successfully created entity in {ControllerName} with ID: {Id}", nameof(DebtController),
-			mappedResult.Id);
+			createdDebt.Id);
 
-		return CreatedAtAction(nameof(Get), new { id = mappedResult.Id }, mappedResult);
+		return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
 	}
 
-	#endregion
-
-	#region PUT|Update - Used to update an existing resource.
-
 	[HttpPut("{id:int}")]
-	public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto, [FromHeader] string auth0UserId)
+	public IActionResult Put(int id, [FromBody] DebtDto requestDto, [FromHeader] string auth0UserId)
 	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with DTO: {RequestDto}", "PUT",
+		_logger.LogInformation("Received PUT request in {ControllerName} with DTO: {RequestDto}",
 			nameof(DebtController), requestDto);
 
 		if (!ModelState.IsValid)
 		{
-			_logger.LogError("Invalid {HttpMethod} attempt in {ControllerName} with DTO: {RequestDto}", "PUT",
-				nameof(DebtController), requestDto);
+			_logger.LogError("Invalid PUT attempt in {ControllerName} with DTO: {RequestDto}", nameof(DebtController),
+				requestDto);
 			return BadRequest(ModelState);
 		}
 
-		Debt? existingEntity = await _repository.Get(d => d.Id == id);
-		if (existingEntity == null)
-		{
-			_logger.LogError("Entity not found in {ControllerName} with ID: {Id}", nameof(DebtController), id);
-			return NotFound();
-		}
-
-		Mapper.Map(requestDto, existingEntity);
-		_repository.Update(existingEntity);
-		await _unitOfWork.Save();
-
-		DebtDto? updatedDto = Mapper.Map<DebtDto>(existingEntity);
+		DebtDto updatedDebt = _debtManagement.UpdateDebt(id, requestDto).Result;
 
 		_logger.LogInformation("Successfully updated entity in {ControllerName} with ID: {Id}", nameof(DebtController),
-			existingEntity.Id);
+			updatedDebt.Id);
 
-		return Ok(updatedDto);
+		return Ok(updatedDebt);
 	}
-
-	#endregion
-
-	#region PATCH|Update - Used to partially update an existing resource.
-
-	[HttpPatch]
-	public IActionResult Patch()
-	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName}", "PATCH", nameof(DebtController));
-		_logger.LogError("Received {HttpMethod} is not implemented in {ControllerName}.", "PATCH",
-			nameof(DebtController));
-		throw new NotImplementedException();
-	}
-
-	#endregion
-
-	#region DELETE|Delete - Used to delete a resource.
 
 	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> Delete(int id, [FromHeader] string auth0UserId)
+	public IActionResult Delete(int id, [FromHeader] string auth0UserId)
 	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with ID: {Id}", "DELETE",
-			nameof(DebtController), id);
+		_logger.LogInformation("Received DELETE request in {ControllerName} with ID: {Id}", nameof(DebtController), id);
 
-		Debt? dbResult = await _repository.Get(d => d.Id == id);
-		if (dbResult == null)
-		{
-			_logger.LogError("Entity not found in {ControllerName} with ID: {Id}", nameof(DebtController), id);
-			return NotFound();
-		}
-
-		_repository.Delete(id); // Changed from _repository.Remove(dbResult);
-		await _unitOfWork.Save();
+		_debtManagement.DeleteDebt(id);
 
 		_logger.LogInformation("Successfully deleted entity in {ControllerName} with ID: {Id}", nameof(DebtController),
 			id);
@@ -124,14 +73,10 @@ public class DebtController : ControllerBase
 		return NoContent();
 	}
 
-	#endregion
-
-	#region GET|Read - Used to retrieve a resource or a collection of resources.
-
 	[HttpGet("{auth0UserId}")]
-	public async Task<IActionResult> Get(string auth0UserId)
+	public IActionResult Get(string auth0UserId)
 	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName}", "GET", nameof(DebtController));
+		_logger.LogInformation("Received GET request in {ControllerName}", nameof(DebtController));
 
 		if (string.IsNullOrWhiteSpace(auth0UserId))
 		{
@@ -139,26 +84,18 @@ public class DebtController : ControllerBase
 			return BadRequest("Invalid auth0UserId");
 		}
 
-		IList<Debt> dbResult = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		IList<DebtDto> debts = _debtManagement.GetAllDebts(auth0UserId).Result;
 
-		if (dbResult == null || !dbResult.Any())
-		{
-			_logger.LogWarning("No data found for auth0UserId: {Auth0UserId}", auth0UserId);
-			return NotFound(); // or return NoContent();
-		}
+		_logger.LogInformation("Exiting GET request in {ControllerName} with mappedResult: {MappedResult}", "GET",
+			nameof(DebtController), debts);
 
-		IList<DebtDto> mappedResult = Mapper.Map<IList<DebtDto>>(dbResult);
-		_logger.LogInformation("Exiting {HttpMethod} request in {ControllerName} with mappedResult: {MappedResult}",
-			"GET", nameof(DebtController), mappedResult);
-		return Ok(mappedResult);
+		return Ok(debts);
 	}
-
 
 	[HttpGet("{id:int}/{auth0UserId}")]
-	public async Task<IActionResult> Get(int id, string auth0UserId)
+	public IActionResult Get(int id, string auth0UserId)
 	{
-		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with ID: {Id}", "GET",
-			nameof(DebtController), id);
+		_logger.LogInformation("Received GET request in {ControllerName} with ID: {Id}", nameof(DebtController), id);
 
 		if (string.IsNullOrWhiteSpace(auth0UserId))
 		{
@@ -166,21 +103,11 @@ public class DebtController : ControllerBase
 			return BadRequest("Invalid auth0UserId");
 		}
 
-		Debt? dbResult = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
-		if (dbResult == null)
-		{
-			_logger.LogError("Entity not found in {ControllerName} with ID: {Id} and UserId: {UserId}", nameof(DebtController), id, auth0UserId);
-			return NotFound();
-		}
+		DebtDto debt = _debtManagement.GetDebt(id, auth0UserId).Result;
 
-		DebtDto? mappedResult = Mapper.Map<DebtDto>(dbResult);
+		_logger.LogInformation("Exiting GET request in {ControllerName} with mappedResult: {MappedResult}", "GET",
+			nameof(DebtController), debt);
 
-		_logger.LogInformation("Exiting {HttpMethod} request in {ControllerName} with mappedResult: {MappedResult}",
-			"GET", nameof(DebtController), mappedResult);
-
-		return Ok(mappedResult);
+		return Ok(debt);
 	}
-
-
-	#endregion
-	}
+}

@@ -1,7 +1,6 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-@inject HttpClient HttpClient
-@inject IConfiguration Configuration
+@inject DebtService DebtService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
@@ -41,7 +40,6 @@
 	<div class="form-group">
 		<label for="CurrencyID">Currency ID</label>
 		<InputNumber id="CurrencyID" class="form-control" @bind-Value="DebtItem.CurrencyId"/>
-
 	</div>
 
 	<div class="form-group">
@@ -60,28 +58,20 @@
 	[Parameter]
 	public EventCallback OnSave { get; set; }
 
-	private IGenericService<DebtDto> _loanService;
-
-	protected override void OnInitialized()
-	{
-		string fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-		_loanService = new GenericService<DebtDto>(HttpClient, fullUrl);
-	}
-
 	private async Task SaveLoanItem()
 	{
 		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		string userId = authState.User.Claims.First(c => c.Type == "sub").Value;
+		string userId = authState.User.Claims.First(c => c.Type == "sid").Value;
 
 		DebtItem.Auth0UserId = userId;
 
 		if (DebtItem.Id == 0)
 		{
-			await _loanService.AddItem(DebtItem);
+			await DebtService.AddItem(DebtItem);
 		}
 		else
 		{
-			await _loanService.UpdateItem(DebtItem);
+			await DebtService.UpdateItem(DebtItem);
 		}
 
 		await OnSave.InvokeAsync(null);
