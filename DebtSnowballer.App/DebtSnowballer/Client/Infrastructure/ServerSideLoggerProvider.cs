@@ -46,7 +46,8 @@ public class ServerSideLogger : ILogger
 		// Send the log message to the server
 		try
 		{
-			HttpResponseMessage response = _httpClient.PostAsync(_serverUri, new StringContent(json, Encoding.UTF8, "application/json"))
+			HttpResponseMessage response = _httpClient
+				.PostAsync(_serverUri, new StringContent(json, Encoding.UTF8, "application/json"))
 				.Result;
 
 			// Check the response status code and throw an exception if it's not successful

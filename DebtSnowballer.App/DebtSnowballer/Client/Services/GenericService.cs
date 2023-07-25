@@ -32,7 +32,8 @@ public class GenericService<T> : IGenericService<T> where T : class
 
 	public async Task<T> UpdateItem(T item)
 	{
-		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_APIURL}/{((CrudDto)(object)item).Id}", item);
+		HttpResponseMessage response =
+			await _httpClient.PutAsJsonAsync($"{_APIURL}/{((CrudDto)(object)item).Id}", item);
 		return await response.Content.ReadFromJsonAsync<T>();
 	}
 
