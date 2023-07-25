@@ -1,10 +1,13 @@
 ﻿using DebtSnowballer.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.BLL.Services;
+using System.Security.Claims;
 
 namespace Server.UIL.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class DebtController : ControllerBase
@@ -78,6 +81,13 @@ public class DebtController : ControllerBase
 	{
 		_logger.LogInformation("Received GET request in {ControllerName}", nameof(DebtController));
 
+		_logger.LogError($"Log Claims");
+		foreach (var claim in User.Claims)
+		{
+			_logger.LogError($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+		}
+
+
 		if (string.IsNullOrWhiteSpace(auth0UserId))
 		{
 			_logger.LogError("Invalid auth0UserId: {Auth0UserId}", auth0UserId);
@@ -96,6 +106,12 @@ public class DebtController : ControllerBase
 	public IActionResult Get(int id, string auth0UserId)
 	{
 		_logger.LogInformation("Received GET request in {ControllerName} with ID: {Id}", nameof(DebtController), id);
+
+		_logger.LogError($"Log Claims");
+		foreach (var claim in User.Claims)
+		{
+			_logger.LogError($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+		}
 
 		if (string.IsNullOrWhiteSpace(auth0UserId))
 		{
