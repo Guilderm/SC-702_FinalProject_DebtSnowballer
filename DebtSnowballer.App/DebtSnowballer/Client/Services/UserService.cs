@@ -15,12 +15,21 @@ public class UserService : IUserService
 	public async Task<string> GetUserSUD()
 	{
 		AuthenticationState authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-		Console.WriteLine($"IsAuthenticated: {authState.User.Identity.IsAuthenticated}");
-		foreach (var claim in authState.User.Claims)
+		if (!authState.User.Identity.IsAuthenticated)
 		{
-			Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+			Console.WriteLine("User is not authenticated.");
+			throw new Exception("User is not authenticated.");
 		}
+
+		Console.WriteLine($"IsAuthenticated: {authState.User.Identity.IsAuthenticated}");
 		Claim userIdClaim = authState.User.Claims.FirstOrDefault(c => c.Type == "sid");
-		Console.WriteLine($"userIdClaim: {userIdClaim}");
-		return userIdClaim?.Value;
-	}}
+		if (userIdClaim == null)
+		{
+			Console.WriteLine("User SID claim is null.");
+			throw new Exception("User SID claim is null.");
+		}
+
+		Console.WriteLine($"User SID claim: {userIdClaim.Value}");
+		return userIdClaim.Value;
+	}
+}

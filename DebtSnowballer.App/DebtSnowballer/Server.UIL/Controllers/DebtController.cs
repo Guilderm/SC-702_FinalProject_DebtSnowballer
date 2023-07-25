@@ -132,7 +132,14 @@ public class DebtController : ControllerBase
 	public async Task<IActionResult> Get(string auth0UserId)
 	{
 		_logger.LogInformation("Received {HttpMethod} request in {ControllerName}", "GET", nameof(DebtController));
-		IList<Debt> dbResult = await _repository.GetAll();
+
+		if (string.IsNullOrWhiteSpace(auth0UserId))
+		{
+			_logger.LogError("Invalid auth0UserId: {Auth0UserId}", auth0UserId);
+			return BadRequest("Invalid auth0UserId");
+		}
+
+		IList<Debt> dbResult = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
 
 		if (dbResult == null || !dbResult.Any())
 		{
@@ -146,16 +153,23 @@ public class DebtController : ControllerBase
 		return Ok(mappedResult);
 	}
 
+
 	[HttpGet("{id:int}/{auth0UserId}")]
 	public async Task<IActionResult> Get(int id, string auth0UserId)
 	{
 		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with ID: {Id}", "GET",
 			nameof(DebtController), id);
 
-		Debt? dbResult = await _repository.Get(d => d.Id == id);
+		if (string.IsNullOrWhiteSpace(auth0UserId))
+		{
+			_logger.LogError("Invalid auth0UserId: {Auth0UserId}", auth0UserId);
+			return BadRequest("Invalid auth0UserId");
+		}
+
+		Debt? dbResult = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		if (dbResult == null)
 		{
-			_logger.LogError("Entity not found in {ControllerName} with ID: {Id}", nameof(DebtController), id);
+			_logger.LogError("Entity not found in {ControllerName} with ID: {Id} and UserId: {UserId}", nameof(DebtController), id, auth0UserId);
 			return NotFound();
 		}
 
@@ -167,5 +181,6 @@ public class DebtController : ControllerBase
 		return Ok(mappedResult);
 	}
 
+
 	#endregion
-}
+	}
