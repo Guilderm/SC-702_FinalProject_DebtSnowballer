@@ -60,12 +60,12 @@
 	[Parameter]
 	public EventCallback OnSave { get; set; }
 
-	private IGenericService<DebtDto> LoanService;
+	private IGenericService<DebtDto> _loanService;
 
 	protected override void OnInitialized()
 	{
 		string fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
-		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
+		_loanService = new GenericService<DebtDto>(HttpClient, fullUrl);
 	}
 
 	private async Task SaveLoanItem()
@@ -77,11 +77,11 @@
 
 		if (DebtItem.Id == 0)
 		{
-			await LoanService.AddItem(DebtItem);
+			await _loanService.AddItem(DebtItem);
 		}
 		else
 		{
-			await LoanService.UpdateItem(DebtItem);
+			await _loanService.UpdateItem(DebtItem);
 		}
 
 		await OnSave.InvokeAsync(null);

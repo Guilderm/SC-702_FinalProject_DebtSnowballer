@@ -12,7 +12,7 @@ public class UserService : IUserService
 		_authenticationStateProvider = authenticationStateProvider;
 	}
 
-	public async Task<string> GetUserSUD()
+	public async Task<string> GetUserSud()
 	{
 		AuthenticationState authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
 		if (!authState.User.Identity.IsAuthenticated)

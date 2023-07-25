@@ -2,5 +2,5 @@
 
 public interface IUserService
 {
-	Task<string> GetUserSUD();
+	Task<string> GetUserSud();
 }

@@ -8,40 +8,40 @@ namespace Server.DAL.Repositories;
 
 public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
 {
-	protected readonly DbContext _DbContext;
-	protected readonly DbSet<TEntity> _dbSet;
-	protected readonly ILogger<GenericRepository<TEntity>> _logger;
+	protected readonly DbContext DbContext;
+	protected readonly DbSet<TEntity> DbSet;
+	protected readonly ILogger<GenericRepository<TEntity>> Logger;
 
 	public GenericRepository(ILogger<GenericRepository<TEntity>> logger, DbContext dbContext)
 	{
-		_DbContext = dbContext;
-		_dbSet = _DbContext.Set<TEntity>();
-		_logger = logger;
+		DbContext = dbContext;
+		DbSet = DbContext.Set<TEntity>();
+		Logger = logger;
 	}
 
 	public async Task Insert(TEntity entity)
 	{
-		_logger.LogInformation($"Inserting an entity of type {typeof(TEntity).Name} into the database.");
-		await _dbSet.AddAsync(entity);
-		_logger.LogInformation($"Entity inserted: {entity}");
+		Logger.LogInformation($"Inserting an entity of type {typeof(TEntity).Name} into the database.");
+		await DbSet.AddAsync(entity);
+		Logger.LogInformation($"Entity inserted: {entity}");
 	}
 
 	public async Task InsertRange(IEnumerable<TEntity> entities)
 	{
-		_logger.LogInformation($"Inserting entities of type {typeof(TEntity).Name} into the database.");
-		await _dbSet.AddRangeAsync(entities);
-		_logger.LogInformation($"Entities inserted: {entities}");
+		Logger.LogInformation($"Inserting entities of type {typeof(TEntity).Name} into the database.");
+		await DbSet.AddRangeAsync(entities);
+		Logger.LogInformation($"Entities inserted: {entities}");
 	}
 
 	public async Task<TEntity> Get(Expression<Func<TEntity, bool>> expression,
 		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
 	{
-		_logger.LogInformation($"Getting an entity of type {typeof(TEntity).Name} from the database.");
-		IQueryable<TEntity> query = _dbSet;
+		Logger.LogInformation($"Getting an entity of type {typeof(TEntity).Name} from the database.");
+		IQueryable<TEntity> query = DbSet;
 		if (include != null) query = include(query);
 
 		TEntity? entity = await query.AsNoTracking().FirstOrDefaultAsync(expression);
-		_logger.LogInformation($"Entity retrieved: {entity}");
+		Logger.LogInformation($"Entity retrieved: {entity}");
 		return entity;
 	}
 
@@ -49,8 +49,8 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 		Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
 		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
 	{
-		_logger.LogInformation($"Getting all entities of type {typeof(TEntity).Name} from the database.");
-		IQueryable<TEntity> query = _dbSet;
+		Logger.LogInformation($"Getting all entities of type {typeof(TEntity).Name} from the database.");
+		IQueryable<TEntity> query = DbSet;
 
 		if (expression != null) query = query.Where(expression);
 
@@ -59,30 +59,30 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 		if (orderBy != null) query = orderBy(query);
 
 		List<TEntity> entities = await query.AsNoTracking().ToListAsync();
-		_logger.LogInformation($"Entities retrieved: {entities}");
+		Logger.LogInformation($"Entities retrieved: {entities}");
 		return entities;
 	}
 
 	public async Task Delete(int id)
 	{
-		_logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
-		TEntity? entity = await _dbSet.FindAsync(id);
-		_dbSet.Remove(entity);
-		_logger.LogInformation($"Entity deleted: {entity}");
+		Logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
+		TEntity? entity = await DbSet.FindAsync(id);
+		DbSet.Remove(entity);
+		Logger.LogInformation($"Entity deleted: {entity}");
 	}
 
 	public void DeleteRange(IEnumerable<TEntity> entities)
 	{
-		_logger.LogInformation($"Deleting entities of type {typeof(TEntity).Name} from the database.");
-		_dbSet.RemoveRange(entities);
-		_logger.LogInformation($"Entities deleted: {entities}");
+		Logger.LogInformation($"Deleting entities of type {typeof(TEntity).Name} from the database.");
+		DbSet.RemoveRange(entities);
+		Logger.LogInformation($"Entities deleted: {entities}");
 	}
 
 	public void Update(TEntity entity)
 	{
-		_logger.LogInformation($"Updating an entity of type {typeof(TEntity).Name} in the database.");
-		_dbSet.Attach(entity);
-		_DbContext.Entry(entity).State = EntityState.Modified;
-		_logger.LogInformation($"Entity updated: {entity}");
+		Logger.LogInformation($"Updating an entity of type {typeof(TEntity).Name} in the database.");
+		DbSet.Attach(entity);
+		DbContext.Entry(entity).State = EntityState.Modified;
+		Logger.LogInformation($"Entity updated: {entity}");
 	}
 }

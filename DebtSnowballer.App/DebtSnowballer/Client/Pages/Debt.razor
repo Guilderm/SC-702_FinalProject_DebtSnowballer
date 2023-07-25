@@ -7,7 +7,7 @@
 
 <h3>Manage Your Debt</h3>
 
-<DebtTable LoanItems="loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
+<DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 
 <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
@@ -19,19 +19,19 @@
 }
 
 @code {
-	private List<DebtDto> loanItems;
+	private List<DebtDto> _loanItems;
 	private DebtDto _selectedDebtItem;
 	private string _userSud;
 
 	protected override async Task OnInitializedAsync()
 	{
-		_userSud = await UserService.GetUserSUD();
+		_userSud = await UserService.GetUserSud();
 		await LoadLoanItems();
 	}
 
 	private async Task LoadLoanItems()
 	{
-		loanItems = (await DebtService.GetDebtbyAuth0UserId(_userSud)).ToList();
+		_loanItems = (await DebtService.GetDebtbyAuth0UserId(_userSud)).ToList();
 	}
 
 	private void NewLoanItem()

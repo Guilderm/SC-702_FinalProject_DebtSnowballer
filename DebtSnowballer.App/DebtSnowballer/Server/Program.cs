@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.BLL.Configurations;
+using Server.BLL.Services;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using Server.DAL.Repositories;
@@ -31,6 +32,8 @@ try
 
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+	builder.Services.AddScoped<CrudManagement>();
+	
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
 		{

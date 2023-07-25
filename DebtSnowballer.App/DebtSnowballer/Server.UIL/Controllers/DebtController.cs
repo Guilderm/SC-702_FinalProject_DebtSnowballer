@@ -12,14 +12,14 @@ namespace Server.UIL.Controllers;
 public class DebtController : ControllerBase
 {
 	private readonly ILogger<DebtController> _logger;
-	protected readonly IMapper _mapper;
+	protected readonly IMapper Mapper;
 	private readonly IGenericRepository<Debt> _repository;
 	private readonly IUnitOfWork _unitOfWork;
 
 	public DebtController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DebtController> logger)
 	{
 		_unitOfWork = unitOfWork;
-		_mapper = mapper;
+		Mapper = mapper;
 		_logger = logger;
 		_repository = _unitOfWork.DebtRepository;
 	}
@@ -39,7 +39,7 @@ public class DebtController : ControllerBase
 			return BadRequest(ModelState);
 		}
 
-		Debt? mappedResult = _mapper.Map<Debt>(requestDto);
+		Debt? mappedResult = Mapper.Map<Debt>(requestDto);
 		_repository.Insert(mappedResult);
 		_unitOfWork.Save();
 
@@ -73,11 +73,11 @@ public class DebtController : ControllerBase
 			return NotFound();
 		}
 
-		_mapper.Map(requestDto, existingEntity);
+		Mapper.Map(requestDto, existingEntity);
 		_repository.Update(existingEntity);
 		await _unitOfWork.Save();
 
-		DebtDto? updatedDto = _mapper.Map<DebtDto>(existingEntity);
+		DebtDto? updatedDto = Mapper.Map<DebtDto>(existingEntity);
 
 		_logger.LogInformation("Successfully updated entity in {ControllerName} with ID: {Id}", nameof(DebtController),
 			existingEntity.Id);
@@ -147,7 +147,7 @@ public class DebtController : ControllerBase
 			return NotFound(); // or return NoContent();
 		}
 
-		IList<DebtDto> mappedResult = _mapper.Map<IList<DebtDto>>(dbResult);
+		IList<DebtDto> mappedResult = Mapper.Map<IList<DebtDto>>(dbResult);
 		_logger.LogInformation("Exiting {HttpMethod} request in {ControllerName} with mappedResult: {MappedResult}",
 			"GET", nameof(DebtController), mappedResult);
 		return Ok(mappedResult);
@@ -173,7 +173,7 @@ public class DebtController : ControllerBase
 			return NotFound();
 		}
 
-		DebtDto? mappedResult = _mapper.Map<DebtDto>(dbResult);
+		DebtDto? mappedResult = Mapper.Map<DebtDto>(dbResult);
 
 		_logger.LogInformation("Exiting {HttpMethod} request in {ControllerName} with mappedResult: {MappedResult}",
 			"GET", nameof(DebtController), mappedResult);

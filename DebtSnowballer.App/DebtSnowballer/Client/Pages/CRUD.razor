@@ -6,7 +6,7 @@
 
 <h3>CRUD Operations</h3>
 
-@if (crudItems == null)
+@if (_crudItems == null)
 {
 	<p>
 		<em>Loading...</em>
@@ -28,7 +28,7 @@ else
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (CrudDto item in crudItems)
+		@foreach (CrudDto item in _crudItems)
 		{
 			<tr>
 				<td>@item.LoanName</td>
@@ -48,95 +48,95 @@ else
 
 	<button class="btn btn-success" @onclick="NewCrudItem">Create New Item</button>
 
-	@if (selectedCrudItem != null)
+	@if (_selectedCrudItem != null)
 	{
-		<h3>@(selectedCrudItem.Id == 0 ? "Add Item" : "Edit Item")</h3>
+		<h3>@(_selectedCrudItem.Id == 0 ? "Add Item" : "Edit Item")</h3>
 
-		<EditForm Model="selectedCrudItem" OnValidSubmit="SaveCrudItem" @key="selectedCrudItem">
+		<EditForm Model="_selectedCrudItem" OnValidSubmit="SaveCrudItem" @key="_selectedCrudItem">
 			<DataAnnotationsValidator/>
 			<ValidationSummary/>
 
 			<div class="form-group">
 				<label for="LoanName">Loan Name:</label>
-				<InputText id="LoanName" class="form-control" @bind-Value="selectedCrudItem.LoanName"/>
+				<InputText id="LoanName" class="form-control" @bind-Value="_selectedCrudItem.LoanName"/>
 			</div>
 
 			<div class="form-group">
 				<label for="Principal">Principal:</label>
-				<InputNumber id="Principal" class="form-control" @bind-Value="selectedCrudItem.Principal"/>
+				<InputNumber id="Principal" class="form-control" @bind-Value="_selectedCrudItem.Principal"/>
 			</div>
 
 			<div class="form-group">
 				<label for="InterestRate">Interest Rate:</label>
-				<InputNumber id="InterestRate" class="form-control" @bind-Value="selectedCrudItem.InterestRate"/>
+				<InputNumber id="InterestRate" class="form-control" @bind-Value="_selectedCrudItem.InterestRate"/>
 			</div>
 
 			<div class="form-group">
 				<label for="TermMonths">Term (Months):</label>
-				<InputNumber id="TermMonths" class="form-control" @bind-Value="selectedCrudItem.TermMonths"/>
+				<InputNumber id="TermMonths" class="form-control" @bind-Value="_selectedCrudItem.TermMonths"/>
 			</div>
 
 			<div class="form-group">
 				<label for="StartDate">Start Date:</label>
-				<InputDate id="StartDate" class="form-control" @bind-Value="selectedCrudItem.StartDate"/>
+				<InputDate id="StartDate" class="form-control" @bind-Value="_selectedCrudItem.StartDate"/>
 			</div>
 
 			<div class="form-group">
 				<label for="EndDate">End Date:</label>
-				<InputDate id="EndDate" class="form-control" @bind-Value="selectedCrudItem.EndDate"/>
+				<InputDate id="EndDate" class="form-control" @bind-Value="_selectedCrudItem.EndDate"/>
 			</div>
 
-			<button type="submit" class="btn btn-success">@(selectedCrudItem.Id == 0 ? "Add" : "Update")</button>
+			<button type="submit" class="btn btn-success">@(_selectedCrudItem.Id == 0 ? "Add" : "Update")</button>
 		</EditForm>
 	}
 }
 
 @code {
-	private List<CrudDto> crudItems;
-	private CrudDto selectedCrudItem;
-	private IGenericService<CrudDto> CrudService;
+	private List<CrudDto> _crudItems;
+	private CrudDto _selectedCrudItem;
+	private IGenericService<CrudDto> _crudService;
 
 	protected override async Task OnInitializedAsync()
 	{
 		string fullUrl = Configuration["ApiEndpoint:Url"] + "/crud";
-		CrudService = new GenericService<CrudDto>(HttpClient, fullUrl);
+		_crudService = new GenericService<CrudDto>(HttpClient, fullUrl);
 		await LoadCrudItems();
 	}
 
 	private async Task LoadCrudItems()
 	{
-		crudItems = await CrudService.GetItems();
+		_crudItems = await _crudService.GetItems();
 	}
 
 	private void NewCrudItem()
 	{
-		selectedCrudItem = new CrudDto();
+		_selectedCrudItem = new CrudDto();
 	}
 
 	private async Task LoadCrudItem(int id)
 	{
-		selectedCrudItem = await CrudService.GetItem(id);
+		_selectedCrudItem = await _crudService.GetItem(id);
 	}
 
 	private async Task SaveCrudItem()
 	{
-		if (selectedCrudItem.Id == 0)
+		if (_selectedCrudItem.Id == 0)
 		{
-			await CrudService.AddItem(selectedCrudItem);
+			await _crudService.AddItem(_selectedCrudItem);
 		}
 		else
 		{
-			await CrudService.UpdateItem(selectedCrudItem);
+			await _crudService.UpdateItem(_selectedCrudItem);
 		}
 
-		selectedCrudItem = null;
+		_selectedCrudItem = null;
 
 		await LoadCrudItems();
 	}
 
 	private async Task DeleteCrudItem(int id)
 	{
-		await CrudService.DeleteItem(id);
+		await _crudService.DeleteItem(id);
 		await LoadCrudItems();
 	}
 
