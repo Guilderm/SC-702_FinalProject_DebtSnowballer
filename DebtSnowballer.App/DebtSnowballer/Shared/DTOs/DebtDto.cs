@@ -10,7 +10,7 @@ public class DebtDto
 	public decimal Fees { get; set; }
 	public decimal MonthlyPayment { get; set; }
 	public int RemainingTerm { get; set; }
-	public int CurrencyID { get; set; }
+	public int CurrencyId { get; set; }
 	public int CardinalOrder { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime? UpdatedAt { get; set; }

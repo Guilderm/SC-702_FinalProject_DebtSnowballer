@@ -33,7 +33,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("AppUser");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F4290CAF88E53")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__AppUser__1C8F42908C9A0449")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(125);
@@ -79,9 +79,7 @@ public partial class DebtSnowballerContext : DbContext
 
 			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
-			entity.Property(e => e.CurrencyId)
-				.HasColumnName("CurrencyID")
-				.HasDefaultValueSql("((1))");
+			entity.Property(e => e.CurrencyId).HasDefaultValueSql("((1))");
 
 			entity.Property(e => e.Fees).HasColumnType("decimal(10, 3)");
 
@@ -97,7 +95,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.Debts)
 				.HasForeignKey(d => d.CurrencyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Debt__CurrencyID__125EB334");
+				.HasConstraintName("FK__Debt__CurrencyId__1BB31344");
 		});
 
 		modelBuilder.Entity<MonthlyExtraPayment>(entity =>
@@ -108,7 +106,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__17236851");
+				.HasConstraintName("FK__MonthlyEx__UserI__2077C861");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -119,7 +117,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__19FFD4FC");
+				.HasConstraintName("FK__OnetimeEx__UserI__2354350C");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -138,7 +136,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__0CA5D9DE");
+				.HasConstraintName("FK__SessionLo__UserI__15FA39EE");
 		});
 
 		modelBuilder.Entity<UserType>(entity =>

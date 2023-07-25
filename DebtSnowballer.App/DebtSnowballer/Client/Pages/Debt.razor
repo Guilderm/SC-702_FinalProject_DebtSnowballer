@@ -41,7 +41,7 @@
 
 	private async Task LoadLoanItem(int id)
 	{
-		_selectedDebtItem = await DebtService.GetItem(id);
+		_selectedDebtItem = await DebtService.GetDebtByIdAndAuth0UserId(id, _userSud);
 	}
 
 	private async Task DeleteLoanItem(int id)
@@ -49,5 +49,4 @@
 		await DebtService.DeleteItem(id);
 		await LoadLoanItems();
 	}
-
 }

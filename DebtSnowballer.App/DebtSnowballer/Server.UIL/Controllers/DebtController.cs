@@ -103,12 +103,12 @@ public class DebtController : ControllerBase
 	#region DELETE|Delete - Used to delete a resource.
 
 	[HttpDelete("{id:int}")]
-	public IActionResult Delete(int id, [FromHeader] string auth0UserId)
+	public async Task<IActionResult> Delete(int id, [FromHeader] string auth0UserId)
 	{
 		_logger.LogInformation("Received {HttpMethod} request in {ControllerName} with ID: {Id}", "DELETE",
 			nameof(DebtController), id);
 
-		Task<Debt>? dbResult = _repository.Get(d => d.Id == id);
+		Debt? dbResult = await _repository.Get(d => d.Id == id);
 		if (dbResult == null)
 		{
 			_logger.LogError("Entity not found in {ControllerName} with ID: {Id}", nameof(DebtController), id);
@@ -116,7 +116,7 @@ public class DebtController : ControllerBase
 		}
 
 		_repository.Delete(id); // Changed from _repository.Remove(dbResult);
-		_unitOfWork.Save();
+		await _unitOfWork.Save();
 
 		_logger.LogInformation("Successfully deleted entity in {ControllerName} with ID: {Id}", nameof(DebtController),
 			id);
@@ -129,18 +129,18 @@ public class DebtController : ControllerBase
 	#region GET|Read - Used to retrieve a resource or a collection of resources.
 
 	[HttpGet("{auth0UserId}")]
-	public IActionResult Get(string auth0UserId)
+	public async Task<IActionResult> Get(string auth0UserId)
 	{
 		_logger.LogInformation("Received {HttpMethod} request in {ControllerName}", "GET", nameof(DebtController));
-		Task<IList<Debt>>? dbResult = _repository.GetAll();
+		IList<Debt> dbResult = await _repository.GetAll();
 
-		if (dbResult == null)
+		if (dbResult == null || !dbResult.Any())
 		{
 			_logger.LogWarning("No data found for auth0UserId: {Auth0UserId}", auth0UserId);
 			return NotFound(); // or return NoContent();
 		}
 
-		IList<DebtDto>? mappedResult = _mapper.Map<IList<DebtDto>>(dbResult);
+		IList<DebtDto> mappedResult = _mapper.Map<IList<DebtDto>>(dbResult);
 		_logger.LogInformation("Exiting {HttpMethod} request in {ControllerName} with mappedResult: {MappedResult}",
 			"GET", nameof(DebtController), mappedResult);
 		return Ok(mappedResult);
