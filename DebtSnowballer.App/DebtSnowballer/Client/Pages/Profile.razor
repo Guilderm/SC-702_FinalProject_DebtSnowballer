@@ -28,7 +28,7 @@ else
 		<br><br>
 
 		<h4>Claims:</h4>
-		@foreach (var claim in user.Claims)
+		@foreach (Claim claim in user.Claims)
 		{
 			<p>@claim.Type: @claim.Value</p>
 		}
@@ -40,7 +40,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		user = authState.User;
 	}
 

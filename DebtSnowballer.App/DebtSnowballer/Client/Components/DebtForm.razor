@@ -63,14 +63,14 @@
 
 	protected override void OnInitialized()
 	{
-		var fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
+		string fullUrl = Configuration["ApiEndpoint:Url"] + "Debt";
 		LoanService = new GenericService<DebtDto>(HttpClient, fullUrl);
 	}
 
 	private async Task SaveLoanItem()
 	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var userId = authState.User.Claims.First(c => c.Type == "sub").Value;
+		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		string userId = authState.User.Claims.First(c => c.Type == "sub").Value;
 
 		DebtItem.Auth0UserId = userId;
 

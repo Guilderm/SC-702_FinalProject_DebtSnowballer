@@ -9,7 +9,7 @@ using Server.DAL.Repositories;
 
 try
 {
-	var builder = WebApplication.CreateBuilder(args);
+	WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 	// Configure Serilog
 	Log.Logger = new LoggerConfiguration()
@@ -58,7 +58,7 @@ try
 
 	builder.Host.UseSerilog(); // Use Serilog as the logging framework
 
-	var app = builder.Build();
+	WebApplication app = builder.Build();
 
 	// Configure the HTTP request pipeline.
 	if (app.Environment.IsDevelopment())

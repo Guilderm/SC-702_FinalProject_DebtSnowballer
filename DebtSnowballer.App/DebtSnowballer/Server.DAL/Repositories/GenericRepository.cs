@@ -46,7 +46,7 @@ namespace Server.DAL.Repositories
 				query = include(query);
 				}
 
-			var entity = await query.AsNoTracking().FirstOrDefaultAsync(expression);
+			TEntity? entity = await query.AsNoTracking().FirstOrDefaultAsync(expression);
 			_logger.LogInformation($"Entity retrieved: {entity}");
 			return entity;
 			}
@@ -73,7 +73,7 @@ namespace Server.DAL.Repositories
 				query = orderBy(query);
 				}
 
-			var entities = await query.AsNoTracking().ToListAsync();
+			List<TEntity> entities = await query.AsNoTracking().ToListAsync();
 			_logger.LogInformation($"Entities retrieved: {entities}");
 			return entities;
 			}
@@ -81,7 +81,7 @@ namespace Server.DAL.Repositories
 		public async Task Delete(int id)
 			{
 			_logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
-			var entity = await _dbSet.FindAsync(id);
+			TEntity? entity = await _dbSet.FindAsync(id);
 			_dbSet.Remove(entity);
 			_logger.LogInformation($"Entity deleted: {entity}");
 			}

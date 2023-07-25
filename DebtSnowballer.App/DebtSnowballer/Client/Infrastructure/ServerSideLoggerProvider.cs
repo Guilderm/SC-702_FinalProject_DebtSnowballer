@@ -41,12 +41,12 @@ public class ServerSideLogger : ILogger
 			Message = formatter(state, exception)
 		};
 
-		var json = JsonSerializer.Serialize(logMessage);
+		string json = JsonSerializer.Serialize(logMessage);
 
 		// Send the log message to the server
 		try
 		{
-			var response = _httpClient.PostAsync(_serverUri, new StringContent(json, Encoding.UTF8, "application/json"))
+			HttpResponseMessage response = _httpClient.PostAsync(_serverUri, new StringContent(json, Encoding.UTF8, "application/json"))
 				.Result;
 
 			// Check the response status code and throw an exception if it's not successful

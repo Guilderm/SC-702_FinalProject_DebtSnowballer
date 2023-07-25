@@ -15,7 +15,7 @@ public class DebtRepository : GenericRepository<Debt>, IDebtRepository
 	public Debt Get(int id, string auth0UserId)
 	{
 		_logger.LogInformation("Looking for Debt entity with id {Id} and Auth0UserId {Auth0UserId}", id, auth0UserId);
-		var entity = _DbContext.Set<Debt>().SingleOrDefault(e => e.Id == id && e.Auth0UserId == auth0UserId);
+		Debt? entity = _DbContext.Set<Debt>().SingleOrDefault(e => e.Id == id && e.Auth0UserId == auth0UserId);
 
 		if (entity == null)
 			_logger.LogError("Debt entity with id {Id} and Auth0UserId {Auth0UserId} not found", id, auth0UserId);
@@ -41,7 +41,7 @@ public class DebtRepository : GenericRepository<Debt>, IDebtRepository
 	{
 		try
 		{
-			var entityToRemove =
+			Debt? entityToRemove =
 				_DbContext.Set<Debt>().SingleOrDefault(e => e.Id == id && e.Auth0UserId == auth0UserId);
 			_DbContext.Set<Debt>().Remove(entityToRemove);
 			return true;
@@ -64,7 +64,7 @@ public class DebtRepository : GenericRepository<Debt>, IDebtRepository
 	{
 		try
 		{
-			var existingEntity = _DbContext.Set<Debt>()
+			Debt? existingEntity = _DbContext.Set<Debt>()
 				.SingleOrDefault(e => e.Id == entity.Id && e.Auth0UserId == auth0UserId);
 			if (existingEntity == null)
 			{

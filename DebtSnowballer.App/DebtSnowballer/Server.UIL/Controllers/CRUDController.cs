@@ -32,8 +32,8 @@ namespace Server.UIL.Controllers
 			{
 			_logger.LogInformation("Received GET request in {ControllerName}.", nameof(CrudController));
 
-			var cruds = await _repository.GetAll();
-			var results = _mapper.Map<IList<CrudDto>>(cruds);
+			IList<Crud> cruds = await _repository.GetAll();
+			IList<CrudDto>? results = _mapper.Map<IList<CrudDto>>(cruds);
 
 			_logger.LogInformation("Returned {Count} Crud items from {ControllerName}.", results.Count, nameof(CrudController));
 
@@ -45,8 +45,8 @@ namespace Server.UIL.Controllers
 			{
 			_logger.LogInformation("Received GET request in {ControllerName} with ID: {Id}.", nameof(CrudController), id);
 
-			var crud = await _repository.Get(id);
-			var result = _mapper.Map<CrudDto>(crud);
+			Crud crud = await _repository.Get(d => d.Id == id);
+			CrudDto? result = _mapper.Map<CrudDto>(crud);
 
 			_logger.LogInformation("Returned Crud item with ID {CrudId} from {ControllerName}.", id, nameof(CrudController));
 
@@ -68,7 +68,7 @@ namespace Server.UIL.Controllers
 				return BadRequest(ModelState);
 				}
 
-			var crud = _mapper.Map<Crud>(crudDto);
+			Crud? crud = _mapper.Map<Crud>(crudDto);
 			await _repository.Insert(crud);
 			await _unitOfWork.Save();
 
@@ -83,21 +83,21 @@ namespace Server.UIL.Controllers
 
 		[HttpPut("{id:int}")]
 		public async Task<IActionResult> Put(int id, [FromBody] CrudDto crudDto)
-			{
+		{
 			_logger.LogInformation("Received PUT request in {ControllerName} with ID: {Id} and DTO: {Dto}.", nameof(CrudController), id, crudDto);
 
 			if (!ModelState.IsValid || id < 1)
-				{
+			{
 				_logger.LogError("Invalid UPDATE attempt in {ControllerName}.", nameof(CrudController));
 				return BadRequest(ModelState);
-				}
+			}
 
-			var crud = await _repository.Get(id);
+			Crud? crud = await _repository.Get(d => d.Id == id);
 			if (crud == null)
-				{
+			{
 				_logger.LogError("Invalid UPDATE attempt in {ControllerName}.", nameof(CrudController));
 				return BadRequest("Submitted data is invalid");
-				}
+			}
 
 			_mapper.Map(crudDto, crud);
 			_repository.Update(crud);
@@ -106,7 +106,7 @@ namespace Server.UIL.Controllers
 			_logger.LogInformation("Updated Crud item with ID {CrudId} in {ControllerName}.", id, nameof(CrudController));
 
 			return NoContent();
-			}
+		}
 
 		#endregion
 
@@ -114,23 +114,24 @@ namespace Server.UIL.Controllers
 
 		[HttpDelete("{id:int}")]
 		public async Task<IActionResult> Delete(int id)
-			{
+		{
 			_logger.LogInformation("Received DELETE request in {ControllerName} with ID: {Id}.", nameof(CrudController), id);
 
-			var crud = await _repository.Get(id);
+			Crud? crud = await _repository.Get(d => d.Id == id);
 			if (crud == null)
-				{
+			{
 				_logger.LogError("Invalid DELETE attempt in {ControllerName}.", nameof(CrudController));
 				return BadRequest("Submitted data is invalid");
-				}
+			}
 
-			_repository.Remove(crud);
+			await _repository.Delete(id);
 			await _unitOfWork.Save();
 
 			_logger.LogInformation("Deleted Crud item with ID {CrudId} in {ControllerName}.", id, nameof(CrudController));
 
 			return NoContent();
-			}
+		}
+
 
 		#endregion
 		}

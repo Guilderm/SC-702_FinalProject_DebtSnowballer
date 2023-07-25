@@ -14,8 +14,8 @@ public class UserService : IUserService
 
 	public async Task<string> GetUserSUD()
 	{
-		var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-		var userIdClaim = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		AuthenticationState authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+		Claim userIdClaim = authState.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 		return userIdClaim?.Value;
 	}
 }

@@ -28,7 +28,7 @@ else
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (var item in crudItems)
+		@foreach (CrudDto item in crudItems)
 		{
 			<tr>
 				<td>@item.LoanName</td>
@@ -98,7 +98,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		var fullUrl = Configuration["ApiEndpoint:Url"] + "/crud";
+		string fullUrl = Configuration["ApiEndpoint:Url"] + "/crud";
 		CrudService = new GenericService<CrudDto>(HttpClient, fullUrl);
 		await LoadCrudItems();
 	}
