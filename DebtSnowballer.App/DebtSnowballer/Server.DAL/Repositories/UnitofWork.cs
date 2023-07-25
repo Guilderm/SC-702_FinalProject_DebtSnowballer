@@ -2,50 +2,54 @@
 using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace Server.DAL.Repositories
-{
-	public class UnitOfWork : IUnitOfWork
 	{
+	public class UnitOfWork : IUnitOfWork
+		{
 		private readonly DbContext _context;
 		private readonly ILogger<UnitOfWork> _logger;
+		private readonly ILoggerFactory _loggerFactory;
 		private IGenericRepository<Debt> _debts;
-		private IGenericRepository<Crud> CRUDs;
+		private IGenericRepository<Crud> _cruds;
 		// Add more fields here for other repositories as needed
 
-		public UnitOfWork(DbContext context, ILogger<UnitOfWork> logger)
-		{
+		public UnitOfWork(DbContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
+			{
 			_context = context;
 			_logger = logger;
-		}
+			_loggerFactory = loggerFactory;
+			}
 
-		public IGenericRepository<Crud> CrudRepository => CRUDs ??= new GenericRepository<Crud>(_logger, _context);
-		public IGenericRepository<Debt> DebtRepository => _debts ??= new GenericRepository<Debt>(_logger, _context);
+		public IGenericRepository<Crud> CrudRepository => _cruds ??= new GenericRepository<Crud>(_loggerFactory.CreateLogger<GenericRepository<Crud>>(), _context);
+		public IGenericRepository<Debt> DebtRepository => _debts ??= new GenericRepository<Debt>(_loggerFactory.CreateLogger<GenericRepository<Debt>>(), _context);
 
 		public async Task Save()
-		{
+			{
 			_logger.LogInformation("Saving changes to the {DbContextName}.", nameof(_context));
 
 			try
-			{
+				{
 				await _context.SaveChangesAsync();
 				_logger.LogInformation("Changes saved to the database.");
-			}
+				}
 			catch (DbUpdateException ex)
-			{
+				{
 				_logger.LogError(ex, "We got a DbUpdateException");
-			}
+				}
 			catch (Exception ex)
-			{
+				{
 				_logger.LogError(ex, "An error occurred while saving changes to the {DbContextName}.", nameof(_context));
 				throw;
+				}
 			}
-		}
 
 		public void Dispose()
-		{
+			{
 			_logger.LogInformation("Disposing the DbContext.");
 			_context.Dispose();
+			}
 		}
 	}
-}
