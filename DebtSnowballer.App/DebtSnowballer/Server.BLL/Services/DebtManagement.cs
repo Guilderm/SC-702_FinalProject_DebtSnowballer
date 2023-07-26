@@ -3,6 +3,7 @@ using DebtSnowballer.Shared.DTOs;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 
+
 namespace Server.BLL.Services;
 
 public class DebtManagement
@@ -18,26 +19,28 @@ public class DebtManagement
 		_repository = _unitOfWork.DebtRepository;
 	}
 
-	public async Task<DebtDto> CreateDebt(DebtDto debtDto)
+	public async Task<DebtDto> CreateDebt(DebtDto debtDto, string auth0UserId)
 	{
 		Debt debt = _mapper.Map<Debt>(debtDto);
+		debt.Auth0UserId = auth0UserId;
 		await _repository.Insert(debt);
 		await _unitOfWork.Save();
 		return _mapper.Map<DebtDto>(debt);
 	}
 
-	public async Task<DebtDto> UpdateDebt(int id, DebtDto debtDto)
+	public async Task<DebtDto> UpdateDebt(int id, DebtDto debtDto, string auth0UserId)
 	{
-		Debt existingDebt = await _repository.Get(d => d.Id == id);
+		Debt existingDebt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		_mapper.Map(debtDto, existingDebt);
 		_repository.Update(existingDebt);
 		await _unitOfWork.Save();
 		return _mapper.Map<DebtDto>(existingDebt);
 	}
 
-	public async Task DeleteDebt(int id)
+	public async Task DeleteDebt(int id, string auth0UserId)
 	{
-		await _repository.Delete(id);
+		Debt debt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
+		await _repository.Delete(debt.Id);
 		await _unitOfWork.Save();
 	}
 

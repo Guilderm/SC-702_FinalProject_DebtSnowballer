@@ -22,96 +22,64 @@ public class DebtController : ControllerBase
 	}
 
 	[HttpPost]
-	public IActionResult Post([FromBody] DebtDto requestDto, [FromHeader] string auth0UserId)
+	public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
 	{
-		_logger.LogInformation("Received POST request in {ControllerName} with DTO: {RequestDto}",
-			nameof(DebtController), requestDto);
+		var auth0UserId = GetAuth0UserId();
 
-		if (!ModelState.IsValid)
-		{
-			_logger.LogError("Invalid POST attempt in {ControllerName} with DTO: {RequestDto}", nameof(DebtController),
-				requestDto);
-			return BadRequest(ModelState);
-		}
-
-		DebtDto createdDebt = _debtManagement.CreateDebt(requestDto).Result;
-
-		_logger.LogInformation("Successfully created entity in {ControllerName} with ID: {Id}", nameof(DebtController),
-			createdDebt.Id);
+		DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
 
 		return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
 	}
 
 	[HttpPut("{id:int}")]
-	public IActionResult Put(int id, [FromBody] DebtDto requestDto, [FromHeader] string auth0UserId)
+	public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
 	{
-		_logger.LogInformation("Received PUT request in {ControllerName} with DTO: {RequestDto}",
-			nameof(DebtController), requestDto);
+		var auth0UserId = GetAuth0UserId();
 
-		if (!ModelState.IsValid)
-		{
-			_logger.LogError("Invalid PUT attempt in {ControllerName} with DTO: {RequestDto}", nameof(DebtController),
-				requestDto);
-			return BadRequest(ModelState);
-		}
-
-		DebtDto updatedDebt = _debtManagement.UpdateDebt(id, requestDto).Result;
-
-		_logger.LogInformation("Successfully updated entity in {ControllerName} with ID: {Id}", nameof(DebtController),
-			updatedDebt.Id);
+		DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
 
 		return Ok(updatedDebt);
 	}
 
 	[HttpDelete("{id:int}")]
-	public IActionResult Delete(int id, [FromHeader] string auth0UserId)
+	public async Task<IActionResult> Delete(int id)
 	{
-		_logger.LogInformation("Received DELETE request in {ControllerName} with ID: {Id}", nameof(DebtController), id);
+		var auth0UserId = GetAuth0UserId();
 
-		_debtManagement.DeleteDebt(id);
-
-		_logger.LogInformation("Successfully deleted entity in {ControllerName} with ID: {Id}", nameof(DebtController),
-			id);
+		await _debtManagement.DeleteDebt(id, auth0UserId);
 
 		return NoContent();
 	}
 
-	[HttpGet("{auth0UserId}")]
-	public IActionResult Get(string auth0UserId)
+	[HttpGet]
+	public async Task<IActionResult> Get()
 	{
-		_logger.LogInformation("Received GET request in {ControllerName}", nameof(DebtController));
+		var auth0UserId = GetAuth0UserId();
 
-		_logger.LogError($"Log Claims");
-		foreach (var claim in User.Claims)
-		{
-			_logger.LogError($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-		}
-
-
-		IList<DebtDto> debts = _debtManagement.GetAllDebts(auth0UserId).Result;
-
-		_logger.LogInformation("Exiting GET request in {ControllerName} with mappedResult: {MappedResult}", "GET",
-			nameof(DebtController), debts);
+		IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
 
 		return Ok(debts);
 	}
 
-	[HttpGet("{id:int}/{auth0UserId}")]
-	public IActionResult Get(int id, string auth0UserId)
+	[HttpGet("{id:int}")]
+	public async Task<IActionResult> Get(int id)
 	{
-		_logger.LogInformation("Received GET request in {ControllerName} with ID: {Id}", nameof(DebtController), id);
+		var auth0UserId = GetAuth0UserId();
 
-		_logger.LogError($"Log Claims");
-		foreach (var claim in User.Claims)
-		{
-			_logger.LogError($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-		}
-
-		DebtDto debt = _debtManagement.GetDebt(id, auth0UserId).Result;
-
-		_logger.LogInformation("Exiting GET request in {ControllerName} with mappedResult: {MappedResult}", "GET",
-			nameof(DebtController), debt);
+		DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
 
 		return Ok(debt);
 	}
-}
+
+	private string GetAuth0UserId()
+	{
+		var auth0UserId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+		if (string.IsNullOrEmpty(auth0UserId))
+		{
+			_logger.LogError("Auth0 User ID claim is null or empty.");
+		}
+
+		return auth0UserId;
+	}
+	}
