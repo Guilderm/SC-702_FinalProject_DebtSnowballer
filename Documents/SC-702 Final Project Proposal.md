@@ -83,7 +83,9 @@ Given the increasing number of people that go on multiple debts, we have decided
 
 **Debt Avalanche**: In this strategy, you will first pay off the loan with the largest interest rate first. The main benefit is that you would pay the least amount in interest, making it the most “logical” choice compared to Strict Debt Snowball. But as Dave Ramsey points out, you did not get deep into debt because you were making logical decisions.
 
-**Debt Snowflake**: This strategy involves making extra payments on your debts whenever you have extra money, such as a bonus or Aguinaldo (13th-month pay).
+**Custom Snowball**: If after applying a strict debt snowball or avalanche, you can make ajustments to the order. this is called a Custom Snowball.
+
+**Debt Snowflake**: The making extra payments on your debts whenever you have extra money, such as a bonus or Aguinaldo (13th-month pay).
 
 
 # <a name="_toc127303013"></a>Technologies And Platforms
