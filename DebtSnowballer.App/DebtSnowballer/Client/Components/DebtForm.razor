@@ -1,8 +1,7 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-
 <EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
-	<DataAnnotationsValidator />
-	<ValidationSummary />
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
 
 	<div class="form-group">
 		<label for="LoanNickName">Loan Nickname</label>
@@ -56,7 +55,8 @@
 	public EventCallback<DebtDto> OnSave { get; set; }
 
 	private async Task SaveLoanItem()
-		{
+	{
 		await OnSave.InvokeAsync(DebtItem);
-		}
+	}
+
 }
