@@ -14,11 +14,11 @@ public class DebtService : IDebtService
 		_apiurl = configuration["ApiEndpoint:Url"] + "/Debt";
 	}
 
-	public async Task DeleteItem(int id)
+	public async Task DeleteDebt(int id)
 	{
 		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_apiurl}/{id}");
 		if (!response.IsSuccessStatusCode)
-			throw new Exception($"Error deleting item: {response.ReasonPhrase}");
+			throw new Exception($"Error deleting debt: {response.ReasonPhrase}");
 	}
 
 	public async Task<IList<DebtDto>> GetDebts()
@@ -33,7 +33,7 @@ public class DebtService : IDebtService
 		return debt;
 	}
 
-	public async Task<DebtDto> AddItem(DebtDto debtDto)
+	public async Task<DebtDto> AddDebt(DebtDto debtDto)
 	{
 		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_apiurl, debtDto);
 		if (!response.IsSuccessStatusCode)
@@ -42,7 +42,7 @@ public class DebtService : IDebtService
 		return result;
 	}
 
-	public async Task<DebtDto> UpdateItem(DebtDto debtDto)
+	public async Task<DebtDto> UpdateDebt(DebtDto debtDto)
 	{
 		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_apiurl}/{debtDto.Id}", debtDto);
 		if (!response.IsSuccessStatusCode)

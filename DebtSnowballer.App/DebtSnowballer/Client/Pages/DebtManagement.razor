@@ -46,7 +46,7 @@
 
 	private async Task DeleteLoanItem(int id)
 	{
-		await DebtService.DeleteItem(id);
+		await DebtService.DeleteDebt(id);
 		await LoadLoanItems();
 	}
 
@@ -54,11 +54,11 @@
 	{
 		if (debtItem.Id == 0)
 		{
-			await DebtService.AddItem(debtItem);
+			await DebtService.AddDebt(debtItem);
 		}
 		else
 		{
-			await DebtService.UpdateItem(debtItem);
+			await DebtService.UpdateDebt(debtItem);
 		}
 
 		await LoadLoanItems();

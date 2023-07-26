@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ca322e3-3060-4b56-bc48-86411f1f0d9b" name="Changes" comment="" />
+    <list default="true" id="2ca322e3-3060-4b56-bc48-86411f1f0d9b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Pages/DebtManagement.razor" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Pages/DebtManagement.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/IDebtService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/IDebtService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/ITragedyService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/TragedyService.cs" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

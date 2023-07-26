@@ -22,7 +22,6 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure logging
 builder.Logging.SetMinimumLevel(LogLevel.Information);

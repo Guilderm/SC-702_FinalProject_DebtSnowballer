@@ -1,6 +1,6 @@
 ﻿namespace DebtSnowballer.Client.Services;
 
-public interface ITragedyService
+public interface IStrategyService
 {
 	
 }

@@ -6,7 +6,7 @@ public interface IDebtService
 {
 	Task<IList<DebtDto>> GetDebts();
 	Task<DebtDto> GetDebtById(int id);
-	Task DeleteItem(int id);
-	Task<DebtDto> AddItem(DebtDto debtDto);
-	Task<DebtDto> UpdateItem(DebtDto debtDto);
+	Task DeleteDebt(int id);
+	Task<DebtDto> AddDebt(DebtDto debtDto);
+	Task<DebtDto> UpdateDebt(DebtDto debtDto);
 }
