@@ -14,7 +14,7 @@
 {
 	<h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-	<DebtForm DebtItem="_selectedDebtItem" OnSave="LoadLoanItems"/>
+	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem"/>
 }
 
 @code {
@@ -47,4 +47,17 @@
 		await LoadLoanItems();
 	}
 
+	private async Task SaveLoanItem(DebtDto debtItem)
+	{
+		if (debtItem.Id == 0)
+		{
+			await DebtService.AddItem(debtItem);
+		}
+		else
+		{
+			await DebtService.UpdateItem(debtItem);
+		}
+
+		await LoadLoanItems();
+	}
 }

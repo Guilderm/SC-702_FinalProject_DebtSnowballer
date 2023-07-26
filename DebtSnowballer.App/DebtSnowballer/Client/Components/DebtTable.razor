@@ -1,11 +1,8 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@inject HttpClient HttpClient
 
 @if (LoanItems == null)
 {
-	<p>
-		<em>Loading...</em>
-	</p>
+	<p><em>Loading...</em></p>
 }
 else
 {
@@ -45,7 +42,6 @@ else
 }
 
 @code {
-
 	[Parameter]
 	public List<DebtDto> LoanItems { get; set; }
 
@@ -54,5 +50,4 @@ else
 
 	[Parameter]
 	public EventCallback<int> DeleteLoanItem { get; set; }
-
 }

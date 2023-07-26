@@ -1,11 +1,8 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.Services
-@inject DebtService DebtService
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
-	<DataAnnotationsValidator/>
-	<ValidationSummary/>
+	<DataAnnotationsValidator />
+	<ValidationSummary />
 
 	<div class="form-group">
 		<label for="LoanNickName">Loan Nickname</label>
@@ -56,33 +53,10 @@
 	public DebtDto DebtItem { get; set; }
 
 	[Parameter]
-	public EventCallback OnSave { get; set; }
+	public EventCallback<DebtDto> OnSave { get; set; }
 
 	private async Task SaveLoanItem()
-	{
-	// Log each claim
-
-		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-		foreach (var claim in authState.User.Claims)
 		{
-			Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+		await OnSave.InvokeAsync(DebtItem);
 		}
-
-		string userId = authState.User.Claims.First(c => c.Type == "sid").Value;
-
-		DebtItem.Auth0UserId = userId;
-
-		if (DebtItem.Id == 0)
-		{
-			await DebtService.AddItem(DebtItem);
-		}
-		else
-		{
-			await DebtService.UpdateItem(DebtItem);
-		}
-
-		await OnSave.InvokeAsync(null);
-	}
-
 }
