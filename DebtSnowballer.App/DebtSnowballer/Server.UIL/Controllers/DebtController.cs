@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.BLL.Services;
-using System.Security.Claims;
 
 namespace Server.UIL.Controllers;
 
@@ -73,13 +72,12 @@ public class DebtController : ControllerBase
 
 	private string GetAuth0UserId()
 	{
-		var auth0UserId = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+		var auth0UserId = User.Claims
+			.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+			?.Value;
 
-		if (string.IsNullOrEmpty(auth0UserId))
-		{
-			_logger.LogError("Auth0 User ID claim is null or empty.");
-		}
+		if (string.IsNullOrEmpty(auth0UserId)) _logger.LogError("Auth0 User ID claim is null or empty.");
 
 		return auth0UserId;
 	}
-	}
+}
