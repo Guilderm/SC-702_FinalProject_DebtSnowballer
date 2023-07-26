@@ -51,6 +51,9 @@ SC-702 Diseño y Desarrollo de Sistemas
 
 ## <a name="_toc127303008"></a>General Objective:
 Create a tool to help people develop a plan to be debt free.
+Similar to these:
+[Free Online Debt Snowball/Avalanche Calculator | Undebt.it](https://undebt.it/)
+[unbury.me - A Loan Calculator](https://unbury.me/)
 
 ## <a name="_toc127303009"></a>Specific Objectives
 - Provide a comparison between different pay-off strategies.
