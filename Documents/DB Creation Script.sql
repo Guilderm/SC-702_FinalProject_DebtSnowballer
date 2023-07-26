@@ -1,43 +1,40 @@
 ﻿-- Drop all foreign key constraints
 while(exists(select 1
              from INFORMATION_SCHEMA.TABLE_CONSTRAINTS
-             where CONSTRAINT_TYPE = 'FOREIGN KEY'))
-    begin
-        declare @sql nvarchar(2000)
-        SELECT TOP 1 @sql = ('ALTER TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME
-            + '] DROP CONSTRAINT [' + CONSTRAINT_NAME + ']')
-        FROM information_schema.table_constraints
-        WHERE CONSTRAINT_TYPE = 'FOREIGN KEY'
-        exec (@sql)
-        PRINT @sql
-    end
+             where CONSTRAINT_TYPE = 'FOREIGN KEY')) begin
+    declare @sql nvarchar(2000)
+    SELECT TOP 1
+            @sql = ('ALTER TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME + '] DROP CONSTRAINT [' + CONSTRAINT_NAME + ']')
+    FROM information_schema.table_constraints
+    WHERE CONSTRAINT_TYPE = 'FOREIGN KEY'
+    exec (@sql)
+    PRINT @sql
+end
 
 -- Drop all tables
 while(exists(select 1
              from INFORMATION_SCHEMA.TABLES
              where TABLE_NAME != '__MigrationHistory'
-               AND TABLE_TYPE = 'BASE TABLE'))
-    begin
-        SELECT TOP 1 @sql = ('DROP TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME
-            + ']')
-        FROM INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_NAME != '__MigrationHistory'
-          AND TABLE_TYPE = 'BASE TABLE'
-        exec (@sql)
-        PRINT @sql
-    end
+               AND TABLE_TYPE = 'BASE TABLE')) begin
+    SELECT TOP 1 @sql = ('DROP TABLE ' + TABLE_SCHEMA + '.[' + TABLE_NAME + ']')
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_NAME != '__MigrationHistory'
+      AND TABLE_TYPE = 'BASE TABLE'
+    exec (@sql)
+    PRINT @sql
+end
 
 
 CREATE TABLE [AppUser]
 (
-    [Id]          INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId] NVARCHAR(125)      NOT NULL UNIQUE, -- Make this column non-nullable
-    [FirstName]   NVARCHAR(50)       NOT NULL,
-    [LastName]    NVARCHAR(50)       NOT NULL,
-    [Email]       NVARCHAR(256)      NOT NULL,
-    [BaseCurrency] NVARCHAR(10)      NOT NULL DEFAULT 'USD',
-    [UserTypeId]  INT                NOT NULL DEFAULT 1,
-    [CreatedAt]   DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [Id]           INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId]  NVARCHAR(125)      NOT NULL UNIQUE, -- Make this column non-nullable
+    [FirstName]    NVARCHAR(50)       NOT NULL,
+    [LastName]     NVARCHAR(50)       NOT NULL,
+    [Email]        NVARCHAR(256)      NOT NULL,
+    [BaseCurrency] NVARCHAR(10)       NOT NULL DEFAULT 'USD',
+    [UserTypeId]   INT                NOT NULL DEFAULT 1,
+    [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_AppUser] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -63,26 +60,26 @@ CREATE TABLE [SessionLog]
 );
 
 -- Create DebtStrategyType table to store different types of debt strategies
-CREATE TABLE [DebtStrategy]
+CREATE TABLE [StrategyType]
 (
-    [Id] INT IDENTITY (1,1) NOT NULL,
-    [Type] NVARCHAR(50) NOT NULL,
+    [Id]   INT IDENTITY (1,1) NOT NULL,
+    [Type] NVARCHAR(50)       NOT NULL,
     CONSTRAINT [PK_DebtStrategyType] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 -- Insert the three debt strategies into the DebtStrategyType table
-INSERT INTO DebtStrategy (Type)
-VALUES ('Debt Snowball'), ('Strict Debt Snowball'), ('Debt Avalanche');
+INSERT INTO StrategyType (Type)
+VALUES ('Debt Snowball'),
+       ('Strict Debt Snowball'),
+       ('Debt Avalanche');
 
 -- Create DebtStrategy table to store the chosen strategy for each user
 CREATE TABLE [DebtStrategy]
 (
-    [Id] INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId]    NVARCHAR(125)      NOT NULL,
-    [UserId] INT NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
-    [StrategyId] INT NOT NULL FOREIGN KEY REFERENCES [DebtStrategy] (ID),
-    [CreatedAt] DATETIME2 NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt] DATETIME2,
+    [Id]          INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId] NVARCHAR(125)      NOT NULL,
+    [UserId]      INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID),
     CONSTRAINT [PK_DebtStrategy] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

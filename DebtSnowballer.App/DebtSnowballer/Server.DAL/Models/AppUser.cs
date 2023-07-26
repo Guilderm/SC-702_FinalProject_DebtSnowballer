@@ -1,24 +1,30 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class AppUser
+namespace Server.DAL.Models
 {
-	public AppUser()
-	{
-		MonthlyExtraPayments = new HashSet<MonthlyExtraPayment>();
-		OnetimeExtraPayments = new HashSet<OnetimeExtraPayment>();
-		SessionLogs = new HashSet<SessionLog>();
-	}
+    public partial class AppUser
+    {
+        public AppUser()
+        {
+            DebtStrategies = new HashSet<DebtStrategy>();
+            MonthlyExtraPayments = new HashSet<MonthlyExtraPayment>();
+            OnetimeExtraPayments = new HashSet<OnetimeExtraPayment>();
+            SessionLogs = new HashSet<SessionLog>();
+        }
 
-	public int Id { get; set; }
-	public string Auth0UserId { get; set; } = null!;
-	public string FirstName { get; set; } = null!;
-	public string LastName { get; set; } = null!;
-	public string Email { get; set; } = null!;
-	public int UserTypeId { get; set; }
-	public DateTime CreatedAt { get; set; }
-	public DateTime? UpdatedAt { get; set; }
+        public int Id { get; set; }
+        public string Auth0UserId { get; set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string BaseCurrency { get; set; } = null!;
+        public int UserTypeId { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-	public virtual ICollection<MonthlyExtraPayment> MonthlyExtraPayments { get; set; }
-	public virtual ICollection<OnetimeExtraPayment> OnetimeExtraPayments { get; set; }
-	public virtual ICollection<SessionLog> SessionLogs { get; set; }
+        public virtual ICollection<DebtStrategy> DebtStrategies { get; set; }
+        public virtual ICollection<MonthlyExtraPayment> MonthlyExtraPayments { get; set; }
+        public virtual ICollection<OnetimeExtraPayment> OnetimeExtraPayments { get; set; }
+        public virtual ICollection<SessionLog> SessionLogs { get; set; }
+    }
 }
