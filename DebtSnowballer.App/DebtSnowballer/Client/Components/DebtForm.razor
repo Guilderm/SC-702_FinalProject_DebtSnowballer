@@ -60,7 +60,15 @@
 
 	private async Task SaveLoanItem()
 	{
+	// Log each claim
+
 		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+		foreach (var claim in authState.User.Claims)
+		{
+			Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+		}
+
 		string userId = authState.User.Claims.First(c => c.Type == "sid").Value;
 
 		DebtItem.Auth0UserId = userId;

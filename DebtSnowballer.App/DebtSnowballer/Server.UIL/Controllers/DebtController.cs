@@ -88,12 +88,6 @@ public class DebtController : ControllerBase
 		}
 
 
-		if (string.IsNullOrWhiteSpace(auth0UserId))
-		{
-			_logger.LogError("Invalid auth0UserId: {Auth0UserId}", auth0UserId);
-			return BadRequest("Invalid auth0UserId");
-		}
-
 		IList<DebtDto> debts = _debtManagement.GetAllDebts(auth0UserId).Result;
 
 		_logger.LogInformation("Exiting GET request in {ControllerName} with mappedResult: {MappedResult}", "GET",
@@ -111,12 +105,6 @@ public class DebtController : ControllerBase
 		foreach (var claim in User.Claims)
 		{
 			_logger.LogError($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-		}
-
-		if (string.IsNullOrWhiteSpace(auth0UserId))
-		{
-			_logger.LogError("Invalid auth0UserId: {Auth0UserId}", auth0UserId);
-			return BadRequest("Invalid auth0UserId");
 		}
 
 		DebtDto debt = _debtManagement.GetDebt(id, auth0UserId).Result;
