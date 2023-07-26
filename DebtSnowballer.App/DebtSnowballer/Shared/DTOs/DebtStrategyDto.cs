@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DebtSnowballer.Shared.DTOs;
-internal class DebtStrategyDto
-	{
-	}
+﻿public class DebtStrategyDto
+{
+	public int Id { get; set; }
+	public string Auth0UserId { get; set; }
+	public int UserId { get; set; }
+	public int StrategyId { get; set; }
+}
