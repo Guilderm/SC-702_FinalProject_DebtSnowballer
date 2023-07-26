@@ -35,9 +35,9 @@ CREATE TABLE [AppUser]
     [FirstName]   NVARCHAR(50)       NOT NULL,
     [LastName]    NVARCHAR(50)       NOT NULL,
     [Email]       NVARCHAR(256)      NOT NULL,
+    [BaseCurrency] NVARCHAR(10)      NOT NULL DEFAULT 'USD',
     [UserTypeId]  INT                NOT NULL DEFAULT 1,
     [CreatedAt]   DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [UpdatedAt]   DATETIME2,
     CONSTRAINT [PK_AppUser] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -60,6 +60,30 @@ CREATE TABLE [SessionLog]
     [ClientSoftware]  NVARCHAR(50)       NOT NULL,
     [RemoteIpAddress] NVARCHAR(50)       NOT NULL,
     CONSTRAINT [PK_SessionLog] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+-- Create DebtStrategyType table to store different types of debt strategies
+CREATE TABLE [DebtStrategy]
+(
+    [Id] INT IDENTITY (1,1) NOT NULL,
+    [Type] NVARCHAR(50) NOT NULL,
+    CONSTRAINT [PK_DebtStrategyType] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+-- Insert the three debt strategies into the DebtStrategyType table
+INSERT INTO DebtStrategy (Type)
+VALUES ('Debt Snowball'), ('Strict Debt Snowball'), ('Debt Avalanche');
+
+-- Create DebtStrategy table to store the chosen strategy for each user
+CREATE TABLE [DebtStrategy]
+(
+    [Id] INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId]    NVARCHAR(125)      NOT NULL,
+    [UserId] INT NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [StrategyId] INT NOT NULL FOREIGN KEY REFERENCES [DebtStrategy] (ID),
+    [CreatedAt] DATETIME2 NOT NULL DEFAULT GETDATE(),
+    [UpdatedAt] DATETIME2,
+    CONSTRAINT [PK_DebtStrategy] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 -- Create Currency table to store different types of currencies
