@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ca322e3-3060-4b56-bc48-86411f1f0d9b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Pages/Debt.razor" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Pages/Debt.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/DebtService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/DebtService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/IDebtService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Client/Services/IDebtService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Server.BLL/Services/DebtManagement.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Server.BLL/Services/DebtManagement.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Server.UIL/Controllers/DebtController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../DebtSnowballer.App/DebtSnowballer/Server.UIL/Controllers/DebtController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DB Creation Script.sql" beforeDir="false" afterPath="$PROJECT_DIR$/DB Creation Script.sql" afterDir="false" />
-    </list>
+    <list default="true" id="2ca322e3-3060-4b56-bc48-86411f1f0d9b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

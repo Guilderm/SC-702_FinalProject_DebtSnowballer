@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Client", "De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebtSnowballer.Shared", "DebtSnowballer\Shared\DebtSnowballer.Shared.csproj", "{8F1D35F3-88C0-4C88-9811-AE381BC377E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.BLL", "DebtSnowballer\Server.BLL\Server.BLL.csproj", "{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.BLL", "DebtSnowballer\Server.BLL\Server.BLL.csproj", "{F0E80AD1-56BA-4A79-BAB8-CD57DF3E63B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.UIL", "DebtSnowballer\Server.UIL\Server.UIL.csproj", "{0823AA9D-1829-403C-88C5-0BD480B879AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.UIL", "DebtSnowballer\Server.UIL\Server.UIL.csproj", "{0823AA9D-1829-403C-88C5-0BD480B879AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.DAL", "DebtSnowballer\Server.DAL\Server.DAL.csproj", "{5631C4CC-C94D-46B7-99C6-6D300875054E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.DAL", "DebtSnowballer\Server.DAL\Server.DAL.csproj", "{5631C4CC-C94D-46B7-99C6-6D300875054E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
