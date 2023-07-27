@@ -4,7 +4,7 @@
 <hr>
 
 <select @bind="SelectedCurrency">
-	@foreach (var currency in _currencies)
+	@foreach (CurrencyInfo currency in _currencies)
 		{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
 		}

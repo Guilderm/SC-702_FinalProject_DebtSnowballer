@@ -11,9 +11,8 @@ public class UnitOfWork : IUnitOfWork
 	private readonly ILogger<UnitOfWork> _logger;
 	private readonly ILoggerFactory _loggerFactory;
 	private IGenericRepository<Crud> _cruds;
-
+	private IGenericRepository<UserProfile> _userProfile;
 	private IGenericRepository<Debt> _debts;
-	// Add more fields here for other repositories as needed
 
 	public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 	{
@@ -27,6 +26,9 @@ public class UnitOfWork : IUnitOfWork
 
 	public IGenericRepository<Debt> DebtRepository => _debts ??=
 		new GenericRepository<Debt>(_loggerFactory.CreateLogger<GenericRepository<Debt>>(), _context);
+
+	public IGenericRepository<UserProfile> UserProfileRepository => _userProfile ??=
+		new GenericRepository<UserProfile>(_loggerFactory.CreateLogger<GenericRepository<UserProfile>>(), _context);
 
 	public async Task Save()
 	{
