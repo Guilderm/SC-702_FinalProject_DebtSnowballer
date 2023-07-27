@@ -1,4 +1,6 @@
-﻿public class CurrencyInfo
+﻿namespace DebtSnowballer.Shared.Currency;
+
+public class CurrencyInfo
 {
 	public string Name { get; set; }
 	public string AlphaCode { get; set; }

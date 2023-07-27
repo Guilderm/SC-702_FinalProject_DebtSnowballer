@@ -1,4 +1,6 @@
-﻿public static class Currencies
+﻿namespace DebtSnowballer.Shared.Currency;
+
+public static class Currencies
 {
 	public static List<CurrencyInfo> All { get; } = new()
 	{
@@ -82,6 +84,5 @@
 			Symbol = "₡",
 			Precision = 2
 		}
-		// Add all other currencies here...
 	};
 }

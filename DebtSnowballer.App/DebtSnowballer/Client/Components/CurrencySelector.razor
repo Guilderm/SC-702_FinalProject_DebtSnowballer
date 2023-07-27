@@ -1,4 +1,5 @@
-﻿<h3>Select your base currency</h3>
+﻿@using DebtSnowballer.Shared.Currency
+<h3>Select your base currency</h3>
 <p>All loans will be converted to your base currency, all calculations and reports will also be made on this currency.</p>
 <hr>
 
@@ -18,8 +19,8 @@
 	[Parameter]
 	public EventCallback<string> SelectedCurrencyChanged { get; set; }
 
-	private List<string> _currencies = new List<string> { "USD", "EUR", "GBP" /* add other currencies as needed */ };
-
+	private List<string> _currencies = Currencies.All.Select(c => c.AlphaCode).ToList();
+	
 	private async Task OnChange(ChangeEventArgs e)
 	{
 		SelectedCurrency = e.Value.ToString();
