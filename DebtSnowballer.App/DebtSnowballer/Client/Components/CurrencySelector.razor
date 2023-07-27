@@ -5,10 +5,11 @@
 
 <select @bind="SelectedCurrency">
 	@foreach (var currency in _currencies)
-	{
-		<option value="@currency">@currency</option>
-	}
+		{
+		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
+		}
 </select>
+
 <hr>
 <hr>
 
@@ -19,7 +20,7 @@
 	[Parameter]
 	public EventCallback<string> SelectedCurrencyChanged { get; set; }
 
-	private List<string> _currencies = Currencies.All.Select(c => c.AlphaCode).ToList();
+	private List<CurrencyInfo> _currencies = Currencies.All;
 	
 	private async Task OnChange(ChangeEventArgs e)
 	{
