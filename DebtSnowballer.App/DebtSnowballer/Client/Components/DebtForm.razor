@@ -1,50 +1,34 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-<EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
-	<DataAnnotationsValidator/>
-	<ValidationSummary/>
-
-	<div class="form-group">
-		<label for="LoanNickName">Loan Nickname</label>
-		<InputText id="LoanNickName" class="form-control" @bind-Value="DebtItem.LoanNickName"/>
+<div class="modal fade" id="debtFormModal" tabindex="-1" role="dialog" aria-labelledby="debtFormModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<h4 class="modal-title w-100 font-weight-bold">@(DebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="CancelEdit">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body mx-3">
+				<EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
+					<DataAnnotationsValidator/>
+					<ValidationSummary/>
+					<!-- Add your form fields here -->
+					<!-- Example: -->
+					<div class="md-form mb-5">
+						<i class="fas fa-tag prefix grey-text"></i>
+						<InputText id="LoanNickName" class="form-control validate" @bind-Value="DebtItem.LoanNickName"/>
+						<label data-error="wrong" data-success="right" for="LoanNickName">Loan Nickname</label>
+					</div>
+					<!-- Add the rest of your form fields in the same way -->
+				</EditForm>
+			</div>
+			<div class="modal-footer d-flex justify-content-center">
+				<button type="submit" class="btn btn-success">@(DebtItem.Id == 0 ? "Add" : "Update")</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="CancelEdit">Cancel</button>
+			</div>
+		</div>
 	</div>
-
-	<div class="form-group">
-		<label for="Principal">Principal</label>
-		<InputNumber id="Principal" class="form-control" @bind-Value="DebtItem.Principal"/>
-	</div>
-
-	<div class="form-group">
-		<label for="InterestRate">Interest Rate</label>
-		<InputNumber id="InterestRate" class="form-control" @bind-Value="DebtItem.InterestRate"/>
-	</div>
-
-	<div class="form-group">
-		<label for="Fees">Fees</label>
-		<InputNumber id="Fees" class="form-control" @bind-Value="DebtItem.Fees"/>
-	</div>
-
-	<div class="form-group">
-		<label for="MonthlyPayment">Monthly Payment</label>
-		<InputNumber id="MonthlyPayment" class="form-control" @bind-Value="DebtItem.MonthlyPayment"/>
-	</div>
-
-	<div class="form-group">
-		<label for="RemainingTerm">Remaining Term</label>
-		<InputNumber id="RemainingTerm" class="form-control" @bind-Value="DebtItem.RemainingTerm"/>
-	</div>
-
-	<div class="form-group">
-		<label for="CurrencyID">Currency ID</label>
-		<InputNumber id="CurrencyID" class="form-control" @bind-Value="DebtItem.CurrencyId"/>
-	</div>
-
-	<div class="form-group">
-		<label for="CardinalOrder">Cardinal Order</label>
-		<InputNumber id="CardinalOrder" class="form-control" @bind-Value="DebtItem.CardinalOrder"/>
-	</div>
-
-	<button type="submit" class="btn btn-success">@(DebtItem.Id == 0 ? "Add" : "Update")</button>
-</EditForm>
+</div>
 
 @code {
 
@@ -54,9 +38,17 @@
 	[Parameter]
 	public EventCallback<DebtDto> OnSave { get; set; }
 
+	[Parameter]
+	public EventCallback OnCancel { get; set; }
+
 	private async Task SaveLoanItem()
 	{
 		await OnSave.InvokeAsync(DebtItem);
+	}
+
+	private void CancelEdit()
+	{
+		OnCancel.InvokeAsync();
 	}
 
 }

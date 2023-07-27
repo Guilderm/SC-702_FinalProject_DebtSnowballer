@@ -7,7 +7,7 @@
 
 <PageTitle>Debt Management</PageTitle>
 
-<h3>Manage Your Debt</h3>
+<h3>Create a stragedy to become debt free</h3>
 
 <DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 
@@ -17,7 +17,7 @@
 {
 	<h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem"/>
+	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" OnCancel="CancelEdit"/>
 }
 
 @code {
@@ -62,6 +62,12 @@
 		}
 
 		await LoadLoanItems();
+		_selectedDebtItem = null;
+	}
+
+	private void CancelEdit()
+	{
+		_selectedDebtItem = null;
 	}
 
 }

@@ -25,32 +25,39 @@ while(exists(select 1
 end
 
 
-CREATE TABLE [AppUser]
+CREATE TABLE [UserProfile]
 (
     [Id]           INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId]  NVARCHAR(125)      NOT NULL UNIQUE, -- Make this column non-nullable
-    [FirstName]    NVARCHAR(50)       NOT NULL,
-    [LastName]     NVARCHAR(50)       NOT NULL,
-    [Email]        NVARCHAR(256)      NOT NULL,
-    [BaseCurrency] NVARCHAR(10)       NOT NULL DEFAULT 'USD',
+    [Auth0UserId]  NVARCHAR(125)      NOT NULL UNIQUE,        -- Make this column non-nullable
+    [FirstName]    NVARCHAR(50)       NULL,
+    [LastName]     NVARCHAR(50)       NULL,
+    [Email]        NVARCHAR(256)      NULL,
+    [BaseCurrency] NVARCHAR(3)         NOT NULL     DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [UserTypeId]   INT                NOT NULL DEFAULT 1,
     [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT [PK_AppUser] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 -- Create UserType table to store different types of users
 CREATE TABLE [UserType]
 (
-    [Id]   INT IDENTITY (1,1) NOT NULL,
-    [Type] NVARCHAR(20)       NOT NULL,
+    [Id]          INT IDENTITY (1,1) NOT NULL,
+    [Type]        NVARCHAR(20)       NOT NULL,
+    [Description] NVARCHAR(50)       NOT NULL,
     CONSTRAINT [PK_UserType] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+-- Insert data into UserType
+INSERT INTO UserType (Type, Description)
+VALUES ('EndUser', 'The user that the application is inteded for'),
+       ('HelpDesk', 'Those provideind technical and customer support'),
+       ('Administrator', 'The administrotors of the application');
 
 -- Create SessionLog table to store user session information
 CREATE TABLE [SessionLog]
 (
     [Id]              INT IDENTITY (1,1) NOT NULL,
-    [UserId]          INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [UserId]          INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [LogonTimeStamp]  DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LogoffTimeStamp] DATETIME2,
     [OperatingSystem] NVARCHAR(50)       NOT NULL,
@@ -78,27 +85,18 @@ CREATE TABLE [DebtStrategy]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL,
     [Auth0UserId] NVARCHAR(125)      NOT NULL,
-    [UserId]      INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [UserId]      INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID),
     CONSTRAINT [PK_DebtStrategy] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
--- Create Currency table to store different types of currencies
-CREATE TABLE [Currency]
-(
-    [Id]         INT IDENTITY (1,1) NOT NULL,
-    [FormalName] NVARCHAR(50)       NOT NULL,
-    [ShortName]  NVARCHAR(20)       NOT NULL,
-    [Symbol]     NVARCHAR(10)       NOT NULL,
-    CONSTRAINT [PK_Currency] PRIMARY KEY CLUSTERED ([Id] ASC)
-);
 
 -- Create Loan table to store information about each loan
 CREATE TABLE [Debt]
 (
     [Id]             INT IDENTITY (1,1) NOT NULL,
     -- TODO: reconfigure the foren key:
-    -- [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [AppUser] (Auth0UserId),
+    -- [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [Auth0UserId]    NVARCHAR(125)      NOT NULL,
     [LoanNickName]   NVARCHAR(50)       NOT NULL,
     [Principal]      DECIMAL(10, 3)     NOT NULL,
@@ -106,7 +104,7 @@ CREATE TABLE [Debt]
     [Fees]           DECIMAL(10, 3)     NOT NULL,
     [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
     [RemainingTerm]  INT                NOT NULL,
-    [CurrencyId]     INT                NOT NULL FOREIGN KEY REFERENCES [Currency] (ID) DEFAULT 1,
+    [CurrencyCode]  NVARCHAR(3)         NOT NULL     DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [CardinalOrder]  INT                NOT NULL, -- The order in which the loan should be paid off
     [CreatedAt]      DATETIME2          NOT NULL                                        DEFAULT GETDATE(),
     [UpdatedAt]      DATETIME2,
@@ -117,7 +115,7 @@ CREATE TABLE [Debt]
 CREATE TABLE [MonthlyExtraPayments]
 (
     [Id]     INT IDENTITY (1,1) NOT NULL,
-    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [Amount] DECIMAL(10, 3)     NOT NULL,
     CONSTRAINT [PK_MonthlyExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
@@ -125,29 +123,18 @@ CREATE TABLE [MonthlyExtraPayments]
 CREATE TABLE [OnetimeExtraPayments]
 (
     [Id]     INT IDENTITY (1,1) NOT NULL,
-    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [AppUser] (ID),
+    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [Amount] DECIMAL(10, 3)     NOT NULL,
     [Date]   DATETIME2          NOT NULL,
     CONSTRAINT [PK_OnetimeExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
 
--- Insert data into UserType
-INSERT INTO UserType (Type)
-VALUES ('Type1'),
-       ('Type2'),
-       ('Type3');
-
--- Insert data into AppUser
-INSERT INTO AppUser (auth0UserId, FirstName, LastName, Email, UserTypeId)
+-- Insert data into UserProfile
+INSERT INTO UserProfile (auth0UserId, FirstName, LastName, Email, UserTypeId)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com', 1),
        ('auth0|60d7b7f29b14170068e32450', 'Jane', 'Doe', 'jane.doe@example.com', 2),
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
-
--- Insert data into Currency
-INSERT INTO Currency (FormalName, ShortName, Symbol)
-VALUES ('United States Dollar', 'USD', '$'),
-       ('Costa Rican Colon', 'CRC', '₡');
 
 -- Insert data into Loan
 INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyID,
