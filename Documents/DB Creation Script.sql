@@ -107,7 +107,6 @@ CREATE TABLE [Debt]
     [CurrencyCode]  NVARCHAR(3)         NOT NULL     DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [CardinalOrder]  INT                NOT NULL, -- The order in which the loan should be paid off
     [CreatedAt]      DATETIME2          NOT NULL                                        DEFAULT GETDATE(),
-    [UpdatedAt]      DATETIME2,
     CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -137,19 +136,19 @@ VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com',
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyID,
+INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyCode,
                   CardinalOrder)
-VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 1, 1),
-       ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 2, 2),
-       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 1, 3),
+VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
+       ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
+       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 'CRC', 3),
 
-       ('google-oauth2|116471976465148595031', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 1, 1),
-       ('google-oauth2|116471976465148595031', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 2, 2),
-       ('google-oauth2|116471976465148595031', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 1, 3),
+       ('google-oauth2|116471976465148595031', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
+       ('google-oauth2|116471976465148595031', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
+       ('google-oauth2|116471976465148595031', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 'CRC', 3),
 
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 1, 1),
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 2, 2),
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 1, 3);
+       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
+       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
+       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 'CRC', 3);
 
 -- Insert data into MonthlyExtraPayments
 INSERT INTO MonthlyExtraPayments (UserId, Amount)

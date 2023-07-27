@@ -1,8 +1,8 @@
 ﻿public static class Currencies
+{
+	public static List<CurrencyInfo> All { get; } = new()
 	{
-	public static List<CurrencyInfo> All { get; } = new List<CurrencyInfo>
-	{
-		new CurrencyInfo
+		new()
 		{
 			Name = "United States dollar",
 			AlphaCode = "USD",
@@ -10,7 +10,7 @@
 			Symbol = "$",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Euro",
 			AlphaCode = "EUR",
@@ -18,7 +18,7 @@
 			Symbol = "€",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Japanese yen",
 			AlphaCode = "JPY",
@@ -26,7 +26,7 @@
 			Symbol = "¥",
 			Precision = 0
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Pound sterling",
 			AlphaCode = "GBP",
@@ -34,7 +34,7 @@
 			Symbol = "£",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Australian dollar",
 			AlphaCode = "AUD",
@@ -42,7 +42,7 @@
 			Symbol = "$",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Canadian dollar",
 			AlphaCode = "CAD",
@@ -50,7 +50,7 @@
 			Symbol = "$",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Swiss franc",
 			AlphaCode = "CHF",
@@ -58,7 +58,7 @@
 			Symbol = "Fr",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Renminbi (Chinese yuan)",
 			AlphaCode = "CNY",
@@ -66,7 +66,7 @@
 			Symbol = "¥",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Indian rupee",
 			AlphaCode = "INR",
@@ -74,14 +74,14 @@
 			Symbol = "₹",
 			Precision = 2
 		},
-		new CurrencyInfo
+		new()
 		{
 			Name = "Costa Rican colón",
 			AlphaCode = "CRC",
 			NumericCode = 188,
 			Symbol = "₡",
 			Precision = 2
-		},
-        // Add all other currencies here...
-    };
-	}
+		}
+		// Add all other currencies here...
+	};
+}

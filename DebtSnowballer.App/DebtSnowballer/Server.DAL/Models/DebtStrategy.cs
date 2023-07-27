@@ -1,12 +1,16 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class DebtStrategy
+namespace Server.DAL.Models
 {
-	public int Id { get; set; }
-	public string Auth0UserId { get; set; } = null!;
-	public int UserId { get; set; }
-	public int StrategyId { get; set; }
+    public partial class DebtStrategy
+    {
+        public int Id { get; set; }
+        public string Auth0UserId { get; set; } = null!;
+        public int UserId { get; set; }
+        public int StrategyId { get; set; }
 
-	public virtual StrategyType Strategy { get; set; } = null!;
-	public virtual AppUser User { get; set; } = null!;
+        public virtual StrategyType Strategy { get; set; } = null!;
+        public virtual UserProfile User { get; set; } = null!;
+    }
 }

@@ -1,7 +1,12 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class UserType
+namespace Server.DAL.Models
 {
-	public int Id { get; set; }
-	public string Type { get; set; } = null!;
+    public partial class UserType
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = null!;
+        public string Description { get; set; } = null!;
+    }
 }
