@@ -7,7 +7,9 @@
 
 <PageTitle>Debt Management</PageTitle>
 
-<h3>Create a stragedy to become debt free</h3>
+<h3>Create a strategy to become debt free</h3>
+
+<CurrencySelector SelectedCurrency="@_selectedCurrency" SelectedCurrencyChanged="UpdateSelectedCurrency" />
 
 <DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 
@@ -23,6 +25,7 @@
 @code {
 	private List<DebtDto> _loanItems;
 	private DebtDto _selectedDebtItem;
+	private string _selectedCurrency;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -32,6 +35,11 @@
 	private async Task LoadLoanItems()
 	{
 		_loanItems = (await DebtService.GetDebts()).ToList();
+	}
+
+	private void UpdateSelectedCurrency(string value)
+	{
+		_selectedCurrency = value;
 	}
 
 	private void NewLoanItem()
@@ -69,5 +77,4 @@
 	{
 		_selectedDebtItem = null;
 	}
-
 }

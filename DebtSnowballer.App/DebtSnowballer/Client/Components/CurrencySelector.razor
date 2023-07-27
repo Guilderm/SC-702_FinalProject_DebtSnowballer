@@ -1,0 +1,28 @@
+﻿<h3>Select your base currency</h3>
+<p>All loans will be converted to your base currency, all calculations and reports will also be made on this currency.</p>
+<hr>
+
+<select @bind="SelectedCurrency">
+	@foreach (var currency in _currencies)
+	{
+		<option value="@currency">@currency</option>
+	}
+</select>
+<hr>
+<hr>
+
+@code {
+	[Parameter]
+	public string SelectedCurrency { get; set; }
+
+	[Parameter]
+	public EventCallback<string> SelectedCurrencyChanged { get; set; }
+
+	private List<string> _currencies = new List<string> { "USD", "EUR", "GBP" /* add other currencies as needed */ };
+
+	private async Task OnChange(ChangeEventArgs e)
+	{
+		SelectedCurrency = e.Value.ToString();
+		await SelectedCurrencyChanged.InvokeAsync(SelectedCurrency);
+	}
+}
