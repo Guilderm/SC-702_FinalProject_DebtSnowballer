@@ -37,7 +37,7 @@
 		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		_user = authState.User;
 
-		//await LoadUserProfile(_user);
+		await LoadUserProfile(_user);
 		await LoadLoanItems();
 	}
 

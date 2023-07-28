@@ -19,7 +19,7 @@ public class UserProfileController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> GetValidateUserProfile([FromBody] UserProfileDto rawUserProfile)
 	{
-		UserProfileDto validatedUserProfile = await _userProfileManagement.GetValidateUserProfile(rawUserProfile);
+		UserProfileDto validatedUserProfile = await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
 		return Ok(validatedUserProfile);
 	}
 }

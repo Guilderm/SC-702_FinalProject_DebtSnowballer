@@ -18,18 +18,18 @@ public class UserProfileManagement
 		_repository = _unitOfWork.UserProfileRepository;
 	}
 
-	public async Task<UserProfileDto> GetValidateUserProfile(UserProfileDto rawUserProfile)
+	public async Task<UserProfileDto> GetValidateUserProfile(UserProfileDto rawUserProfile, string auth0UserId)
 	{
 		bool changesMade = false;
-		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == rawUserProfile.Auth0UserId);
+		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
 
-		if (userProfileModel.Auth0UserId != rawUserProfile.Auth0UserId)
+		if (userProfileModel == null || userProfileModel.Auth0UserId != rawUserProfile.Auth0UserId)
 		{
 			userProfileModel = _mapper.Map<UserProfile>(rawUserProfile);
 			await _repository.Insert(userProfileModel);
 			changesMade = true;
 		}
-		if (rawUserProfile.LastUpdated > userProfileModel.LastUpdated)
+		else if (rawUserProfile.LastUpdated > userProfileModel.LastUpdated)
 		{
 			_mapper.Map(rawUserProfile, userProfileModel);
 			_repository.Update(userProfileModel);
@@ -39,9 +39,10 @@ public class UserProfileManagement
 		{
 			await _unitOfWork.Save();
 			userProfileModel = await _repository.Get(u => u.Auth0UserId == rawUserProfile.Auth0UserId);
-			}
+		}
 
 		UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(userProfileModel);
 		return userProfileDto;
 	}
-}
+
+	}

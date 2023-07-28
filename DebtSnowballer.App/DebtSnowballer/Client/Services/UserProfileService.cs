@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text.Json;
 using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.Services;
@@ -57,7 +58,7 @@ public class UserProfileService : IUserProfileService
 		UserProfileDto rawProfileDto = new()
 		{
 			Auth0UserId = user.Claims.FirstOrDefault(c =>
-				c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value,
+				c.Type == "sub")?.Value,
 			GivenName = user.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value,
 			FamilyName = user.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value,
 			NickName = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value,
@@ -66,6 +67,10 @@ public class UserProfileService : IUserProfileService
 			Locale = user.Claims.FirstOrDefault(c => c.Type == "Locale")?.Value,
 			CreatedAt = createdAt
 		};
+
+		// Log the contents of rawProfileDto to the console
+		string rawProfileDtoJson = JsonSerializer.Serialize(rawProfileDto);
+		Console.WriteLine($"RawProfileDto: {rawProfileDtoJson}");
 
 		return rawProfileDto;
 	}

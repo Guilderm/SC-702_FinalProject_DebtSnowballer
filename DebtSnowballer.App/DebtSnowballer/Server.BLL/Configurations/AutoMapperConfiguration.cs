@@ -10,5 +10,6 @@ public class AutoMapperConfiguration : Profile
 	{
 		CreateMap<Debt, DebtDto>().ReverseMap();
 		CreateMap<Crud, CrudDto>().ReverseMap();
-	}
+		CreateMap<UserProfile, UserProfileDto>().ReverseMap();
+		}
 }
