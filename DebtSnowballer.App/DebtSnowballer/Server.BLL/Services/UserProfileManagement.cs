@@ -49,17 +49,15 @@ public class UserProfileManagement
 
 	public async Task<bool> UpdateBaseCurrency(string baseCurrency, string auth0UserId)
 	{
-		// Get the user profile from the database
 		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
 
 		if (userProfileModel.Auth0UserId != auth0UserId)
-			// User profile not found
 			return false;
 
-		// Update the base currency
+		if (userProfileModel.BaseCurrency == baseCurrency) return false;
+
 		userProfileModel.BaseCurrency = baseCurrency;
 
-		// Save the changes
 		_repository.Update(userProfileModel);
 		await _unitOfWork.Save();
 
