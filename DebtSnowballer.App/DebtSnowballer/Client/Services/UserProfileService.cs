@@ -41,10 +41,8 @@ public class UserProfileService : IUserProfileService
 			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
 			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
 		}
-		else
-		{
-			Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
-		}
+
+		Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
 	}
 
 

@@ -2,7 +2,7 @@
 <h3>Select your base currency</h3>
 <p>All loans will be converted to your base currency, all calculations and reports will also be made on this currency.</p>
 
-<select @oninput="OnChange" @bind="SelectedCurrency">
+<select @oninput="OnChange" @bind="CurrentBaseCurrency">
 	@foreach (CurrencyInfo currency in _currencies)
 	{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
@@ -13,8 +13,9 @@
 <br>
 
 @code {
+
 	[Parameter]
-	public string SelectedCurrency { get; set; }
+	public string CurrentBaseCurrency { get; set; }
 
 	[Parameter]
 	public EventCallback<string> UpdatedBaseCurrency { get; set; }
@@ -24,10 +25,11 @@
 	private async Task OnChange(ChangeEventArgs e)
 	{
 		string newCurrency = e.Value.ToString();
-		if (newCurrency != SelectedCurrency)
+		if (newCurrency != CurrentBaseCurrency)
 		{
-			SelectedCurrency = newCurrency;
-			await UpdatedBaseCurrency.InvokeAsync(SelectedCurrency);
+			CurrentBaseCurrency = newCurrency;
+			await UpdatedBaseCurrency.InvokeAsync(CurrentBaseCurrency);
 		}
 	}
+
 }

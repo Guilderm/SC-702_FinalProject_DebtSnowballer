@@ -6,8 +6,8 @@ using Server.UIL.Controllers;
 
 public class UserProfileController : BaseController
 {
-	private readonly UserProfileManagement _userProfileManagement;
 	private readonly ILogger<UserProfileController> _logger;
+	private readonly UserProfileManagement _userProfileManagement;
 
 	public UserProfileController(UserProfileManagement userProfileManagement, ILogger<UserProfileController> logger)
 		: base(logger)
@@ -19,9 +19,12 @@ public class UserProfileController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> GetValidateUserProfile([FromBody] UserProfileDto rawUserProfile)
 	{
-		_logger.LogInformation("Entered function 'GetValidateUserProfile' in 'UserProfileController' with HTTP POST request. Input: {@rawUserProfile}", rawUserProfile);
+		_logger.LogInformation(
+			"Entered function 'GetValidateUserProfile' in 'UserProfileController' with HTTP POST request. Input: {@rawUserProfile}",
+			rawUserProfile);
 
-		UserProfileDto validatedUserProfile = await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
+		UserProfileDto validatedUserProfile =
+			await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
 
 		_logger.LogInformation("Outcome of 'GetValidateUserProfile': {@validatedUserProfile}", validatedUserProfile);
 
@@ -31,7 +34,9 @@ public class UserProfileController : BaseController
 	[HttpPut("UpdateBaseCurrency/{baseCurrency}")]
 	public async Task<IActionResult> UpdateBaseCurrency(string baseCurrency)
 	{
-		_logger.LogInformation("Entered function 'UpdateBaseCurrency' in 'UserProfileController' with HTTP PUT request. Input: {baseCurrency}", baseCurrency);
+		_logger.LogInformation(
+			"Entered function 'UpdateBaseCurrency' in 'UserProfileController' with HTTP PUT request. Input: {baseCurrency}",
+			baseCurrency);
 
 		bool isUpdated = await _userProfileManagement.UpdateBaseCurrency(baseCurrency, GetAuth0UserId());
 
