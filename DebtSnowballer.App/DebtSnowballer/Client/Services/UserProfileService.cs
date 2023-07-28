@@ -31,12 +31,22 @@ public class UserProfileService : IUserProfileService
 
 	public async Task UpdateBaseCurrency(string baseCurrency)
 	{
+		Console.WriteLine($"Entered function 'UpdateBaseCurrency' with input: {baseCurrency}");
+
 		var request = new HttpRequestMessage(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{baseCurrency}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
 		if (!response.IsSuccessStatusCode)
+		{
+			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
 			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
+		}
+		else
+		{
+			Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
+		}
 	}
+
 
 	private async Task<UserProfileDto> CreateUserProfileFromClaimsAsync(ClaimsPrincipal user)
 	{

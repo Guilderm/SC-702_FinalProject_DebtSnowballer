@@ -44,6 +44,7 @@
 	private async Task LoadUserProfile(ClaimsPrincipal user)
 	{
 		_userProfile = await UserProfileService.GetUserProfile(user);
+		_selectedCurrency = _userProfile.BaseCurrency;
 	}
 
 	private async Task LoadLoanItems()
@@ -54,8 +55,10 @@
 	private async Task UpdateSelectedCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
+		_selectedCurrency = selectedCurrency;
+		_userProfile.BaseCurrency = selectedCurrency;
 	}
-	
+
 	private void NewLoanItem()
 	{
 		_selectedDebtItem = new DebtDto();
