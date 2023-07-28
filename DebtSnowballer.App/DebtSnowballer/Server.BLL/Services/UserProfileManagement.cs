@@ -35,6 +35,7 @@ public class UserProfileManagement
 			_repository.Update(userProfileModel);
 			changesMade = true;
 		}
+
 		if (changesMade)
 		{
 			await _unitOfWork.Save();
@@ -44,5 +45,4 @@ public class UserProfileManagement
 		UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(userProfileModel);
 		return userProfileDto;
 	}
-
-	}
+}

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using DebtSnowballer.Shared.DTOs;
+﻿using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.BLL.Services;
@@ -19,7 +18,8 @@ public class UserProfileController : BaseController
 	[HttpPost]
 	public async Task<IActionResult> GetValidateUserProfile([FromBody] UserProfileDto rawUserProfile)
 	{
-		UserProfileDto validatedUserProfile = await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
+		UserProfileDto validatedUserProfile =
+			await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
 		return Ok(validatedUserProfile);
 	}
 }

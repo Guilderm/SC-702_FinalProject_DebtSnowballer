@@ -1,5 +1,5 @@
-﻿using DebtSnowballer.Shared.DTOs;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.Services;
 
