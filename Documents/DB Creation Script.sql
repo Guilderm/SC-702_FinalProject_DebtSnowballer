@@ -104,7 +104,7 @@ CREATE TABLE [Debt]
     -- [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [Auth0UserId]    NVARCHAR(125)      NOT NULL,
     [LoanNickName]   NVARCHAR(50)       NOT NULL,
-    [Principal]      DECIMAL(10, 3)     NOT NULL,
+    [RemainingPrincipal]      DECIMAL(10, 3)     NOT NULL,
     [InterestRate]   DECIMAL(5, 5)      NOT NULL,
     [Fees]           DECIMAL(10, 3)     NOT NULL,
     [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
@@ -141,7 +141,7 @@ VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com',
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, LoanNickName, Principal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyCode,
+INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyCode,
                   CardinalOrder)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
        ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),

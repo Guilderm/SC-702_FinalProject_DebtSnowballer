@@ -24,11 +24,14 @@
 
 	private async Task OnChange(ChangeEventArgs e)
 	{
-		string newCurrency = e.Value.ToString();
-		if (newCurrency != CurrentBaseCurrency)
+		if (e.Value != null)
 		{
-			CurrentBaseCurrency = newCurrency;
-			await UpdatedBaseCurrency.InvokeAsync(CurrentBaseCurrency);
+			string newCurrency = e.Value.ToString();
+			if (newCurrency != CurrentBaseCurrency)
+			{
+				CurrentBaseCurrency = newCurrency;
+				await UpdatedBaseCurrency.InvokeAsync(CurrentBaseCurrency);
+			}
 		}
 	}
 

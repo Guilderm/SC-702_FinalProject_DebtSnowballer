@@ -61,7 +61,7 @@ public partial class DebtSnowballerContext : DbContext
 
 			entity.Property(e => e.MonthlyPayment).HasColumnType("decimal(10, 3)");
 
-			entity.Property(e => e.Principal).HasColumnType("decimal(10, 3)");
+			entity.Property(e => e.RemainingPrincipal).HasColumnType("decimal(10, 3)");
 		});
 
 		modelBuilder.Entity<DebtStrategy>(entity =>
@@ -74,13 +74,13 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.StrategyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__Strat__5D16C24D");
+				.HasConstraintName("FK__DebtStrat__Strat__164F3FA9");
 
 			entity.HasOne(d => d.User)
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__UserI__5C229E14");
+				.HasConstraintName("FK__DebtStrat__UserI__155B1B70");
 		});
 
 		modelBuilder.Entity<MonthlyExtraPayment>(entity =>
@@ -91,7 +91,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__63C3BFDC");
+				.HasConstraintName("FK__MonthlyEx__UserI__1CFC3D38");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -102,7 +102,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__66A02C87");
+				.HasConstraintName("FK__OnetimeEx__UserI__1FD8A9E3");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -121,7 +121,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__5669C4BE");
+				.HasConstraintName("FK__SessionLo__UserI__0FA2421A");
 		});
 
 		modelBuilder.Entity<StrategyType>(entity =>
@@ -135,7 +135,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("UserProfile");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F429001B90728")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F4290A9FB0AD1")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(75);

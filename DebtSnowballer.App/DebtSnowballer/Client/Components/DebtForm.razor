@@ -12,14 +12,46 @@
 				<EditForm Model="DebtItem" OnValidSubmit="SaveLoanItem" @key="DebtItem">
 					<DataAnnotationsValidator/>
 					<ValidationSummary/>
-					<!-- Add your form fields here -->
-					<!-- Example: -->
 					<div class="md-form mb-5">
 						<i class="fas fa-tag prefix grey-text"></i>
 						<InputText id="LoanNickName" class="form-control validate" @bind-Value="DebtItem.LoanNickName"/>
 						<label data-error="wrong" data-success="right" for="LoanNickName">Loan Nickname</label>
 					</div>
-					<!-- Add the rest of your form fields in the same way -->
+					<div class="md-form mb-5">
+						<i class="fas fa-dollar-sign prefix grey-text"></i>
+						<InputNumber id="Principal" class="form-control validate" @bind-Value="DebtItem.RemainingPrincipal"/>
+						<label data-error="wrong" data-success="right" for="Principal">Principal</label>
+					</div>
+
+					<div class="md-form mb-5">
+						<i class="fas fa-percent prefix grey-text"></i>
+						<InputNumber id="InterestRate" class="form-control validate" @bind-Value="DebtItem.InterestRate"/>
+						<label data-error="wrong" data-success="right" for="InterestRate">Interest Rate</label>
+					</div>
+
+					<div class="md-form mb-5">
+						<i class="fas fa-dollar-sign prefix grey-text"></i>
+						<InputNumber id="Fees" class="form-control validate" @bind-Value="DebtItem.Fees"/>
+						<label data-error="wrong" data-success="right" for="Fees">Fees</label>
+					</div>
+
+					<div class="md-form mb-5">
+						<i class="fas fa-dollar-sign prefix grey-text"></i>
+						<InputNumber id="MonthlyPayment" class="form-control validate" @bind-Value="DebtItem.MonthlyPayment"/>
+						<label data-error="wrong" data-success="right" for="MonthlyPayment">Monthly Payment</label>
+					</div>
+
+					<div class="md-form mb-5">
+						<i class="fas fa-calendar-day prefix grey-text"></i>
+						<InputNumber id="RemainingTerm" class="form-control validate" @bind-Value="DebtItem.RemainingTerm"/>
+						<label data-error="wrong" data-success="right" for="RemainingTerm">Remaining Term</label>
+					</div>
+
+					<div class="md-form mb-5">
+						<i class="fas fa-money-bill-wave prefix grey-text"></i>
+						<InputText id="CurrencyCode" class="form-control validate" @bind-Value="DebtItem.CurrencyCode"/>
+						<label data-error="wrong" data-success="right" for="CurrencyCode">Currency Code</label>
+					</div>
 				</EditForm>
 			</div>
 			<div class="modal-footer d-flex justify-content-center">
