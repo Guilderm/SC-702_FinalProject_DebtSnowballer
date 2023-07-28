@@ -28,11 +28,15 @@ end
 CREATE TABLE [UserProfile]
 (
     [Id]           INT IDENTITY (1,1) NOT NULL,
-    [Auth0UserId]  NVARCHAR(125)      NOT NULL UNIQUE,        -- Make this column non-nullable
-    [FirstName]    NVARCHAR(50)       NULL,
-    [LastName]     NVARCHAR(50)       NULL,
+    [Auth0UserId]  NVARCHAR(75)       NOT NULL UNIQUE,
+    [GivenName]    NVARCHAR(50)       NULL,
+    [FamilyName]   NVARCHAR(50)       NULL,
+    [NickName]     NVARCHAR(50)       NULL,
+    [FullName]     NVARCHAR(100)      NULL,
     [Email]        NVARCHAR(256)      NULL,
-    [BaseCurrency] NVARCHAR(3)         NOT NULL     DEFAULT 'USD', -- Currency will be defined using ISO 4217
+    [Picture]      NVARCHAR(300)      NULL,
+    [Locale]       NVARCHAR(10)       NULL,
+    [BaseCurrency] NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [UserTypeId]   INT                NOT NULL DEFAULT 1,
     [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED ([Id] ASC)
@@ -104,9 +108,9 @@ CREATE TABLE [Debt]
     [Fees]           DECIMAL(10, 3)     NOT NULL,
     [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
     [RemainingTerm]  INT                NOT NULL,
-    [CurrencyCode]  NVARCHAR(3)         NOT NULL     DEFAULT 'USD', -- Currency will be defined using ISO 4217
-    [CardinalOrder]  INT                NOT NULL, -- The order in which the loan should be paid off
-    [CreatedAt]      DATETIME2          NOT NULL                                        DEFAULT GETDATE(),
+    [CurrencyCode]   NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
+    [CardinalOrder]  INT                NOT NULL,               -- The order in which the loan should be paid off
+    [CreatedAt]      DATETIME2          NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -130,7 +134,7 @@ CREATE TABLE [OnetimeExtraPayments]
 
 
 -- Insert data into UserProfile
-INSERT INTO UserProfile (auth0UserId, FirstName, LastName, Email, UserTypeId)
+INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserTypeId)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com', 1),
        ('auth0|60d7b7f29b14170068e32450', 'Jane', 'Doe', 'jane.doe@example.com', 2),
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
