@@ -5,8 +5,8 @@ namespace DebtSnowballer.Client.Services;
 
 public class UserProfileService : IUserProfileService
 {
-	private readonly HttpClient _httpClient;
 	private readonly string _apiurl;
+	private readonly HttpClient _httpClient;
 
 	public UserProfileService(HttpClient httpClient, IConfiguration configuration)
 	{

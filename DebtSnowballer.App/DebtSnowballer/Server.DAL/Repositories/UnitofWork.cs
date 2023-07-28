@@ -11,8 +11,8 @@ public class UnitOfWork : IUnitOfWork
 	private readonly ILogger<UnitOfWork> _logger;
 	private readonly ILoggerFactory _loggerFactory;
 	private IGenericRepository<Crud> _cruds;
-	private IGenericRepository<UserProfile> _userProfile;
 	private IGenericRepository<Debt> _debts;
+	private IGenericRepository<UserProfile> _userProfile;
 
 	public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 	{

@@ -1,83 +1,68 @@
 ﻿using DebtSnowballer.Shared.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.BLL.Services;
 
-namespace Server.UIL.Controllers;
-
-[Authorize]
-[ApiController]
-[Route("api/[controller]")]
-public class DebtController : ControllerBase
+namespace Server.UIL.Controllers
 {
-	private readonly DebtManagement _debtManagement;
-	private readonly ILogger<DebtController> _logger;
-
-	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
+	public class DebtController : BaseController
 	{
-		_debtManagement = debtManagement;
-		_logger = logger;
-	}
+		private readonly DebtManagement _debtManagement;
 
-	[HttpPost]
-	public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
-	{
-		var auth0UserId = GetAuth0UserId();
+		public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
+			: base(logger)
+		{
+			_debtManagement = debtManagement;
+		}
 
-		DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
+		[HttpPost]
+		public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
+		{
+			var auth0UserId = GetAuth0UserId();
 
-		return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
-	}
+			DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
 
-	[HttpPut("{id:int}")]
-	public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
-	{
-		var auth0UserId = GetAuth0UserId();
+			return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
+		}
 
-		DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
+		[HttpPut("{id:int}")]
+		public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
+		{
+			var auth0UserId = GetAuth0UserId();
 
-		return Ok(updatedDebt);
-	}
+			DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
 
-	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> Delete(int id)
-	{
-		var auth0UserId = GetAuth0UserId();
+			return Ok(updatedDebt);
+		}
 
-		await _debtManagement.DeleteDebt(id, auth0UserId);
+		[HttpDelete("{id:int}")]
+		public async Task<IActionResult> Delete(int id)
+		{
+			var auth0UserId = GetAuth0UserId();
 
-		return NoContent();
-	}
+			await _debtManagement.DeleteDebt(id, auth0UserId);
 
-	[HttpGet]
-	public async Task<IActionResult> Get()
-	{
-		var auth0UserId = GetAuth0UserId();
+			return NoContent();
+		}
 
-		IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
+		[HttpGet]
+		public async Task<IActionResult> Get()
+		{
+			var auth0UserId = GetAuth0UserId();
 
-		return Ok(debts);
-	}
+			IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
 
-	[HttpGet("{id:int}")]
-	public async Task<IActionResult> Get(int id)
-	{
-		var auth0UserId = GetAuth0UserId();
+			return Ok(debts);
+		}
 
-		DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
+		[HttpGet("{id:int}")]
+		public async Task<IActionResult> Get(int id)
+		{
+			var auth0UserId = GetAuth0UserId();
 
-		return Ok(debt);
-	}
+			DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
 
-	private string GetAuth0UserId()
-	{
-		var auth0UserId = User.Claims
-			.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-			?.Value;
-
-		if (string.IsNullOrEmpty(auth0UserId)) _logger.LogError("Auth0 User ID claim is null or empty.");
-
-		return auth0UserId;
+			return Ok(debt);
+		}
 	}
 }

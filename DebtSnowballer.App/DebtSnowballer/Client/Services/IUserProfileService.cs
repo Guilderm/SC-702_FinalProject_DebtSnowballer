@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-using DebtSnowballer.Shared.DTOs;
+﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.Services
+namespace DebtSnowballer.Client.Services;
+
+public interface IUserProfileService
 {
-	public interface IUserProfileService
-	{
-		Task UpdateBaseCurrency(string baseCurrency);
-		Task<UserProfileDto> GetUserProfile();
-	}
+	Task UpdateBaseCurrency(string baseCurrency);
+	Task<UserProfileDto> GetUserProfile();
 }

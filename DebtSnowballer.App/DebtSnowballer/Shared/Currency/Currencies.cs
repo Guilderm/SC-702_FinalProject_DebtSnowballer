@@ -4,7 +4,7 @@ public static class Currencies
 {
 	public static List<CurrencyInfo> All { get; } = new()
 	{
-		new()
+		new CurrencyInfo
 		{
 			Name = "United States dollar",
 			AlphaCode = "USD",
@@ -12,7 +12,7 @@ public static class Currencies
 			Symbol = "$",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Euro",
 			AlphaCode = "EUR",
@@ -20,7 +20,7 @@ public static class Currencies
 			Symbol = "€",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Japanese yen",
 			AlphaCode = "JPY",
@@ -28,7 +28,7 @@ public static class Currencies
 			Symbol = "¥",
 			Precision = 0
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Pound sterling",
 			AlphaCode = "GBP",
@@ -36,7 +36,7 @@ public static class Currencies
 			Symbol = "£",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Australian dollar",
 			AlphaCode = "AUD",
@@ -44,7 +44,7 @@ public static class Currencies
 			Symbol = "$",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Canadian dollar",
 			AlphaCode = "CAD",
@@ -52,7 +52,7 @@ public static class Currencies
 			Symbol = "$",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Swiss franc",
 			AlphaCode = "CHF",
@@ -60,7 +60,7 @@ public static class Currencies
 			Symbol = "Fr",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Renminbi (Chinese yuan)",
 			AlphaCode = "CNY",
@@ -68,7 +68,7 @@ public static class Currencies
 			Symbol = "¥",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Indian rupee",
 			AlphaCode = "INR",
@@ -76,7 +76,7 @@ public static class Currencies
 			Symbol = "₹",
 			Precision = 2
 		},
-		new()
+		new CurrencyInfo
 		{
 			Name = "Costa Rican colón",
 			AlphaCode = "CRC",

@@ -10,18 +10,18 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<CurrencySelector SelectedCurrency="@_selectedCurrency" SelectedCurrencyChanged="UpdateSelectedCurrency" />
+<CurrencySelector SelectedCurrency="@_selectedCurrency" SelectedCurrencyChanged="UpdateSelectedCurrency"/>
 
-<DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem" />
+<DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 
 <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
 @if (_selectedDebtItem != null)
-	{
+{
 	<h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
 
-	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" OnCancel="CancelEdit" />
-	}
+	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" OnCancel="CancelEdit"/>
+}
 
 @code {
 	private List<DebtDto> _loanItems;
@@ -30,59 +30,60 @@
 	private UserProfileDto _userProfile;
 
 	protected override async Task OnInitializedAsync()
-		{
+	{
 		await LoadUserProfile();
 		await LoadLoanItems();
-		}
+	}
 
 	private async Task LoadUserProfile()
 	{
 		_userProfile = await UserProfileService.GetUserProfile(); // Call the appropriate method to get the user profile
 	}
-	
+
 	private async Task LoadLoanItems()
-		{
+	{
 		_loanItems = (await DebtService.GetDebts()).ToList();
-		}
+	}
 
 	private void UpdateSelectedCurrency(string value)
-		{
+	{
 		_selectedCurrency = value;
-		}
+	}
 
 	private void NewLoanItem()
-		{
+	{
 		_selectedDebtItem = new DebtDto();
-		}
+	}
 
 	private async Task LoadLoanItem(int id)
-		{
+	{
 		_selectedDebtItem = await DebtService.GetDebtById(id);
-		}
+	}
 
 	private async Task DeleteLoanItem(int id)
-		{
+	{
 		await DebtService.DeleteDebt(id);
 		await LoadLoanItems();
-		}
+	}
 
 	private async Task SaveLoanItem(DebtDto debtItem)
-		{
+	{
 		if (debtItem.Id == 0)
-			{
+		{
 			await DebtService.AddDebt(debtItem);
-			}
+		}
 		else
-			{
+		{
 			await DebtService.UpdateDebt(debtItem);
-			}
+		}
 
 		await LoadLoanItems();
 		_selectedDebtItem = null;
-		}
+	}
 
 	private void CancelEdit()
-		{
+	{
 		_selectedDebtItem = null;
-		}
+	}
+
 }
