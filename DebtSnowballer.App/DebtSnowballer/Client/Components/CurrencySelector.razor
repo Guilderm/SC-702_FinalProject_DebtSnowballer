@@ -1,9 +1,8 @@
 ﻿@using DebtSnowballer.Shared.Currency
 <h3>Select your base currency</h3>
 <p>All loans will be converted to your base currency, all calculations and reports will also be made on this currency.</p>
-<br>
 
-<select  @oninput="OnChange">
+<select @oninput="OnChange" @bind="SelectedCurrency">
 	@foreach (CurrencyInfo currency in _currencies)
 	{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
@@ -18,7 +17,7 @@
 	public string SelectedCurrency { get; set; }
 
 	[Parameter]
-	public EventCallback<string> SelectedCurrencyChanged { get; set; }
+	public EventCallback<string> UpdatedBaseCurrency { get; set; }
 
 	private List<CurrencyInfo> _currencies = Currencies.All;
 
@@ -28,7 +27,7 @@
 		if (newCurrency != SelectedCurrency)
 		{
 			SelectedCurrency = newCurrency;
-			await SelectedCurrencyChanged.InvokeAsync(SelectedCurrency);
+			await UpdatedBaseCurrency.InvokeAsync(SelectedCurrency);
 		}
 	}
 }

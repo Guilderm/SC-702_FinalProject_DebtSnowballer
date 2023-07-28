@@ -11,11 +11,11 @@
 <PageTitle>Debt Management</PageTitle>
 
 <h3>Create a strategy to become debt free</h3>
+<br>
+<CurrencySelector SelectedCurrency="@_currentBaseCurrency" UpdatedBaseCurrency="UpdateSelectedCurrency"/>
 
-<CurrencySelector SelectedCurrency="@_selectedCurrency" SelectedCurrencyChanged="UpdateSelectedCurrency"/>
-
+<br>
 <DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
-
 <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
 @if (_selectedDebtItem != null)
@@ -28,7 +28,7 @@
 @code {
 	private List<DebtDto> _loanItems;
 	private DebtDto _selectedDebtItem;
-	private string _selectedCurrency;
+	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
 	private ClaimsPrincipal _user;
 
@@ -44,7 +44,7 @@
 	private async Task LoadUserProfile(ClaimsPrincipal user)
 	{
 		_userProfile = await UserProfileService.GetUserProfile(user);
-		_selectedCurrency = _userProfile.BaseCurrency;
+		_currentBaseCurrency = _userProfile.BaseCurrency;
 	}
 
 	private async Task LoadLoanItems()
@@ -55,7 +55,7 @@
 	private async Task UpdateSelectedCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
-		_selectedCurrency = selectedCurrency;
+		_currentBaseCurrency = selectedCurrency;
 		_userProfile.BaseCurrency = selectedCurrency;
 	}
 
