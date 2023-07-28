@@ -31,34 +31,20 @@ public class UserProfileService : IUserProfileService
 
 	public async Task UpdateBaseCurrency(string baseCurrency)
 	{
-		UserProfileDto userProfile = await GetUserProfile();
-		userProfile.BaseCurrency = baseCurrency;
-		await UpdateUserProfile(userProfile);
-	}
+		var request = new HttpRequestMessage(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{baseCurrency}");
+		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
-	public async Task<UserProfileDto> GetUserProfile()
-	{
-		UserProfileDto userProfile = await _httpClient.GetFromJsonAsync<UserProfileDto>($"{_apiurl}");
-		return userProfile;
-	}
-
-	private async Task UpdateUserProfile(UserProfileDto userProfile)
-	{
-		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_apiurl}/{userProfile}", userProfile);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
 	}
 
 	private async Task<UserProfileDto> CreateUserProfileFromClaimsAsync(ClaimsPrincipal user)
 	{
-		foreach (Claim claim in user.Claims) Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-
 		DateTime.TryParse(user.Claims.FirstOrDefault(c => c.Type == "updated_at")?.Value, out DateTime createdAt);
 
 		UserProfileDto rawProfileDto = new()
 		{
-			Auth0UserId = user.Claims.FirstOrDefault(c =>
-				c.Type == "sub")?.Value,
+			Auth0UserId = user.Claims.FirstOrDefault(c => c.Type == "sub")?.Value,
 			GivenName = user.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value,
 			FamilyName = user.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value,
 			NickName = user.Claims.FirstOrDefault(c => c.Type == "nickname")?.Value,

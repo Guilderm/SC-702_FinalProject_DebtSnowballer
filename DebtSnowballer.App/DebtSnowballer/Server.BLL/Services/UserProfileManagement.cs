@@ -23,8 +23,9 @@ public class UserProfileManagement
 		bool changesMade = false;
 		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
 
-		if (userProfileModel == null || userProfileModel.Auth0UserId != rawUserProfile.Auth0UserId)
+		if (userProfileModel.Auth0UserId != rawUserProfile.Auth0UserId)
 		{
+			userProfileModel.Auth0UserId = rawUserProfile.Auth0UserId;
 			userProfileModel = _mapper.Map<UserProfile>(rawUserProfile);
 			await _repository.Insert(userProfileModel);
 			changesMade = true;
@@ -44,5 +45,24 @@ public class UserProfileManagement
 
 		UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(userProfileModel);
 		return userProfileDto;
+	}
+
+	public async Task<bool> UpdateBaseCurrency(string baseCurrency, string auth0UserId)
+	{
+		// Get the user profile from the database
+		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+
+		if (userProfileModel.Auth0UserId != auth0UserId)
+			// User profile not found
+			return false;
+
+		// Update the base currency
+		userProfileModel.BaseCurrency = baseCurrency;
+
+		// Save the changes
+		_repository.Update(userProfileModel);
+		await _unitOfWork.Save();
+
+		return true;
 	}
 }

@@ -22,4 +22,14 @@ public class UserProfileController : BaseController
 			await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
 		return Ok(validatedUserProfile);
 	}
+
+	[HttpPut("UpdateBaseCurrency/{baseCurrency}")]
+	public async Task<IActionResult> UpdateBaseCurrency(string baseCurrency)
+	{
+		bool isUpdated = await _userProfileManagement.UpdateBaseCurrency(baseCurrency, GetAuth0UserId());
+
+		if (isUpdated) return Ok();
+
+		return StatusCode(500, "An error occurred while updating the base currency.");
+	}
 }

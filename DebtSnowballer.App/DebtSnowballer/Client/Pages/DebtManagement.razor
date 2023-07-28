@@ -51,11 +51,11 @@
 		_loanItems = (await DebtService.GetDebts()).ToList();
 	}
 
-	private void UpdateSelectedCurrency(string value)
+	private async Task UpdateSelectedCurrency(string selectedCurrency)
 	{
-		_selectedCurrency = value;
+		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 	}
-
+	
 	private void NewLoanItem()
 	{
 		_selectedDebtItem = new DebtDto();
