@@ -39,6 +39,7 @@ CREATE TABLE [UserProfile]
     [BaseCurrency] NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [UserTypeId]   INT                NOT NULL DEFAULT 1,
     [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [LastUpdated]  DATETIME2          NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

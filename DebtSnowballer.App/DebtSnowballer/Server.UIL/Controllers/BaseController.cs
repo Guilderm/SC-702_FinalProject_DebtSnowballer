@@ -9,11 +9,11 @@ namespace Server.UIL.Controllers;
 [Route("api/[controller]")]
 public abstract class BaseController : ControllerBase
 {
-	protected readonly ILogger _logger;
+	protected readonly ILogger Logger;
 
 	protected BaseController(ILogger logger)
 	{
-		_logger = logger;
+		Logger = logger;
 	}
 
 	protected string GetAuth0UserId()
@@ -23,7 +23,7 @@ public abstract class BaseController : ControllerBase
 			?.Value;
 
 		if (string.IsNullOrEmpty(auth0UserId))
-			_logger.LogError("Auth0 User ID claim is null or empty.");
+			Logger.LogError("Auth0 User ID claim is null or empty.");
 
 		return auth0UserId;
 	}

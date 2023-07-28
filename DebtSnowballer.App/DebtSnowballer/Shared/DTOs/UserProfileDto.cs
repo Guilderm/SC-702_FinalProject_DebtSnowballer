@@ -14,4 +14,5 @@ public class UserProfileDto
 	public string BaseCurrency { get; set; }
 	public int UserTypeId { get; set; }
 	public DateTime CreatedAt { get; set; }
-}
+	public DateTime LastUpdated { get; set; }
+	}

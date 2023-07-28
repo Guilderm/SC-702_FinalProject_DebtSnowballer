@@ -22,6 +22,7 @@ public class UserProfile
 	public string BaseCurrency { get; set; } = null!;
 	public int UserTypeId { get; set; }
 	public DateTime CreatedAt { get; set; }
+	public DateTime LastUpdated { get; set; }
 
 	public virtual ICollection<DebtStrategy> DebtStrategies { get; set; }
 	public virtual ICollection<MonthlyExtraPayment> MonthlyExtraPayments { get; set; }

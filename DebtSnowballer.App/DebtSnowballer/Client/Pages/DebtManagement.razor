@@ -2,6 +2,8 @@
 @page "/DebtManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
 @attribute [Authorize]
@@ -28,16 +30,20 @@
 	private DebtDto _selectedDebtItem;
 	private string _selectedCurrency;
 	private UserProfileDto _userProfile;
+	private ClaimsPrincipal _user;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await LoadUserProfile();
+		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		_user = authState.User;
+
+		//await LoadUserProfile(_user);
 		await LoadLoanItems();
 	}
 
-	private async Task LoadUserProfile()
+	private async Task LoadUserProfile(ClaimsPrincipal user)
 	{
-		_userProfile = await UserProfileService.GetUserProfile(); // Call the appropriate method to get the user profile
+		_userProfile = await UserProfileService.GetUserProfile(user);
 	}
 
 	private async Task LoadLoanItems()
