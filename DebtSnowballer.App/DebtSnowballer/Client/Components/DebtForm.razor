@@ -6,22 +6,51 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@(DebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h5>
-                <button type="button" class="btn-close" ></button>
+                <button type="button" class="btn-close" @onclick="CancelEdit"></button>
             </div>
             <div class="modal-body">
                 <EditForm Model="@DebtItem" OnValidSubmit="HandleValidSubmit">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
-                    <InputNumber id="principal" @bind-Value="DebtItem.RemainingPrincipal" placeholder="Principal" />
-                    <InputNumber id="interestRate" @bind-Value="DebtItem.InterestRate" placeholder="Interest Rate" />
-                    <InputNumber id="fees" @bind-Value="DebtItem.Fees" placeholder="Fees" />
-                    <InputNumber id="monthlyPayment" @bind-Value="DebtItem.MonthlyPayment" placeholder="Monthly Payment" />
-                    <InputNumber id="remainingTerm" @bind-Value="DebtItem.RemainingTerm" placeholder="Remaining Term" />
-                    <InputText id="currency" @bind-Value="DebtItem.CurrencyCode" placeholder="Currency" />
+                    <div class="form-group">
+                        <label for="LoanNickName">Loan NickName</label>
+	                    <InputText id="LoanNickName" @bind-Value="DebtItem.LoanNickName" class="form-control" placeholder="Loan NickName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="RemainingPrincipal">Remaining Principal</label>
+                        <InputNumber id="RemainingPrincipal" @bind-Value="DebtItem.RemainingPrincipal" class="form-control" placeholder="Remaining Principal" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interestRate">Interest Rate</label>
+                        <InputNumber id="interestRate" @bind-Value="DebtItem.InterestRate" class="form-control" placeholder="Interest Rate" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fees">Fees</label>
+                        <InputNumber id="fees" @bind-Value="DebtItem.Fees" class="form-control" placeholder="Fees" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthlyPayment">Monthly Payment</label>
+                        <InputNumber id="monthlyPayment" @bind-Value="DebtItem.MonthlyPayment" class="form-control" placeholder="Monthly Payment" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remainingTerm">Remaining Term</label>
+                        <InputNumber id="remainingTerm" @bind-Value="DebtItem.RemainingTerm" class="form-control" placeholder="Remaining Term" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <InputText id="currency" @bind-Value="DebtItem.CurrencyCode" class="form-control" placeholder="Currency" />
+                    </div>
+
 
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="CancelEdit">Cancel</button>
                 </EditForm>
             </div>
         </div>
@@ -42,7 +71,7 @@
     public bool Visible { get; set; }
 
     private async Task HandleValidSubmit()
-    {
+        {
         await OnSave.InvokeAsync(DebtItem);
-    }
+        }
 }
