@@ -23,10 +23,9 @@ public class UserProfileManagement
 		bool changesMade = false;
 		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
 
-		if (userProfileModel.Auth0UserId != rawUserProfile.Auth0UserId)
+		if (userProfileModel == null)
 		{
-			userProfileModel.Auth0UserId = rawUserProfile.Auth0UserId;
-			userProfileModel = _mapper.Map<UserProfile>(rawUserProfile);
+			userProfileModel = _mapper.Map(rawUserProfile, userProfileModel);
 			await _repository.Insert(userProfileModel);
 			changesMade = true;
 		}
