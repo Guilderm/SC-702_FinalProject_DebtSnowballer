@@ -20,9 +20,7 @@
 
 @if (_selectedDebtItem != null)
 {
-	<h3>@(_selectedDebtItem.Id == 0 ? "Add Loan" : "Edit Loan")</h3>
-
-	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" OnCancel="CancelEdit"/>
+	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" CancelEdit="CancelEdit" Visible="@(_selectedDebtItem != null)" />
 }
 
 @code {
