@@ -33,7 +33,7 @@ public class UserProfileService : IUserProfileService
 	{
 		Console.WriteLine($"Entered function 'UpdateBaseCurrency' with input: {baseCurrency}");
 
-		var request = new HttpRequestMessage(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{baseCurrency}");
+		HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{baseCurrency}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
 		if (!response.IsSuccessStatusCode)
