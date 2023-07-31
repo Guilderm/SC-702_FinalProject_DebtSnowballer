@@ -1,7 +1,6 @@
 ﻿@page "/Debt"
 @page "/DebtManagement"
 @using DebtSnowballer.Shared.DTOs
-@using System.Security.Claims
 @using DebtSnowballer.Client.Services
 @using DebtSnowballer.Client.Components.DebtManagement
 
@@ -14,18 +13,18 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<CurrencySelector CurrentBaseCurrency="@_currentBaseCurrency" UpdatedBaseCurrency="UpdateBaseCurrency"/>
+<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
 <DebtTable Debts="_debts" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt"/>
 
 <DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+
 
 @code {
 	private List<DebtDto> _debts;
 	private DebtDto _selectedDebt;
 	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
-	private ClaimsPrincipal _user;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -35,12 +34,6 @@
 		_currentBaseCurrency = _userProfile.BaseCurrency;
 
 		await LoadDebts();
-	}
-
-	private async Task LoadUserProfile(ClaimsPrincipal user)
-	{
-		_userProfile = await UserProfileService.GetUserProfile(user);
-		_currentBaseCurrency = _userProfile.BaseCurrency;
 	}
 
 	private async Task LoadDebts()

@@ -1,40 +1,23 @@
 ﻿@using DebtSnowballer.Shared.Currency
-<br>
-<br>
 
-<h3>Select your base currency</h3>
-<p>All loans will be converted to your base currency, all calculations and reports will also be made on this currency.</p>
 
-<select @oninput="OnChange" @bind="CurrentBaseCurrency">
-	@foreach (CurrencyInfo currency in _currencies)
+<select @onchange="OnChange" value="@UserCurrency">
+	@foreach (CurrencyInfo currency in Currencies.All)
 	{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
 	}
 </select>
 
-<br>
-
 @code {
 
 	[Parameter]
-	public string CurrentBaseCurrency { get; set; }
+	public string UserCurrency { get; set; }
 
 	[Parameter]
 	public EventCallback<string> UpdatedBaseCurrency { get; set; }
 
-	private List<CurrencyInfo> _currencies = Currencies.All;
-
-	private async Task OnChange(ChangeEventArgs e)
+	private async Task OnChange(ChangeEventArgs newCurrency)
 	{
-		if (e.Value != null)
-		{
-			string newCurrency = e.Value.ToString();
-			if (newCurrency != CurrentBaseCurrency)
-			{
-				CurrentBaseCurrency = newCurrency;
-				await UpdatedBaseCurrency.InvokeAsync(CurrentBaseCurrency);
-			}
-		}
+		await UpdatedBaseCurrency.InvokeAsync(newCurrency.Value.ToString());
 	}
-
 }

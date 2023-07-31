@@ -1,0 +1,16 @@
+﻿@using DebtSnowballer.Client.Components.DebtManagement
+
+<h3>Select your base currency</h3>
+<p>All loans will be converted to your base currency. All calculations and reports will also be made using this currency.</p>
+<br>
+<CurrencySelector UserCurrency="@UserCurrency" UpdatedBaseCurrency="UpdateBaseCurrency"/>
+<br>
+<br>
+
+@code {
+	[Parameter]
+	public string UserCurrency { get; set; }
+
+	[Parameter]
+	public EventCallback<string> UpdateBaseCurrency { get; set; }
+}

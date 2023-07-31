@@ -18,7 +18,7 @@ else
 			<th>Fees</th>
 			<th>Monthly Payment</th>
 			<th>Remaining Term</th>
-
+				<th>Currency</th>
 			<th>Cardinal Order</th>
 			<th>Actions</th>
 		</tr>
@@ -32,7 +32,8 @@ else
 				<td>@debt.InterestRate</td>
 				<td>@debt.Fees</td>
 				<td>@debt.MonthlyPayment</td>
-				<td>@debt.RemainingTermInMonths</td>
+					<td>@debt.RemainingTermInMonths</td>
+					<td>@debt.CurrencyCode</td>
 				<td>@debt.CardinalOrder</td>
 				<td>
 					<button class="btn btn-primary" @onclick="() => EditDebt.InvokeAsync(debt.Id)">Edit</button>
