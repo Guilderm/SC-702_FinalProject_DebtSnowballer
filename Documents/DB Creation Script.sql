@@ -132,7 +132,14 @@ CREATE TABLE [OnetimeExtraPayments]
     [Date]   DATETIME2          NOT NULL,
     CONSTRAINT [PK_OnetimeExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
-
+-- Currency will be defined using ISO 4217
+CREATE TABLE ExchangeRates (
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    BaseCurrency VARCHAR(3) NOT NULL,
+    TargetCurrency VARCHAR(3) NOT NULL,
+    ExchangeRate DECIMAL(10, 4) NOT NULL,
+    LastUpdated TIMESTAMP NOT NULL
+);
 
 -- Insert data into UserProfile
 INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserTypeId)

@@ -1,0 +1,21 @@
+﻿@using DebtSnowballer.Shared.DTOs
+
+@if (Debts != null)
+{
+	<div class="summary">
+		<p>
+			<strong>Total Amount Owed:</strong> @TotalAmountOwed.ToString("C")
+		</p>
+		<p>
+			<strong>Total Monthly Payment:</strong> @TotalMonthlyPayment.ToString("C")
+		</p>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public List<DebtDto> Debts { get; set; }
+
+	private decimal TotalAmountOwed => Debts.Sum(debt => debt.RemainingPrincipal);
+	private decimal TotalMonthlyPayment => Debts.Sum(debt => debt.MonthlyPayment);
+}

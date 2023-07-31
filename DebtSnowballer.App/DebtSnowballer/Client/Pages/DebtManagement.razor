@@ -19,6 +19,8 @@
 
 <DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
+<DebtSummary Debts="_debts" />
+
 
 @code {
 	private List<DebtDto> _debts;
