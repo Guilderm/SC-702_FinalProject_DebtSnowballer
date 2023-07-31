@@ -1,4 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Shared.Currency
 @if (Debt != null)
 {
 	<div class="modal" style="display: block">
@@ -45,9 +46,14 @@
 
 						<div class="form-group">
 							<label for="currency">Currency</label>
-							<CurrencySelector UserCurrency="@Debt.CurrencyCode" />
+							<InputSelect id="currency" @bind-Value="Debt.CurrencyCode" class="form-control">
+								@foreach (CurrencyInfo currency in Currencies.All)
+								{
+									<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
+								}
+							</InputSelect>
 						</div>
-						
+
 						<button type="submit" class="btn btn-primary">Save</button>
 						<button type="button" class="btn btn-danger" @onclick="OnCancel">Cancel</button>
 					</EditForm>
@@ -58,6 +64,16 @@
 }
 
 @code {
+
+	private void UpdateCurrency(string newCurrency)
+	{
+		Debt.CurrencyCode = newCurrency;
+	}
+
+	private void UpdateCurrency(ChangeEventArgs e)
+	{
+		Debt.CurrencyCode = e.Value.ToString();
+	}
 
 	[Parameter]
 	public DebtDto Debt { get; set; }
@@ -77,4 +93,5 @@
 	{
 		Debt.CurrencyCode = newCurrencyCode;
 	}
+
 }
