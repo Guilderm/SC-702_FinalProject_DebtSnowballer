@@ -1,6 +1,9 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using Microsoft.AspNetCore.Components.Forms
 
+@if (DebtItem != null)
+{
+	
 <div class="modal" tabindex="-1" style="display: @(Visible ? "block" : "none");">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -56,6 +59,7 @@
         </div>
     </div>
 </div>
+}
 
 @code {
     [Parameter]

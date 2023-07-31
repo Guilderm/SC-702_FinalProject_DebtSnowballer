@@ -7,61 +7,61 @@ namespace Server.UIL.Controllers;
 
 public class DebtController : BaseController
 {
-	private readonly DebtManagement _debtManagement;
+    private readonly DebtManagement _debtManagement;
 
-	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
-		: base(logger)
-	{
-		_debtManagement = debtManagement;
-	}
+    public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
+        : base(logger)
+    {
+        _debtManagement = debtManagement;
+    }
 
-	[HttpPost]
-	public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
-	{
-		var auth0UserId = GetAuth0UserId();
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
+    {
+        var auth0UserId = GetAuth0UserId();
 
-		DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
+        DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
 
-		return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
-	}
+        return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
+    }
 
-	[HttpPut("{id:int}")]
-	public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
-	{
-		var auth0UserId = GetAuth0UserId();
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
+    {
+        var auth0UserId = GetAuth0UserId();
 
-		DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
+        DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
 
-		return Ok(updatedDebt);
-	}
+        return Ok(updatedDebt);
+    }
 
-	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> Delete(int id)
-	{
-		var auth0UserId = GetAuth0UserId();
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var auth0UserId = GetAuth0UserId();
 
-		await _debtManagement.DeleteDebt(id, auth0UserId);
+        await _debtManagement.DeleteDebt(id, auth0UserId);
 
-		return NoContent();
-	}
+        return NoContent();
+    }
 
-	[HttpGet]
-	public async Task<IActionResult> Get()
-	{
-		var auth0UserId = GetAuth0UserId();
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var auth0UserId = GetAuth0UserId();
 
-		IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
+        IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
 
-		return Ok(debts);
-	}
+        return Ok(debts);
+    }
 
-	[HttpGet("{id:int}")]
-	public async Task<IActionResult> Get(int id)
-	{
-		var auth0UserId = GetAuth0UserId();
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var auth0UserId = GetAuth0UserId();
 
-		DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
+        DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
 
-		return Ok(debt);
-	}
+        return Ok(debt);
+    }
 }

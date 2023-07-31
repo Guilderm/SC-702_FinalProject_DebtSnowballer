@@ -18,10 +18,8 @@
 <DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
 <button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
 
-@if (_selectedDebtItem != null)
-	{
 	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" CancelEdit="CancelEdit" Visible="@(_selectedDebtItem != null)" />
-	}
+
 
 @code {
 	private List<DebtDto> _loanItems;

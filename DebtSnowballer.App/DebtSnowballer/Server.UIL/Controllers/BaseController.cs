@@ -9,22 +9,22 @@ namespace Server.UIL.Controllers;
 [Route("api/[controller]")]
 public abstract class BaseController : ControllerBase
 {
-	protected readonly ILogger Logger;
+    protected readonly ILogger Logger;
 
-	protected BaseController(ILogger logger)
-	{
-		Logger = logger;
-	}
+    protected BaseController(ILogger logger)
+    {
+        Logger = logger;
+    }
 
-	protected string GetAuth0UserId()
-	{
-		var auth0UserId = User.Claims
-			.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-			?.Value;
+    protected string GetAuth0UserId()
+    {
+        var auth0UserId = User.Claims
+            .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+            ?.Value;
 
-		if (string.IsNullOrEmpty(auth0UserId))
-			Logger.LogError("Auth0 User ID claim is null or empty.");
+        if (string.IsNullOrEmpty(auth0UserId))
+            Logger.LogError("Auth0 User ID claim is null or empty.");
 
-		return auth0UserId;
-	}
+        return auth0UserId;
+    }
 }
