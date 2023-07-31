@@ -16,8 +16,7 @@
 
 <CurrencySelector CurrentBaseCurrency="@_currentBaseCurrency" UpdatedBaseCurrency="UpdateBaseCurrency"/>
 
-<DebtTable Debts="_debts" EditDebt="GetDebt" DeleteDebt="DeleteDebt"/>
-<button class="btn btn-success" @onclick="NewDebt">Add New Loan</button>
+<DebtTable Debts="_debts" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt"/>
 
 <DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
@@ -31,9 +30,10 @@
 	protected override async Task OnInitializedAsync()
 	{
 		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		_user = authState.User;
 
-		await LoadUserProfile(_user);
+		_userProfile = await UserProfileService.GetUserProfile(authState.User);
+		_currentBaseCurrency = _userProfile.BaseCurrency;
+
 		await LoadDebts();
 	}
 
@@ -55,7 +55,7 @@
 		_userProfile.BaseCurrency = selectedCurrency;
 	}
 
-	private void NewDebt()
+	private void OnAddNewDebt()
 	{
 		_selectedDebt = new DebtDto();
 	}

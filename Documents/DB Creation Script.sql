@@ -108,7 +108,7 @@ CREATE TABLE [Debt]
     [InterestRate]   DECIMAL(5, 5)      NOT NULL,
     [Fees]           DECIMAL(10, 3)     NOT NULL,
     [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
-    [RemainingTerm]  INT                NOT NULL,
+    [RemainingTermInMonths]  INT                NOT NULL,
     [CurrencyCode]   NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [CardinalOrder]  INT                NOT NULL,               -- The order in which the loan should be paid off
     [CreatedAt]      DATETIME2          NOT NULL DEFAULT GETDATE(),
@@ -141,7 +141,7 @@ VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com',
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, Fees, MonthlyPayment, RemainingTerm, CurrencyCode,
+INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, Fees, MonthlyPayment, RemainingTermInMonths, CurrencyCode,
                   CardinalOrder)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
        ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
@@ -196,7 +196,6 @@ VALUES ('Loan 1', 10000.00, 5.00, 60, GETDATE()),
        ('Loan 5', 50000.00, 3.00, 12, GETDATE()),
        ('Loan 6', 60000.00, 2.50, 60, GETDATE()),
        ('Loan 7', 70000.00, 2.00, 48, GETDATE()),
-
        ('Loan 8', 80000.00, 1.50, 36, GETDATE()),
        ('Loan 9', 90000.00, 1.00, 24, GETDATE()),
        ('Loan 10', 100000.00, 0.50, 12, GETDATE());
