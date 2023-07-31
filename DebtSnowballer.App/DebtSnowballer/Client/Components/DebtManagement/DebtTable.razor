@@ -1,5 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@if (LoanItems == null)
+@if (Debts == null)
 {
 	<p>
 		<em>Loading...</em>
@@ -7,6 +7,8 @@
 }
 else
 {
+	<br>
+	<br>
 	<table class="table">
 		<thead>
 		<tr>
@@ -22,7 +24,7 @@ else
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (DebtDto item in LoanItems)
+		@foreach (DebtDto item in Debts)
 		{
 			<tr>
 				<td>@item.LoanNickName</td>
@@ -33,24 +35,25 @@ else
 				<td>@item.RemainingTerm</td>
 				<td>@item.CardinalOrder</td>
 				<td>
-					<button class="btn btn-primary" @onclick="() => EditLoanItem.InvokeAsync(item.Id)">Edit</button>
-					<button class="btn btn-danger" @onclick="() => DeleteLoanItem.InvokeAsync(item.Id)">Delete</button>
+					<button class="btn btn-primary" @onclick="() => EditDebt.InvokeAsync(item.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteDebt.InvokeAsync(item.Id)">Delete</button>
 				</td>
 			</tr>
 		}
 		</tbody>
 	</table>
+	<br>
 }
 
 @code {
 
 	[Parameter]
-	public List<DebtDto> LoanItems { get; set; }
+	public List<DebtDto> Debts { get; set; }
 
 	[Parameter]
-	public EventCallback<int> EditLoanItem { get; set; }
+	public EventCallback<int> EditDebt { get; set; }
 
 	[Parameter]
-	public EventCallback<int> DeleteLoanItem { get; set; }
+	public EventCallback<int> DeleteDebt { get; set; }
 
 }

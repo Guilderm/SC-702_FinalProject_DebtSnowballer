@@ -7,9 +7,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Components\Debt\**" />
+	  <Content Remove="Components\Debt\**" />
+	  <EmbeddedResource Remove="Components\Debt\**" />
+	  <None Remove="Components\Debt\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="Components\AuthenticationStatus.razor" />
-		<None Include="Components\DebtForm.razor" />
-		<None Include="Components\DebtTable.razor" />
+		<None Include="Components\DebtManagement\DebtForm.razor" />
+		<None Include="Components\DebtManagement\DebtTable.razor" />
 		<None Include="Pages\Authentication.razor" />
 		<None Include="Pages\CRUD.razor" />
 		<None Include="Pages\DebtManagement.razor" />
@@ -31,10 +38,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Shared\DebtSnowballer.Shared.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Components\Debt\" />
 	</ItemGroup>
 
 </Project>

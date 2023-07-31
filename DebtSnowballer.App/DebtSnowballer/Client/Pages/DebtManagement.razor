@@ -3,6 +3,8 @@
 @using DebtSnowballer.Shared.DTOs
 @using System.Security.Claims
 @using DebtSnowballer.Client.Services
+@using DebtSnowballer.Client.Components.DebtManagement
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
@@ -11,19 +13,17 @@
 <PageTitle>Debt Management</PageTitle>
 
 <h3>Create a strategy to become debt free</h3>
-<br>
-<CurrencySelector CurrentBaseCurrency="@_currentBaseCurrency" UpdatedBaseCurrency="UpdateSelectedCurrency"/>
 
-<br>
-<DebtTable LoanItems="_loanItems" EditLoanItem="LoadLoanItem" DeleteLoanItem="DeleteLoanItem"/>
-<button class="btn btn-success" @onclick="NewLoanItem">Add New Loan</button>
+<CurrencySelector CurrentBaseCurrency="@_currentBaseCurrency" UpdatedBaseCurrency="UpdateBaseCurrency"/>
 
-	<DebtForm DebtItem="_selectedDebtItem" OnSave="SaveLoanItem" CancelEdit="CancelEdit" Visible="@(_selectedDebtItem != null)" />
+<DebtTable Debts="_debts" EditDebt="GetDebt" DeleteDebt="DeleteDebt"/>
+<button class="btn btn-success" @onclick="NewDebt">Add New Loan</button>
 
+<DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
 @code {
-	private List<DebtDto> _loanItems;
-	private DebtDto _selectedDebtItem;
+	private List<DebtDto> _debts;
+	private DebtDto _selectedDebt;
 	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
 	private ClaimsPrincipal _user;
@@ -34,7 +34,7 @@
 		_user = authState.User;
 
 		await LoadUserProfile(_user);
-		await LoadLoanItems();
+		await LoadDebts();
 	}
 
 	private async Task LoadUserProfile(ClaimsPrincipal user)
@@ -43,35 +43,35 @@
 		_currentBaseCurrency = _userProfile.BaseCurrency;
 	}
 
-	private async Task LoadLoanItems()
+	private async Task LoadDebts()
 	{
-		_loanItems = (await DebtService.GetDebts()).ToList();
+		_debts = (await DebtService.GetDebts()).ToList();
 	}
 
-	private async Task UpdateSelectedCurrency(string selectedCurrency)
+	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_currentBaseCurrency = selectedCurrency;
 		_userProfile.BaseCurrency = selectedCurrency;
 	}
 
-	private void NewLoanItem()
+	private void NewDebt()
 	{
-		_selectedDebtItem = new DebtDto();
+		_selectedDebt = new DebtDto();
 	}
 
-	private async Task LoadLoanItem(int id)
+	private async Task GetDebt(int id)
 	{
-		_selectedDebtItem = await DebtService.GetDebtById(id);
+		_selectedDebt = await DebtService.GetDebtById(id);
 	}
 
-	private async Task DeleteLoanItem(int id)
+	private async Task DeleteDebt(int id)
 	{
 		await DebtService.DeleteDebt(id);
-		await LoadLoanItems();
+		await LoadDebts();
 	}
 
-	private async Task SaveLoanItem(DebtDto debtItem)
+	private async Task SaveDebt(DebtDto debtItem)
 	{
 		if (debtItem.Id == 0)
 		{
@@ -82,13 +82,13 @@
 			await DebtService.UpdateDebt(debtItem);
 		}
 
-		await LoadLoanItems();
-		_selectedDebtItem = null;
+		await LoadDebts();
+		_selectedDebt = null;
 	}
 
 	private void CancelEdit()
 	{
-		_selectedDebtItem = null;
+		_selectedDebt = null;
 	}
 
 }
