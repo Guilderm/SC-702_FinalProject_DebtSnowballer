@@ -2,8 +2,8 @@
 @page "/DebtManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-@using DebtSnowballer.Client.Components.DebtManagement
 @using DebtSnowballer.Shared.Currency
+@using DebtSnowballer.Client.Components.DebtManagement
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
@@ -14,13 +14,13 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
+<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
-<DebtTable Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
+<DebtTable Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
+<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
-<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 
 @code {
@@ -102,4 +102,5 @@
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
-	}
+
+}

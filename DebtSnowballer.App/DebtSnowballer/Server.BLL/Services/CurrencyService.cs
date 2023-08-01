@@ -85,17 +85,14 @@ public class CurrencyService : ICurrencyService
 	private async Task UpdateAllRatesForBaseCurrency(string baseCurrency, JsonDocument jsonDocument,
 		DateTime nextUpdateTime)
 	{
-		// Delete all existing rates for the base currency
 		await _repository.Delete(er => er.BaseCurrency == baseCurrency);
 
-		// Now create new rates
 		JsonElement.ObjectEnumerator rates = jsonDocument.RootElement.GetProperty("conversion_rates").EnumerateObject();
 		foreach (JsonProperty rate in rates)
 		{
 			string quoteCurrency = rate.Name;
 			decimal exchangeRateValue = rate.Value.GetDecimal();
 
-			// Only create exchange rate if the target currency exists in DebtSnowballer.Shared.Currency.Currencies
 			if (Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
 				await CreateExchangeRate(baseCurrency, quoteCurrency, exchangeRateValue, nextUpdateTime);
 		}
