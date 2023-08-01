@@ -20,8 +20,8 @@ public class DebtDto
 	[Range(0, 90, ErrorMessage = "Interest Rate must be less than 90%.")]
 	public decimal InterestRate { get; set; }
 
-	[Range(0, double.MaxValue, ErrorMessage = "Fees must be a positive number.")]
-	public decimal Fees { get; set; }
+	[Range(0, double.MaxValue, ErrorMessage = "Bank Fees must be a positive number.")]
+	public decimal BankFees { get; set; }
 
 	[Required]
 	[Range(0, double.MaxValue, ErrorMessage = "Monthly Payment must be a positive number.")]

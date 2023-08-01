@@ -99,19 +99,17 @@ CREATE TABLE [DebtStrategy]
 -- Create Loan table to store information about each loan
 CREATE TABLE [Debt]
 (
-    [Id]             INT IDENTITY (1,1) NOT NULL,
-    -- TODO: reconfigure the foren key:
-    -- [Auth0UserId]    NVARCHAR(125)      NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
-    [Auth0UserId]    NVARCHAR(125)      NOT NULL,
-    [LoanNickName]   NVARCHAR(50)       NOT NULL,
-    [RemainingPrincipal]      DECIMAL(10, 3)     NOT NULL,
-    [InterestRate]   DECIMAL(5, 5)      NOT NULL,
-    [Fees]           DECIMAL(10, 3)     NOT NULL,
-    [MonthlyPayment] DECIMAL(10, 3)     NOT NULL,
-    [RemainingTermInMonths]  INT                NOT NULL,
-    [CurrencyCode]   NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
-    [CardinalOrder]  INT                NOT NULL,               -- The order in which the loan should be paid off
-    [CreatedAt]      DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [Id]                    INT IDENTITY (1,1) NOT NULL,
+    [Auth0UserId]           NVARCHAR(125)      NOT NULL,
+    [LoanNickName]          NVARCHAR(50)       NOT NULL,
+    [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
+    [InterestRate]          DECIMAL(6, 4)      NOT NULL,
+    [BankFees]              DECIMAL(18, 2)     NOT NULL,
+    [MonthlyPayment]        DECIMAL(18, 2)     NOT NULL,
+    [RemainingTermInMonths] INT                NOT NULL,
+    [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD',
+    [CardinalOrder]         INT                NOT NULL,
+    [CreatedAt]             DATETIME2          NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -133,12 +131,13 @@ CREATE TABLE [OnetimeExtraPayments]
     CONSTRAINT [PK_OnetimeExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 -- Currency will be defined using ISO 4217
-CREATE TABLE ExchangeRates (
-    Id   INT IDENTITY (1,1) NOT NULL,
-    BaseCurrency VARCHAR(3) NOT NULL,
-    TargetCurrency VARCHAR(3) NOT NULL,
-    Rate DECIMAL(19, 9) NOT NULL,
-    NextUpdateTime DATETIME2 NOT NULL
+CREATE TABLE ExchangeRates
+(
+    Id             INT IDENTITY (1,1) NOT NULL,
+    BaseCurrency   VARCHAR(3)         NOT NULL,
+    TargetCurrency VARCHAR(3)         NOT NULL,
+    Rate           DECIMAL(19, 9)     NOT NULL,
+    NextUpdateTime DATETIME2          NOT NULL
 );
 
 -- Insert data into UserProfile
@@ -148,19 +147,13 @@ VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com',
        ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, Fees, MonthlyPayment, RemainingTermInMonths, CurrencyCode,
-                  CardinalOrder)
-VALUES ('auth0|60d7b7f29b14170068e3244f', 'Loan 1', 10000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
-       ('auth0|60d7b7f29b14170068e32450', 'Loan 2', 20000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
-       ('auth0|60d7b7f29b14170068e32451', 'Loan 3', 30000.00, 0.07, 300.00, 600.00, 36, 'CRC', 3),
-
-       ('google-oauth2|116471976465148595031', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
-       ('google-oauth2|116471976465148595031', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 'JPY', 2),
-       ('google-oauth2|116471976465148595031', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 'USD', 3),
-
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Personal', 5000.00, 0.05, 100.00, 200.00, 60, 'CRC', 1),
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'Car', 15000.00, 0.06, 200.00, 400.00, 48, 'CRC', 2),
-       ('05d1O2h3eSwYig2VqhcEgw3IpT0FGIZs', 'House', 50000.00, 0.07, 300.00, 600.00, 36, 'CRC', 3);
+INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, BankFees, MonthlyPayment,
+                  RemainingTermInMonths, CurrencyCode, CardinalOrder)
+VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125, 0, 562500, 360, 'CRC', 1),
+       ('google-oauth2|116471976465148595031', '2023 Honda Accord Loan', 25000, 0.042, 0, 460, 60, 'USD', 2),
+       ('google-oauth2|116471976465148595031', 'Visa Credit Card', 3125000, 0.229, 0, 625000, 60, 'CRC', 3),
+       ('google-oauth2|116471976465148595031', 'Federal Student Loan', 30000, 0.058, 0, 350, 120, 'USD', 4),
+       ('google-oauth2|116471976465148595031', 'Personal Loan', 10000, 0.1, 0, 200, 60, 'USD', 5);
 
 -- Insert data into MonthlyExtraPayments
 INSERT INTO MonthlyExtraPayments (UserId, Amount)

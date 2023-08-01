@@ -16,7 +16,7 @@ else
 			<th>Loan Nickname</th>
 			<th>Principal</th>
 			<th>Interest Rate</th>
-			<th>Fees</th>
+			<th>BankFees</th>
 			<th>Monthly Payment</th>
 			<th>Remaining Term</th>
 			<th>Cardinal Order</th>
@@ -32,7 +32,7 @@ else
 				<td>@debt.LoanNickName</td>
 				<td>@currencySymbol @debt.RemainingPrincipal.ToString("F2")</td>
 				<td>@debt.InterestRate.ToString("P2")</td>
-				<td>@currencySymbol @debt.Fees.ToString("F2")</td>
+				<td>@currencySymbol @debt.BankFees.ToString("F2")</td>
 				<td>@currencySymbol @debt.MonthlyPayment.ToString("F2")</td>
 				<td>@debt.RemainingTermInMonths</td>
 				<td>@debt.CardinalOrder</td>
