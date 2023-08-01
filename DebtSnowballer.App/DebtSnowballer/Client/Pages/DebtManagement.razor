@@ -19,7 +19,7 @@
 
 <DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
-<DebtSummary DebtsInBaseCurrency="_debtsInBaseCurrency"/>
+<DebtSummary DebtsInBaseCurrency="_debtsInBaseCurrency"/> 
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
@@ -55,6 +55,7 @@
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_currentBaseCurrency = selectedCurrency;
 		_userProfile.BaseCurrency = selectedCurrency;
+		await LoadDebtsInBaseCurrency();
 	}
 
 	private void OnAddNewDebt()
