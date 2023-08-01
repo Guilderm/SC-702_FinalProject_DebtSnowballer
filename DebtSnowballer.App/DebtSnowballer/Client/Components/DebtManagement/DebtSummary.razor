@@ -1,19 +1,16 @@
 ﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Shared.Currency
 <br>
 <br>
 
 @if (DebtsInBaseCurrency != null)
 {
 	<div class="summary">
-		<p>
-			<strong>Total Amount Owed in Base Currency:</strong> @TotalAmountOwedInBaseCurrency.ToString("C")
-		</p>
-		<p>
-			<strong>Total Monthly Payment in Base Currency:</strong> @TotalMonthlyPaymentInBaseCurrency.ToString("C")
-		</p>
+		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwedInBaseCurrency.ToString("F2")</strong></p>
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalMonthlyPaymentInBaseCurrency.ToString("F2")</strong></p>
 	</div>
 
-	<DebtTable Debts="DebtsInBaseCurrency"/>
+	<DebtTable DebtsInQuoteCurrency="DebtsInBaseCurrency"/>
 }
 
 @code {
@@ -21,17 +18,14 @@
 	[Parameter]
 	public List<DebtDto> DebtsInBaseCurrency { get; set; }
 
+	[Parameter]
+	public string BaseCurrencyCode { get; set; }
+
 	private decimal TotalAmountOwedInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
 	private decimal TotalMonthlyPaymentInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
-
-	private async Task HandleSave(DebtDto debt)
-	{
-	// Handle the save operation here
+	
+	private string GetCurrencySymbol(string currencyCode)
+	{CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
+		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
-
-	private void HandleCancel()
-	{
-	// Handle the cancel operation here
-	}
-
 }

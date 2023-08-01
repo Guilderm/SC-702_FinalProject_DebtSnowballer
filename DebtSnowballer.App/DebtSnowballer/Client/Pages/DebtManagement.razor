@@ -13,13 +13,14 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtTable Debts="_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt"/>
+<DebtTable DebtsInQuoteCurrency="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" />
 
-<DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
 
-<DebtSummary DebtsInBaseCurrency="_debtsInBaseCurrency"/> 
+<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" />
+
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
