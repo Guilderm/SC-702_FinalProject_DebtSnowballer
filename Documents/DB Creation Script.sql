@@ -27,7 +27,7 @@ end
 
 CREATE TABLE [UserProfile]
 (
-    [Id]           INT IDENTITY (1,1) NOT NULL,
+    [Id]         INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [Auth0UserId]  NVARCHAR(75)       NOT NULL UNIQUE,
     [GivenName]    NVARCHAR(50)       NULL,
     [FamilyName]   NVARCHAR(50)       NULL,
@@ -39,17 +39,15 @@ CREATE TABLE [UserProfile]
     [BaseCurrency] NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [UserTypeId]   INT                NOT NULL DEFAULT 1,
     [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [LastUpdated]  DATETIME2          NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [LastUpdated]  DATETIME2          NOT NULL DEFAULT GETDATE()
 );
 
 -- Create UserType table to store different types of users
 CREATE TABLE [UserType]
 (
-    [Id]          INT IDENTITY (1,1) NOT NULL,
+    [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [Type]        NVARCHAR(20)       NOT NULL,
-    [Description] NVARCHAR(50)       NOT NULL,
-    CONSTRAINT [PK_UserType] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Description] NVARCHAR(50)       NOT NULL
 );
 
 -- Insert data into UserType
@@ -61,22 +59,20 @@ VALUES ('EndUser', 'The user that the application is inteded for'),
 -- Create SessionLog table to store user session information
 CREATE TABLE [SessionLog]
 (
-    [Id]              INT IDENTITY (1,1) NOT NULL,
+    [Id]              INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [UserId]          INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [LogonTimeStamp]  DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LogoffTimeStamp] DATETIME2,
     [OperatingSystem] NVARCHAR(50)       NOT NULL,
     [ClientSoftware]  NVARCHAR(50)       NOT NULL,
-    [RemoteIpAddress] NVARCHAR(50)       NOT NULL,
-    CONSTRAINT [PK_SessionLog] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [RemoteIpAddress] NVARCHAR(50)       NOT NULL
 );
 
 -- Create DebtStrategyType table to store different types of debt strategies
 CREATE TABLE [StrategyType]
 (
-    [Id]   INT IDENTITY (1,1) NOT NULL,
-    [Type] NVARCHAR(50)       NOT NULL,
-    CONSTRAINT [PK_DebtStrategyType] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Id]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Type] NVARCHAR(50)       NOT NULL
 );
 
 -- Insert the three debt strategies into the DebtStrategyType table
@@ -88,18 +84,17 @@ VALUES ('Debt Snowball'),
 -- Create DebtStrategy table to store the chosen strategy for each user
 CREATE TABLE [DebtStrategy]
 (
-    [Id]          INT IDENTITY (1,1) NOT NULL,
+    [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [Auth0UserId] NVARCHAR(125)      NOT NULL,
     [UserId]      INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
-    [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID),
-    CONSTRAINT [PK_DebtStrategy] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID)
 );
 
 
 -- Create Loan table to store information about each loan
 CREATE TABLE [Debt]
 (
-    [Id]                    INT IDENTITY (1,1) NOT NULL,
+    [Id]                    INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [Auth0UserId]           NVARCHAR(125)      NOT NULL,
     [LoanNickName]          NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
@@ -109,17 +104,15 @@ CREATE TABLE [Debt]
     [RemainingTermInMonths] INT                NOT NULL,
     [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD',
     [CardinalOrder]         INT                NOT NULL,
-    [CreatedAt]             DATETIME2          NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT [PK_Loan] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [CreatedAt]             DATETIME2          NOT NULL DEFAULT GETDATE()
 );
 
 -- Create PaymentStrategyPlan table to store information about each user's payment strategy
 CREATE TABLE [MonthlyExtraPayments]
 (
-    [Id]     INT IDENTITY (1,1) NOT NULL,
+    [Id]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
-    [Amount] DECIMAL(10, 3)     NOT NULL,
-    CONSTRAINT [PK_MonthlyExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Amount] DECIMAL(10, 3)     NOT NULL
 );
 
 CREATE TABLE [OnetimeExtraPayments]

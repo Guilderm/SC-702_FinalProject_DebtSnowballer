@@ -13,13 +13,13 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
+<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
-<DebtTable Debts="_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" />
+<DebtTable Debts="_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt"/>
 
-<DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
+<DebtForm Debt="_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
-<DebtSummary DebtsInBaseCurrency="_debtsInBaseCurrency" />
+<DebtSummary DebtsInBaseCurrency="_debtsInBaseCurrency"/>
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
@@ -29,7 +29,7 @@
 	private UserProfileDto _userProfile;
 
 	protected override async Task OnInitializedAsync()
-		{
+	{
 		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
 		_userProfile = await UserProfileService.GetUserProfile(authState.User);
@@ -37,13 +37,13 @@
 
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
-		}
+	}
 
 	private async Task LoadDebtsInQuoteCurrency()
-		{
+	{
 		_debtsInQuoteCurrency = (await DebtService.GetDebts()).ToList();
 		await LoadDebtsInBaseCurrency();
-		}
+	}
 
 	private async Task LoadDebtsInBaseCurrency()
 	{
@@ -51,45 +51,46 @@
 	}
 
 	private async Task UpdateBaseCurrency(string selectedCurrency)
-		{
+	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_currentBaseCurrency = selectedCurrency;
 		_userProfile.BaseCurrency = selectedCurrency;
-		}
+	}
 
 	private void OnAddNewDebt()
-		{
+	{
 		_selectedDebt = new DebtDto();
-		}
+	}
 
 	private async Task GetDebt(int id)
-		{
+	{
 		_selectedDebt = await DebtService.GetDebtById(id);
-		}
+	}
 
 	private async Task DeleteDebt(int id)
-		{
+	{
 		await DebtService.DeleteDebt(id);
 		await LoadDebtsInQuoteCurrency();
-		}
+	}
 
 	private async Task SaveDebt(DebtDto debtItem)
-		{
+	{
 		if (debtItem.Id == 0)
-			{
+		{
 			await DebtService.AddDebt(debtItem);
-			}
+		}
 		else
-			{
+		{
 			await DebtService.UpdateDebt(debtItem);
-			}
+		}
 
 		await LoadDebtsInQuoteCurrency();
 		_selectedDebt = null;
-		}
+	}
 
 	private void CancelEdit()
-		{
+	{
 		_selectedDebt = null;
-		}
+	}
+
 }
