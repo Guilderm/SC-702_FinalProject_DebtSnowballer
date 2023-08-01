@@ -124,11 +124,10 @@ CREATE TABLE [MonthlyExtraPayments]
 
 CREATE TABLE [OnetimeExtraPayments]
 (
-    [Id]     INT IDENTITY (1,1) NOT NULL,
+    [Id]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
     [Amount] DECIMAL(10, 3)     NOT NULL,
-    [Date]   DATETIME2          NOT NULL,
-    CONSTRAINT [PK_OnetimeExtraPayments] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Date]   DATETIME2          NOT NULL
 );
 -- Currency will be defined using ISO 4217
 CREATE TABLE ExchangeRates
