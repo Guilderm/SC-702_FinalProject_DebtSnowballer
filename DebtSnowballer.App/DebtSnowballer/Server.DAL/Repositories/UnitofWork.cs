@@ -12,7 +12,7 @@ public class UnitOfWork : IUnitOfWork
 	private readonly ILoggerFactory _loggerFactory;
 	private IGenericRepository<Crud> _cruds;
 	private IGenericRepository<Debt> _debts;
-	private IGenericRepository<ExchangeRate> _ExchangeRate;
+	private IGenericRepository<ExchangeRate> _exchangeRate;
 	private IGenericRepository<UserProfile> _userProfile;
 
 	public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
@@ -22,7 +22,7 @@ public class UnitOfWork : IUnitOfWork
 		_loggerFactory = loggerFactory;
 	}
 
-	public IGenericRepository<ExchangeRate> ExchangeRateRepository => _ExchangeRate ??=
+	public IGenericRepository<ExchangeRate> ExchangeRateRepository => _exchangeRate ??=
 		new GenericRepository<ExchangeRate>(_loggerFactory.CreateLogger<GenericRepository<ExchangeRate>>(), _context);
 
 	public IGenericRepository<Crud> CrudRepository => _cruds ??=

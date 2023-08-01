@@ -2,5 +2,5 @@
 
 public interface ICurrencyService
 {
-	Task<decimal> GetExchangeRate(string fromCurrency, string toCurrency);
+	Task<decimal> GetExchangeRate(string baseCurrency, string quoteCurrency);
 }

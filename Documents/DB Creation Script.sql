@@ -137,8 +137,8 @@ CREATE TABLE ExchangeRates (
     Id   INT IDENTITY (1,1) NOT NULL,
     BaseCurrency VARCHAR(3) NOT NULL,
     TargetCurrency VARCHAR(3) NOT NULL,
-    Rate DECIMAL(10, 4) NOT NULL,
-    LastUpdated DATETIME2 NOT NULL
+    Rate DECIMAL(19, 9) NOT NULL,
+    NextUpdateTime DATETIME2 NOT NULL
 );
 
 -- Insert data into UserProfile

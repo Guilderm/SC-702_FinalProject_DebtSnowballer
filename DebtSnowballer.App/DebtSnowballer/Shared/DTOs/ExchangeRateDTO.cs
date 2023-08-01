@@ -1,6 +1,6 @@
-﻿namespace Server.DAL.Models;
+﻿namespace DebtSnowballer.Shared.DTOs;
 
-public class ExchangeRate
+public class ExchangeRateDto
 {
 	public int Id { get; set; }
 	public string BaseCurrency { get; set; } = null!;
