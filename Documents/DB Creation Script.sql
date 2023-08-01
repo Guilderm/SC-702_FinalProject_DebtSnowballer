@@ -130,7 +130,7 @@ CREATE TABLE ExchangeRates
     Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     BaseCurrency   VARCHAR(3)         NOT NULL,
     QuoteCurrency VARCHAR(3)         NOT NULL,
-    Rate           DECIMAL(19, 9)     NOT NULL,
+    ConversionRate           DECIMAL(19, 9)     NOT NULL,
     NextUpdateTime DATETIME2          NOT NULL
 );
 

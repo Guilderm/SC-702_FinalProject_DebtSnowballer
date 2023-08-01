@@ -26,8 +26,6 @@ public class CurrencyService : ICurrencyService
 
 	public async Task<decimal> GetExchangeRate(string baseCurrency, string quoteCurrency)
 	{
-		ValidateCurrencyCodes(baseCurrency, quoteCurrency);
-
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
 		if (_exchangeRate == null || _exchangeRate.NextUpdateTime < DateTime.UtcNow)
@@ -36,13 +34,6 @@ public class CurrencyService : ICurrencyService
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
 		return _exchangeRate.Rate;
-	}
-
-	private void ValidateCurrencyCodes(string baseCurrency, string quoteCurrency)
-	{
-		if (!Currencies.SupportedCurrencies.Any(c => c.AlphaCode == baseCurrency) ||
-		    !Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
-			throw new ArgumentException("Invalid currency code.");
 	}
 
 
@@ -96,7 +87,6 @@ public class CurrencyService : ICurrencyService
 			if (Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
 				await CreateExchangeRate(baseCurrency, quoteCurrency, exchangeRateValue, nextUpdateTime);
 		}
-
 		await _unitOfWork.Save();
 	}
 

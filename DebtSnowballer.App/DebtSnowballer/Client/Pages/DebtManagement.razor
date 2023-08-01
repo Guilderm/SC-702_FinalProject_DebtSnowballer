@@ -75,6 +75,7 @@
 	{
 		await DebtService.DeleteDebt(id);
 		await LoadDebtsInQuoteCurrency();
+		await LoadDebtsInBaseCurrency();
 	}
 
 	private async Task SaveDebt(DebtDto debtItem)
@@ -89,6 +90,7 @@
 		}
 
 		await LoadDebtsInQuoteCurrency();
+		await LoadDebtsInBaseCurrency();
 		_selectedDebt = null;
 	}
 
