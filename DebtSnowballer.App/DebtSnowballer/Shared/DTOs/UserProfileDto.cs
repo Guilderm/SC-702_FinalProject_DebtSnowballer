@@ -20,10 +20,4 @@ public class UserProfileDto
 	public int UserTypeId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
-
-	// If you need to transfer the related entities as well, uncomment these lines
-	// public List<DebtStrategyDto> DebtStrategies { get; set; }
-	// public List<MonthlyExtraPaymentDto> MonthlyExtraPayments { get; set; }
-	// public List<OnetimeExtraPaymentDto> OnetimeExtraPayments { get; set; }
-	// public List<SessionLogDto> SessionLogs { get; set; }
 }

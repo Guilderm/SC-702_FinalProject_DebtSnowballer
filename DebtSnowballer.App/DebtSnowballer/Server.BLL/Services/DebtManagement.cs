@@ -7,15 +7,20 @@ namespace Server.BLL.Services;
 
 public class DebtManagement
 {
+	private readonly CurrencyService _currencyService;
 	private readonly IMapper _mapper;
 	private readonly IGenericRepository<Debt> _repository;
 	private readonly IUnitOfWork _unitOfWork;
+	private readonly UserProfileManagement _userProfileManagement;
 
-	public DebtManagement(IUnitOfWork unitOfWork, IMapper mapper)
+	public DebtManagement(IUnitOfWork unitOfWork, IMapper mapper, UserProfileManagement userProfileManagement,
+		CurrencyService currencyService)
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
 		_repository = _unitOfWork.DebtRepository;
+		_userProfileManagement = userProfileManagement;
+		_currencyService = currencyService;
 	}
 
 	public async Task<DebtDto> CreateDebt(DebtDto debtDto, string auth0UserId)
@@ -53,5 +58,25 @@ public class DebtManagement
 	{
 		Debt debt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		return _mapper.Map<DebtDto>(debt);
+	}
+
+	public async Task<IList<DebtDto>> GetAllDebtsInBaseCurrency(string auth0UserId)
+	{
+		UserProfileDto userProfile = await _userProfileManagement.GetValidateUserProfile(null, auth0UserId);
+
+		IList<Debt> debts = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		IList<DebtDto> debtDtos = _mapper.Map<IList<DebtDto>>(debts);
+
+		foreach (var debtDto in debtDtos)
+			if (debtDto.CurrencyCode != userProfile.BaseCurrency)
+			{
+				decimal exchangeRate =
+					await _currencyService.GetExchangeRate(debtDto.CurrencyCode, userProfile.BaseCurrency);
+				debtDto.RemainingPrincipal *= exchangeRate;
+				debtDto.MonthlyPayment *= exchangeRate;
+				debtDto.CurrencyCode = userProfile.BaseCurrency;
+			}
+
+		return debtDtos;
 	}
 }

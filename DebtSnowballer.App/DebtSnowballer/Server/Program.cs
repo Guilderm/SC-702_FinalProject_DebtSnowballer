@@ -35,6 +35,7 @@ try
 	builder.Services.AddScoped<CrudManagement>();
 	builder.Services.AddScoped<DebtManagement>();
 	builder.Services.AddScoped<UserProfileManagement>();
+	builder.Services.AddScoped<CurrencyService>();
 
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
