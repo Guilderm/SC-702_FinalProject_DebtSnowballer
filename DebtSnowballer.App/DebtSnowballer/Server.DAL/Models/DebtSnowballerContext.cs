@@ -75,24 +75,20 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.StrategyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__Strat__0915401C");
+				.HasConstraintName("FK__DebtStrat__Strat__2799C73C");
 
 			entity.HasOne(d => d.User)
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__UserI__08211BE3");
+				.HasConstraintName("FK__DebtStrat__UserI__26A5A303");
 		});
 
 		modelBuilder.Entity<ExchangeRate>(entity =>
 		{
-			entity.HasNoKey();
-
 			entity.Property(e => e.BaseCurrency)
 				.HasMaxLength(3)
 				.IsUnicode(false);
-
-			entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
 			entity.Property(e => e.Rate).HasColumnType("decimal(19, 9)");
 
@@ -109,7 +105,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__0FC23DAB");
+				.HasConstraintName("FK__MonthlyEx__UserI__2E46C4CB");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -120,7 +116,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__129EAA56");
+				.HasConstraintName("FK__OnetimeEx__UserI__31233176");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -139,7 +135,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__0268428D");
+				.HasConstraintName("FK__SessionLo__UserI__20ECC9AD");
 		});
 
 		modelBuilder.Entity<StrategyType>(entity =>
@@ -153,7 +149,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("UserProfile");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F42905D7FABCC")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F42907809A8B2")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(75);

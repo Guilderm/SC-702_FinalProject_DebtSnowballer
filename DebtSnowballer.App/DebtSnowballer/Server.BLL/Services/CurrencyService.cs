@@ -39,10 +39,11 @@ public class CurrencyService : ICurrencyService
 
 	private void ValidateCurrencyCodes(string baseCurrency, string quoteCurrency)
 	{
-		if (!Enum.IsDefined(typeof(Currencies), baseCurrency) ||
-		    !Enum.IsDefined(typeof(Currencies), quoteCurrency))
+		if (!Currencies.All.Any(c => c.AlphaCode == baseCurrency) ||
+		    !Currencies.All.Any(c => c.AlphaCode == quoteCurrency))
 			throw new ArgumentException("Invalid currency code.");
 	}
+
 
 	private async Task<ExchangeRate> GetExchangeRateFromDatabase(string baseCurrency, string quoteCurrency)
 	{
@@ -70,7 +71,7 @@ public class CurrencyService : ICurrencyService
 
 	private string BuildApiUrl(string baseCurrency)
 	{
-		string currencies = string.Join(",", Enum.GetNames(typeof(Currencies)));
+		string currencies = string.Join(",", Currencies.All.Select(c => c.AlphaCode));
 		return $"{_baseUrl}{_apiKey}/latest/{baseCurrency}?symbols={currencies}";
 	}
 

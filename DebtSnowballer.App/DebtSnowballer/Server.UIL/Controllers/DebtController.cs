@@ -8,11 +8,13 @@ namespace Server.UIL.Controllers;
 public class DebtController : BaseController
 {
 	private readonly DebtManagement _debtManagement;
+	private readonly ILogger<DebtController> _logger;
 
 	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
 		: base(logger)
 	{
 		_debtManagement = debtManagement;
+		_logger = logger;
 	}
 
 	[HttpPost]
@@ -63,5 +65,24 @@ public class DebtController : BaseController
 		DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
 
 		return Ok(debt);
+	}
+
+	[HttpGet("GetAllDebtsInBaseCurrency")]
+	public async Task<IActionResult> GetAllDebtsInBaseCurrency()
+	{
+		try
+		{
+			var debtsInBaseCurrency = await _debtManagement.GetAllDebtsInBaseCurrency(GetAuth0UserId());
+
+			if (debtsInBaseCurrency == null) return NotFound();
+
+			return Ok(debtsInBaseCurrency);
+		}
+		catch (Exception ex)
+		{
+			// Log the exception message
+			_logger.LogError(ex, $"Something went wrong in the {nameof(GetAllDebtsInBaseCurrency)}");
+			return StatusCode(500, "Internal server error");
+		}
 	}
 }

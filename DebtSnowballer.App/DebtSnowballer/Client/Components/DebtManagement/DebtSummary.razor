@@ -2,23 +2,35 @@
 <br>
 <br>
 
-@if (Debts != null)
+@if (DebtsInBaseCurrency != null)
 {
 	<div class="summary">
 		<p>
-			<strong>Total Amount Owed:</strong> @TotalAmountOwed.ToString("C")
+			<strong>Total Amount Owed in Base Currency:</strong> @TotalAmountOwedInBaseCurrency.ToString("C")
 		</p>
 		<p>
-			<strong>Total Monthly Payment:</strong> @TotalMonthlyPayment.ToString("C")
+			<strong>Total Monthly Payment in Base Currency:</strong> @TotalMonthlyPaymentInBaseCurrency.ToString("C")
 		</p>
 	</div>
+
+	<DebtTable Debts="DebtsInBaseCurrency"/>
 }
 
 @code {
 
 	[Parameter]
-	public List<DebtDto> Debts { get; set; }
+	public List<DebtDto> DebtsInBaseCurrency { get; set; }
 
-	private decimal TotalAmountOwed => Debts.Sum(debt => debt.RemainingPrincipal);
-	private decimal TotalMonthlyPayment => Debts.Sum(debt => debt.MonthlyPayment);
+	private decimal TotalAmountOwedInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
+	private decimal TotalMonthlyPaymentInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
+
+	private async Task HandleSave(DebtDto debt)
+	{
+	// Handle the save operation here
+	}
+
+	private void HandleCancel()
+	{
+	// Handle the cancel operation here
+	}
 }

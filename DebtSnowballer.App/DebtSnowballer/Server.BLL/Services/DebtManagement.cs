@@ -62,12 +62,12 @@ public class DebtManagement
 
 	public async Task<IList<DebtDto>> GetAllDebtsInBaseCurrency(string auth0UserId)
 	{
-		UserProfileDto userProfile = await _userProfileManagement.GetValidateUserProfile(null, auth0UserId);
+		UserProfile userProfile = await _userProfileManagement.GetUserProfileModel(auth0UserId);
 
-		IList<Debt> debts = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
-		IList<DebtDto> debtDtos = _mapper.Map<IList<DebtDto>>(debts);
+		IList<Debt> debtsInQuoteCurrency = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		IList<DebtDto> debtsInBaseCurrency = _mapper.Map<IList<DebtDto>>(debtsInQuoteCurrency);
 
-		foreach (var debtDto in debtDtos)
+		foreach (DebtDto debtDto in debtsInBaseCurrency)
 			if (debtDto.CurrencyCode != userProfile.BaseCurrency)
 			{
 				decimal exchangeRate =
@@ -77,6 +77,6 @@ public class DebtManagement
 				debtDto.CurrencyCode = userProfile.BaseCurrency;
 			}
 
-		return debtDtos;
+		return debtsInBaseCurrency;
 	}
 }

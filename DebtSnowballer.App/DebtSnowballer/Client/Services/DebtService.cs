@@ -50,4 +50,11 @@ public class DebtService : IDebtService
 		DebtDto result = await response.Content.ReadFromJsonAsync<DebtDto>();
 		return result;
 	}
+
+	public async Task<IList<DebtDto>> GetAllDebtsInBaseCurrency()
+	{
+		IList<DebtDto> debts =
+			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_apiurl}/GetAllDebtsInBaseCurrency");
+		return debts;
+	}
 }

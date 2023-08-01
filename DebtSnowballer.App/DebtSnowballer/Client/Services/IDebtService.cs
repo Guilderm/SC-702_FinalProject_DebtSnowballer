@@ -9,4 +9,5 @@ public interface IDebtService
 	Task DeleteDebt(int id);
 	Task<DebtDto> AddDebt(DebtDto debtDto);
 	Task<DebtDto> UpdateDebt(DebtDto debtDto);
+	Task<IList<DebtDto>> GetAllDebtsInBaseCurrency();
 }

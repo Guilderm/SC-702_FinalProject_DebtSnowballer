@@ -21,7 +21,7 @@ public class UserProfileManagement
 	public async Task<UserProfileDto> GetValidateUserProfile(UserProfileDto rawUserProfile, string auth0UserId)
 	{
 		bool changesMade = false;
-		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+		UserProfile userProfileModel = await GetUserProfileModel(auth0UserId);
 
 		if (userProfileModel == null)
 		{
@@ -44,6 +44,12 @@ public class UserProfileManagement
 
 		UserProfileDto userProfileDto = _mapper.Map<UserProfileDto>(userProfileModel);
 		return userProfileDto;
+	}
+
+	public async Task<UserProfile> GetUserProfileModel(string auth0UserId)
+	{
+		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+		return userProfileModel;
 	}
 
 	public async Task<bool> UpdateBaseCurrency(string baseCurrency, string auth0UserId)
