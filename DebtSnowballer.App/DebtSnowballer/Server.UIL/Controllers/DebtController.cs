@@ -52,7 +52,7 @@ public class DebtController : BaseController
 	{
 		string? auth0UserId = GetAuth0UserId();
 
-		IList<DebtDto> debts = await _debtManagement.GetAllDebts(auth0UserId);
+		IList<DebtDto> debts = await _debtManagement.GetAllDebtsInQuoteCurrency(auth0UserId);
 
 		return Ok(debts);
 	}

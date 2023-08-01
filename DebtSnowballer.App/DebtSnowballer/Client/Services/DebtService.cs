@@ -21,7 +21,7 @@ public class DebtService : IDebtService
 			throw new Exception($"Error deleting debt: {response.ReasonPhrase}");
 	}
 
-	public async Task<IList<DebtDto>> GetDebts()
+	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency()
 	{
 		IList<DebtDto> debts = await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_apiurl}");
 		return debts;

@@ -48,7 +48,7 @@ public class DebtManagement
 		await _unitOfWork.Save();
 	}
 
-	public async Task<IList<DebtDto>> GetAllDebts(string auth0UserId)
+	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency(string auth0UserId)
 	{
 		IList<Debt> debts = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
 		return _mapper.Map<IList<DebtDto>>(debts);

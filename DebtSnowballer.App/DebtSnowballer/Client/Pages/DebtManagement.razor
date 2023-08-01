@@ -41,7 +41,7 @@
 
 	private async Task LoadDebtsInQuoteCurrency()
 	{
-		_debtsInQuoteCurrency = (await DebtService.GetDebts()).ToList();
+		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();
 		await LoadDebtsInBaseCurrency();
 	}
 
@@ -93,5 +93,4 @@
 	{
 		_selectedDebt = null;
 	}
-
-}
+	}

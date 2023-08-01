@@ -4,7 +4,7 @@ namespace DebtSnowballer.Client.Services;
 
 public interface IDebtService
 {
-	Task<IList<DebtDto>> GetDebts();
+	Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency();
 	Task<DebtDto> GetDebtById(int id);
 	Task DeleteDebt(int id);
 	Task<DebtDto> AddDebt(DebtDto debtDto);
