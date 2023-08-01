@@ -134,11 +134,11 @@ CREATE TABLE [OnetimeExtraPayments]
 );
 -- Currency will be defined using ISO 4217
 CREATE TABLE ExchangeRates (
-    Id INT PRIMARY KEY AUTO_INCREMENT,
+    Id   INT IDENTITY (1,1) NOT NULL,
     BaseCurrency VARCHAR(3) NOT NULL,
     TargetCurrency VARCHAR(3) NOT NULL,
-    ExchangeRate DECIMAL(10, 4) NOT NULL,
-    LastUpdated TIMESTAMP NOT NULL
+    Rate DECIMAL(10, 4) NOT NULL,
+    LastUpdated DATETIME2 NOT NULL
 );
 
 -- Insert data into UserProfile

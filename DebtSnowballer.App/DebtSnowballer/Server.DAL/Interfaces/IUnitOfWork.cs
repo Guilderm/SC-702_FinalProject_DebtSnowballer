@@ -6,9 +6,7 @@ public interface IUnitOfWork : IDisposable
 {
 	IGenericRepository<UserProfile> UserProfileRepository { get; }
 	IGenericRepository<Debt> DebtRepository { get; }
-
 	IGenericRepository<Crud> CrudRepository { get; }
-
-	// Add more properties here for other repositories as needed
+	IGenericRepository<ExchangeRate> ExchangeRateRepository { get; }
 	Task Save();
 }

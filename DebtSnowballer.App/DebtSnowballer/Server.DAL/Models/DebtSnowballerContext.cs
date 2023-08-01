@@ -16,6 +16,7 @@ public partial class DebtSnowballerContext : DbContext
 	public virtual DbSet<Crud> Cruds { get; set; } = null!;
 	public virtual DbSet<Debt> Debts { get; set; } = null!;
 	public virtual DbSet<DebtStrategy> DebtStrategies { get; set; } = null!;
+	public virtual DbSet<ExchangeRate> ExchangeRates { get; set; } = null!;
 	public virtual DbSet<MonthlyExtraPayment> MonthlyExtraPayments { get; set; } = null!;
 	public virtual DbSet<OnetimeExtraPayment> OnetimeExtraPayments { get; set; } = null!;
 	public virtual DbSet<SessionLog> SessionLogs { get; set; } = null!;
@@ -74,13 +75,30 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.StrategyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__Strat__002AF460");
+				.HasConstraintName("FK__DebtStrat__Strat__7854C86E");
 
 			entity.HasOne(d => d.User)
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__UserI__7F36D027");
+				.HasConstraintName("FK__DebtStrat__UserI__7760A435");
+		});
+
+		modelBuilder.Entity<ExchangeRate>(entity =>
+		{
+			entity.HasNoKey();
+
+			entity.Property(e => e.BaseCurrency)
+				.HasMaxLength(3)
+				.IsUnicode(false);
+
+			entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+			entity.Property(e => e.Rate).HasColumnType("decimal(10, 4)");
+
+			entity.Property(e => e.TargetCurrency)
+				.HasMaxLength(3)
+				.IsUnicode(false);
 		});
 
 		modelBuilder.Entity<MonthlyExtraPayment>(entity =>
@@ -91,7 +109,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__06D7F1EF");
+				.HasConstraintName("FK__MonthlyEx__UserI__7F01C5FD");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -102,7 +120,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__09B45E9A");
+				.HasConstraintName("FK__OnetimeEx__UserI__01DE32A8");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -121,7 +139,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__797DF6D1");
+				.HasConstraintName("FK__SessionLo__UserI__71A7CADF");
 		});
 
 		modelBuilder.Entity<StrategyType>(entity =>
@@ -135,7 +153,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("UserProfile");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F4290826105CE")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F42909995C8EB")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(75);

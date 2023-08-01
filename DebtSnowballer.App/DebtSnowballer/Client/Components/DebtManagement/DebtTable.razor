@@ -1,73 +1,74 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Shared.Currency
+<br>
+<br>
 @if (Debts == null)
-    {
-    <p>
-        <em>Loading Debts</em>
-    </p>
-    }
+{
+	<p>
+		<em>Loading Debts</em>
+	</p>
+}
 else
-    {
-    <br>
-    <br>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Loan Nickname</th>
-                <th>Principal</th>
-                <th>Interest Rate</th>
-                <th>Fees</th>
-                <th>Monthly Payment</th>
-                <th>Remaining Term</th>
-	            <th>Cardinal Order</th>
-                <th>Currency</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (DebtDto debt in Debts)
-                {
-                string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
-                <tr>
-                    <td>@debt.LoanNickName</td>
-	                <td>@currencySymbol @debt.RemainingPrincipal.ToString("F2")</td>
-	                <td>@debt.InterestRate.ToString("P2")</td>
-	                <td>@currencySymbol @debt.Fees.ToString("F2")</td>
-	                <td>@currencySymbol @debt.MonthlyPayment.ToString("F2")</td>
-	                <td>@debt.RemainingTermInMonths</td>
-                    <td>@debt.CardinalOrder</td>
-                    <td>@debt.CurrencyCode</td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() => EditDebt.InvokeAsync(debt.Id)">Edit</button>
-                        <button class="btn btn-danger" @onclick="() => DeleteDebt.InvokeAsync(debt.Id)">Delete</button>
-                    </td>
-                </tr>
-                }
-        </tbody>
-    </table>
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Loan Nickname</th>
+			<th>Principal</th>
+			<th>Interest Rate</th>
+			<th>Fees</th>
+			<th>Monthly Payment</th>
+			<th>Remaining Term</th>
+			<th>Cardinal Order</th>
+			<th>Currency</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (DebtDto debt in Debts)
+		{
+			string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
+			<tr>
+				<td>@debt.LoanNickName</td>
+				<td>@currencySymbol @debt.RemainingPrincipal.ToString("F2")</td>
+				<td>@debt.InterestRate.ToString("P2")</td>
+				<td>@currencySymbol @debt.Fees.ToString("F2")</td>
+				<td>@currencySymbol @debt.MonthlyPayment.ToString("F2")</td>
+				<td>@debt.RemainingTermInMonths</td>
+				<td>@debt.CardinalOrder</td>
+				<td>@debt.CurrencyCode</td>
+				<td>
+					<button class="btn btn-primary" @onclick="() => EditDebt.InvokeAsync(debt.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteDebt.InvokeAsync(debt.Id)">Delete</button>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
 
-    <button class="btn btn-success" @onclick="OnAddNewLoan">Add New Loan</button>
+	<button class="btn btn-success" @onclick="OnAddNewLoan">Add New Loan</button>
 
-    <br>
-    }
+	<br>
+}
 
 @code {
 
-    [Parameter]
-    public List<DebtDto> Debts { get; set; }
+	[Parameter]
+	public List<DebtDto> Debts { get; set; }
 
-    [Parameter]
-    public EventCallback OnAddNewLoan { get; set; }
+	[Parameter]
+	public EventCallback OnAddNewLoan { get; set; }
 
-    [Parameter]
-    public EventCallback<int> EditDebt { get; set; }
+	[Parameter]
+	public EventCallback<int> EditDebt { get; set; }
 
-    [Parameter]
-    public EventCallback<int> DeleteDebt { get; set; }
+	[Parameter]
+	public EventCallback<int> DeleteDebt { get; set; }
 
-    private string GetCurrencySymbol(string currencyCode)
-        {
-        CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
-        return currencyInfo != null ? currencyInfo.Symbol : "$";
-        }
+	private string GetCurrencySymbol(string currencyCode)
+	{
+		CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
+		return currencyInfo != null ? currencyInfo.Symbol : "$";
+	}
+
 }
