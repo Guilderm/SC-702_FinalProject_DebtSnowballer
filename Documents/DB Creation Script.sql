@@ -37,6 +37,9 @@ CREATE TABLE [UserProfile]
     [Picture]      NVARCHAR(300)      NULL,
     [Locale]       NVARCHAR(10)       NULL,
     [BaseCurrency] NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
+            [TotalAmountOwed]    DECIMAL(18, 2)      NULL DEFAULT 0,
+        [ContractedMonthlyPayment]    DECIMAL(18, 2)      NULL DEFAULT 0,
+                [PreferredMonthlyPayment]    DECIMAL(18, 2)      NULL DEFAULT 0, -- Cannot be less than ContractedMonthlyPayment
     [UserTypeId]   INT                NOT NULL DEFAULT 1,
     [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LastUpdated]  DATETIME2          NOT NULL DEFAULT GETDATE()
@@ -98,9 +101,8 @@ CREATE TABLE [Debt]
     [Auth0UserId]           NVARCHAR(125)      NOT NULL,
     [LoanNickName]          NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
-    [InterestRate]          DECIMAL(6, 4)      NOT NULL,
-    [BankFees]              DECIMAL(18, 2)     NOT NULL,
-    [MonthlyPayment]        DECIMAL(18, 2)     NOT NULL,
+        [BankFees]              DECIMAL(18, 2)     NOT NULL,
+    [MonthlyPayment]        DECIMAL(18, 2)     NOT NULL, [InterestRate]          DECIMAL(6, 4)      NOT NULL,
     [RemainingTermInMonths] INT                NOT NULL,
     [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD',
     [CardinalOrder]         INT                NOT NULL,
@@ -127,7 +129,7 @@ CREATE TABLE ExchangeRates
 (
     Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     BaseCurrency   VARCHAR(3)         NOT NULL,
-    TargetCurrency VARCHAR(3)         NOT NULL,
+    QuoteCurrency VARCHAR(3)         NOT NULL,
     Rate           DECIMAL(19, 9)     NOT NULL,
     NextUpdateTime DATETIME2          NOT NULL
 );

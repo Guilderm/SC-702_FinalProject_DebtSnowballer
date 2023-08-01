@@ -16,7 +16,7 @@
 
 <BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtTable DebtsInQuoteCurrency="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
+<DebtTable Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
 
@@ -29,12 +29,13 @@
 	private DebtDto _selectedDebt;
 	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
+	private AuthenticationState _authState;
 
 	protected override async Task OnInitializedAsync()
 	{
-		AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-		_userProfile = await UserProfileService.GetUserProfile(authState.User);
+		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
 		_currentBaseCurrency = _userProfile.BaseCurrency;
 
 		await LoadDebtsInQuoteCurrency();

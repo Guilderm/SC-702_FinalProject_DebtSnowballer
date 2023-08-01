@@ -2,10 +2,10 @@
 @using DebtSnowballer.Shared.Currency
 <br>
 <br>
-@if (DebtsInQuoteCurrency == null)
+@if (Debts == null)
 {
 	<p>
-		<em>Loading DebtsInQuoteCurrency</em>
+		<em>Loading Debts</em>
 	</p>
 }
 else
@@ -25,7 +25,7 @@ else
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (DebtDto debt in DebtsInQuoteCurrency)
+		@foreach (DebtDto debt in Debts)
 		{
 			string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
 			<tr>
@@ -54,7 +54,7 @@ else
 @code {
 
 	[Parameter]
-	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
+	public List<DebtDto> Debts { get; set; }
 
 	[Parameter]
 	public EventCallback OnAddNewLoan { get; set; }
@@ -65,9 +65,6 @@ else
 	[Parameter]
 	public EventCallback<int> DeleteDebt { get; set; }
 
-	private string GetCurrencySymbol(string currencyCode)
-	{
-		CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
-		return currencyInfo != null ? currencyInfo.Symbol : "$";
-	}
+	[Parameter]
+	public Func<string, string> GetCurrencySymbol { get; set; }
 }

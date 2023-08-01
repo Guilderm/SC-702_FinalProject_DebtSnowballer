@@ -24,9 +24,8 @@
 	[Parameter]
 	public EventCallback<string> UpdatedBaseCurrency { get; set; }
 
-	private async Task OnChange(ChangeEventArgs SelectedCurrency)
+	private async Task OnChange(ChangeEventArgs selectedCurrency)
 	{
-		await UpdateBaseCurrency.InvokeAsync(SelectedCurrency.Value.ToString());
+		await UpdateBaseCurrency.InvokeAsync(selectedCurrency.Value.ToString());
 	}
-
 }

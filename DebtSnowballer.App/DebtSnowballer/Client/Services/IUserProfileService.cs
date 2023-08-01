@@ -5,6 +5,7 @@ namespace DebtSnowballer.Client.Services;
 
 public interface IUserProfileService
 {
-	Task<UserProfileDto> GetUserProfile(ClaimsPrincipal user);
+	Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user);
 	Task UpdateBaseCurrency(string baseCurrency);
+	Task UpdatePreferredMonthlyPayment(decimal preferredMonthlyPayment);
 }

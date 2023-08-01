@@ -16,7 +16,8 @@ public class UserProfileService : IUserProfileService
 		_apiurl = configuration["ApiEndpoint:Url"] + "/UserProfile";
 	}
 
-	public async Task<UserProfileDto> GetUserProfile(ClaimsPrincipal user)
+
+	public async Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user)
 	{
 		UserProfileDto rawUserProfile = await CreateUserProfileFromClaimsAsync(user);
 		HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"{_apiurl}", rawUserProfile);
@@ -28,6 +29,7 @@ public class UserProfileService : IUserProfileService
 
 		return validatedUserProfile;
 	}
+
 
 	public async Task UpdateBaseCurrency(string baseCurrency)
 	{
@@ -45,6 +47,22 @@ public class UserProfileService : IUserProfileService
 		Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
 	}
 
+
+	public async Task UpdatePreferredMonthlyPayment(decimal preferredMonthlyPayment)
+	{
+		Console.WriteLine($"Entered function 'UpdatePreferredMonthlyPayment' with input: {preferredMonthlyPayment}");
+
+		HttpRequestMessage request = new(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{preferredMonthlyPayment}");
+		HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+		if (!response.IsSuccessStatusCode)
+		{
+			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
+			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
+		}
+
+		Console.WriteLine($"Successfully updated base currency to: {preferredMonthlyPayment}");
+	}
 
 	private async Task<UserProfileDto> CreateUserProfileFromClaimsAsync(ClaimsPrincipal user)
 	{

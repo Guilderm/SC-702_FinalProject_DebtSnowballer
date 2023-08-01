@@ -84,16 +84,34 @@ public class CurrencyService : ICurrencyService
 	private async Task UpdateAllRatesForBaseCurrency(string baseCurrency, JsonDocument jsonDocument,
 		DateTime nextUpdateTime)
 	{
+		// Delete all existing rates for the base currency
+		var existingRates = await _repository.GetAll(er => er.BaseCurrency == baseCurrency);
+		foreach (var rate in existingRates) await _repository.Delete(rate.Id);
+
+		// Now create new rates
 		JsonElement.ObjectEnumerator rates = jsonDocument.RootElement.GetProperty("conversion_rates").EnumerateObject();
 		foreach (JsonProperty rate in rates)
 		{
 			string targetCurrency = rate.Name;
 			decimal exchangeRateValue = rate.Value.GetDecimal();
 
-			await UpdateOrCreateExchangeRate(baseCurrency, targetCurrency, exchangeRateValue, nextUpdateTime);
+			await CreateExchangeRate(baseCurrency, targetCurrency, exchangeRateValue, nextUpdateTime);
 		}
 
 		await _unitOfWork.Save();
+	}
+
+	private async Task CreateExchangeRate(string baseCurrency, string quoteCurrency, decimal exchangeRateValue,
+		DateTime nextUpdateTime)
+	{
+		var newRate = new ExchangeRate
+		{
+			BaseCurrency = baseCurrency,
+			TargetCurrency = quoteCurrency,
+			Rate = exchangeRateValue,
+			NextUpdateTime = nextUpdateTime
+		};
+		await _repository.Insert(newRate);
 	}
 
 	private async Task UpdateOrCreateExchangeRate(string baseCurrency, string quoteCurrency, decimal exchangeRateValue,
