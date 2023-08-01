@@ -5,15 +5,16 @@
 
 @if (DebtsInBaseCurrency != null)
 {
-	<div class="summary">
-		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwedInBaseCurrency.ToString("F2")</strong></p>
-		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalMonthlyPaymentInBaseCurrency.ToString("F2")</strong></p>
+	<div class="summary"><p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwedInBaseCurrency.ToString("N2")</strong></p>
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalMonthlyPaymentInBaseCurrency.ToString("N2")</strong></p>
 	</div>
 
 	<DebtTable DebtsInQuoteCurrency="DebtsInBaseCurrency"/>
 }
 
 @code {
+	private decimal TotalAmountOwedInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
+	private decimal TotalMonthlyPaymentInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
 
 	[Parameter]
 	public List<DebtDto> DebtsInBaseCurrency { get; set; }
@@ -21,8 +22,6 @@
 	[Parameter]
 	public string BaseCurrencyCode { get; set; }
 
-	private decimal TotalAmountOwedInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
-	private decimal TotalMonthlyPaymentInBaseCurrency => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
 	
 	private string GetCurrencySymbol(string currencyCode)
 	{CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);

@@ -3,6 +3,7 @@
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
 @using DebtSnowballer.Client.Components.DebtManagement
+@using DebtSnowballer.Shared.Currency
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
@@ -15,11 +16,11 @@
 
 <BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtTable DebtsInQuoteCurrency="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" />
+<DebtTable DebtsInQuoteCurrency="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
 
-<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" />
+<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
 
 @code {
@@ -93,5 +94,11 @@
 	private void CancelEdit()
 	{
 		_selectedDebt = null;
+	}
+
+	public string GetCurrencySymbol(string currencyCode)
+	{
+		CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
+		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
 	}
