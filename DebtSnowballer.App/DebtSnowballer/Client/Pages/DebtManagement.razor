@@ -99,7 +99,7 @@
 
 	public string GetCurrencySymbol(string currencyCode)
 	{
-		CurrencyInfo currencyInfo = Currencies.All.FirstOrDefault(c => c.AlphaCode == currencyCode);
+		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
 	}

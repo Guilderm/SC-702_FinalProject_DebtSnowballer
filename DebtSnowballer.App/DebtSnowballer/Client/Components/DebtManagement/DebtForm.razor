@@ -50,7 +50,7 @@
 						<div class="form-group">
 							<label for="currency">Currency</label>
 							<InputSelect id="currency" @bind-Value="Debt.CurrencyCode" class="form-control">
-								@foreach (CurrencyInfo currency in Currencies.All)
+								@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 								{
 									<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
 								}

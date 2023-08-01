@@ -13,6 +13,7 @@ public class CurrencyService : ICurrencyService
 	private readonly HttpClient _httpClient;
 	private readonly IGenericRepository<ExchangeRate> _repository;
 	private readonly IUnitOfWork _unitOfWork;
+	private ExchangeRate _exchangeRate;
 
 	public CurrencyService(IUnitOfWork unitOfWork, IConfiguration configuration)
 	{
@@ -27,20 +28,20 @@ public class CurrencyService : ICurrencyService
 	{
 		ValidateCurrencyCodes(baseCurrency, quoteCurrency);
 
-		ExchangeRate exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
+		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
-		if (exchangeRate == null || exchangeRate.NextUpdateTime < DateTime.UtcNow)
-			await UpdateExchangeRateFromApi(baseCurrency, quoteCurrency);
+		if (_exchangeRate == null || _exchangeRate.NextUpdateTime < DateTime.UtcNow)
+			await UpdateExchangeRateFromApi(baseCurrency);
 
-		exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
+		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
-		return exchangeRate.Rate;
+		return _exchangeRate.Rate;
 	}
 
 	private void ValidateCurrencyCodes(string baseCurrency, string quoteCurrency)
 	{
-		if (!Currencies.All.Any(c => c.AlphaCode == baseCurrency) ||
-		    !Currencies.All.Any(c => c.AlphaCode == quoteCurrency))
+		if (!Currencies.SupportedCurrencies.Any(c => c.AlphaCode == baseCurrency) ||
+		    !Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
 			throw new ArgumentException("Invalid currency code.");
 	}
 
@@ -50,7 +51,7 @@ public class CurrencyService : ICurrencyService
 		return await _repository.Get(er => er.BaseCurrency == baseCurrency && er.TargetCurrency == quoteCurrency);
 	}
 
-	private async Task UpdateExchangeRateFromApi(string baseCurrency, string quoteCurrency)
+	private async Task UpdateExchangeRateFromApi(string baseCurrency)
 	{
 		try
 		{
@@ -71,7 +72,7 @@ public class CurrencyService : ICurrencyService
 
 	private string BuildApiUrl(string baseCurrency)
 	{
-		string currencies = string.Join(",", Currencies.All.Select(c => c.AlphaCode));
+		string currencies = string.Join(",", Currencies.SupportedCurrencies.Select(c => c.AlphaCode));
 		return $"{_baseUrl}{_apiKey}/latest/{baseCurrency}?symbols={currencies}";
 	}
 
@@ -85,17 +86,18 @@ public class CurrencyService : ICurrencyService
 		DateTime nextUpdateTime)
 	{
 		// Delete all existing rates for the base currency
-		var existingRates = await _repository.GetAll(er => er.BaseCurrency == baseCurrency);
-		foreach (var rate in existingRates) await _repository.Delete(rate.Id);
+		await _repository.Delete(er => er.BaseCurrency == baseCurrency);
 
 		// Now create new rates
 		JsonElement.ObjectEnumerator rates = jsonDocument.RootElement.GetProperty("conversion_rates").EnumerateObject();
 		foreach (JsonProperty rate in rates)
 		{
-			string targetCurrency = rate.Name;
+			string quoteCurrency = rate.Name;
 			decimal exchangeRateValue = rate.Value.GetDecimal();
 
-			await CreateExchangeRate(baseCurrency, targetCurrency, exchangeRateValue, nextUpdateTime);
+			// Only create exchange rate if the target currency exists in DebtSnowballer.Shared.Currency.Currencies
+			if (Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
+				await CreateExchangeRate(baseCurrency, quoteCurrency, exchangeRateValue, nextUpdateTime);
 		}
 
 		await _unitOfWork.Save();
@@ -104,7 +106,7 @@ public class CurrencyService : ICurrencyService
 	private async Task CreateExchangeRate(string baseCurrency, string quoteCurrency, decimal exchangeRateValue,
 		DateTime nextUpdateTime)
 	{
-		var newRate = new ExchangeRate
+		ExchangeRate newRate = new()
 		{
 			BaseCurrency = baseCurrency,
 			TargetCurrency = quoteCurrency,
@@ -112,29 +114,5 @@ public class CurrencyService : ICurrencyService
 			NextUpdateTime = nextUpdateTime
 		};
 		await _repository.Insert(newRate);
-	}
-
-	private async Task UpdateOrCreateExchangeRate(string baseCurrency, string quoteCurrency, decimal exchangeRateValue,
-		DateTime nextUpdateTime)
-	{
-		ExchangeRate existingRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
-
-		if (existingRate == null)
-		{
-			existingRate = new ExchangeRate
-			{
-				BaseCurrency = baseCurrency,
-				TargetCurrency = quoteCurrency,
-				Rate = exchangeRateValue,
-				NextUpdateTime = nextUpdateTime
-			};
-			await _repository.Insert(existingRate);
-		}
-		else
-		{
-			existingRate.Rate = exchangeRateValue;
-			existingRate.NextUpdateTime = nextUpdateTime;
-			_repository.Update(existingRate);
-		}
 	}
 }

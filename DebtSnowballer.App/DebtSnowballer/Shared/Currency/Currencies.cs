@@ -2,7 +2,7 @@
 
 public static class Currencies
 {
-	public static List<CurrencyInfo> All { get; } = new()
+	public static List<CurrencyInfo> SupportedCurrencies { get; } = new()
 	{
 		new CurrencyInfo
 		{

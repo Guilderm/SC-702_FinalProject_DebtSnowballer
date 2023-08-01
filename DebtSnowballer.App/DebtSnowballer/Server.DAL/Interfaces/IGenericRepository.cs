@@ -16,6 +16,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
 		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null);
 
 	Task Delete(int id);
+	Task Delete(Expression<Func<TEntity, bool>> predicate);
 	void DeleteRange(IEnumerable<TEntity> entities);
 	void Update(TEntity entity);
 }

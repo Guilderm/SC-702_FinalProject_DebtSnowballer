@@ -3,10 +3,10 @@
 <br>
 
 <h3>Select your base currency</h3>
-<p>All loans will be converted to your base currency. All calculations and reports will also be made using this currency.</p>
+<p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
 <br>
 <select @onchange="OnChange" value="@UserCurrency">
-	@foreach (CurrencyInfo currency in Currencies.All)
+	@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 	{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
 	}
