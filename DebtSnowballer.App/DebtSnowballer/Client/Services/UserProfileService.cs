@@ -16,25 +16,23 @@ public class UserProfileService : IUserProfileService
 		_backendUrl = _httpClient.BaseAddress + "api/UserProfile";
 	}
 
-
 	public async Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user)
 	{
-		UserProfileDto rawUserProfile = await CreateUserProfileFromClaimsAsync(user);
+		Console.WriteLine("Entered function 'CreateUpdateUserProfile'");
+		UserProfileDto rawUserProfile = CreateUserProfileFromClaims(user);
 		HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"{_backendUrl}", rawUserProfile);
 
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error validating user profile: {response.ReasonPhrase}");
 
 		UserProfileDto validatedUserProfile = await response.Content.ReadFromJsonAsync<UserProfileDto>();
-
+		Console.WriteLine($"Successfully validated user profile: {JsonSerializer.Serialize(validatedUserProfile)}");
 		return validatedUserProfile;
 	}
-
 
 	public async Task UpdateBaseCurrency(string baseCurrency)
 	{
 		Console.WriteLine($"Entered function 'UpdateBaseCurrency' with input: {baseCurrency}");
-
 		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{baseCurrency}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
@@ -47,11 +45,9 @@ public class UserProfileService : IUserProfileService
 		Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
 	}
 
-
 	public async Task UpdatePreferredMonthlyPayment(decimal preferredMonthlyPayment)
 	{
 		Console.WriteLine($"Entered function 'UpdatePreferredMonthlyPayment' with input: {preferredMonthlyPayment}");
-
 		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{preferredMonthlyPayment}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
@@ -64,7 +60,7 @@ public class UserProfileService : IUserProfileService
 		Console.WriteLine($"Successfully updated base currency to: {preferredMonthlyPayment}");
 	}
 
-	private async Task<UserProfileDto> CreateUserProfileFromClaimsAsync(ClaimsPrincipal user)
+	private UserProfileDto CreateUserProfileFromClaims(ClaimsPrincipal user)
 	{
 		DateTime.TryParse(user.Claims.FirstOrDefault(c => c.Type == "updated_at")?.Value, out DateTime createdAt);
 
@@ -80,7 +76,6 @@ public class UserProfileService : IUserProfileService
 			CreatedAt = createdAt
 		};
 
-		// Log the contents of rawProfileDto to the console
 		string rawProfileDtoJson = JsonSerializer.Serialize(rawProfileDto);
 		Console.WriteLine($"RawProfileDto: {rawProfileDtoJson}");
 
