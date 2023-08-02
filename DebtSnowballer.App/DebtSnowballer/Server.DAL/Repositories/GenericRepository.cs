@@ -34,7 +34,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 	}
 
 	public async Task<TEntity> Get(Expression<Func<TEntity, bool>> expression,
-		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
 	{
 		Logger.LogInformation($"Getting an entity of type {typeof(TEntity).Name} from the database.");
 		IQueryable<TEntity> query = DbSet;
@@ -45,9 +45,9 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 		return entity;
 	}
 
-	public async Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>> expression = null,
-		Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null)
+	public async Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>>? expression = null,
+		Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
 	{
 		Logger.LogInformation($"Getting all entities of type {typeof(TEntity).Name} from the database.");
 		IQueryable<TEntity> query = DbSet;
