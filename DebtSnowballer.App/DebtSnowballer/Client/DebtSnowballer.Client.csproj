@@ -14,10 +14,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Remove="wwwroot\appsettings.Development.json" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="Components\AuthenticationStatus.razor" />
 		<None Include="Components\DebtManagement\DebtForm.razor" />
 		<None Include="Components\DebtManagement\DebtTable.razor" />
@@ -27,7 +23,6 @@
 		<None Include="Pages\Profile.razor" />
 		<None Include="Shared\MainLayout.razor" />
 		<None Include="Shared\NavMenu.razor" />
-		<None Include="wwwroot\appsettings.Development.json" />
 	</ItemGroup>
 
 	<ItemGroup>
