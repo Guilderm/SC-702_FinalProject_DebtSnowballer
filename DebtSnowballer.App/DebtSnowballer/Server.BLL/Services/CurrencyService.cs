@@ -87,6 +87,7 @@ public class CurrencyService : ICurrencyService
 			if (Currencies.SupportedCurrencies.Any(c => c.AlphaCode == quoteCurrency))
 				await CreateExchangeRate(baseCurrency, quoteCurrency, exchangeRateValue, nextUpdateTime);
 		}
+
 		await _unitOfWork.Save();
 	}
 
