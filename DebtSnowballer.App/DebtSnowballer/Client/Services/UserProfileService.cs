@@ -13,7 +13,7 @@ public class UserProfileService : IUserProfileService
 	public UserProfileService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_backendUrl = _httpClient.BaseAddress + "api/UserProfile";
+		//_backendUrl = _httpClient.BaseAddress + "api/UserProfile";
 	}
 
 	public async Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user)

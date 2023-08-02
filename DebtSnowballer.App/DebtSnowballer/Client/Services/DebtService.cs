@@ -11,7 +11,7 @@ public class DebtService : IDebtService
 	public DebtService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_backendUrl = _httpClient.BaseAddress + "api/Debt";
+		//_backendUrl = _httpClient.BaseAddress + "api/Debt";
 	}
 
 	public async Task DeleteDebt(int id)
