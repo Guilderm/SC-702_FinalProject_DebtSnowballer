@@ -14,6 +14,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="wwwroot\appsettings.Development.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="Components\AuthenticationStatus.razor" />
 		<None Include="Components\DebtManagement\DebtForm.razor" />
 		<None Include="Components\DebtManagement\DebtTable.razor" />
@@ -23,6 +27,7 @@
 		<None Include="Pages\Profile.razor" />
 		<None Include="Shared\MainLayout.razor" />
 		<None Include="Shared\NavMenu.razor" />
+		<None Include="wwwroot\appsettings.Development.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,6 +42,15 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Shared\DebtSnowballer.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\appsettings.Production.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\appsettings.Staging.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>
