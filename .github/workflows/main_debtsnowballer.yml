@@ -29,10 +29,10 @@ jobs:
         run: dotnet build ./DebtSnowballer.App/DebtSnowballer/Server --configuration Release
 
       - name: dotnet publish Client
-        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Client -c Release -o ./myapp
- 
+        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Client -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
       - name: dotnet publish Server
-        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Server -c Release -o ./myapp
+        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Server -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
 
       - name: Upload artifact for deployment job
