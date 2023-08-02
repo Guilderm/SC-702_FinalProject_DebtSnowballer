@@ -18,6 +18,7 @@
 		<None Include="Components\DebtManagement\DebtForm.razor" />
 		<None Include="Components\DebtManagement\DebtTable.razor" />
 		<None Include="Pages\Authentication.razor" />
+		<None Include="Pages\CRUD.razor" />
 		<None Include="Pages\DebtManagement.razor" />
 		<None Include="Pages\Index.razor" />
 		<None Include="Pages\Profile.razor" />

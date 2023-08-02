@@ -32,6 +32,7 @@ try
 
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+	builder.Services.AddScoped<CrudManagement>();
 	builder.Services.AddScoped<DebtManagement>();
 	builder.Services.AddScoped<UserProfileManagement>();
 	builder.Services.AddScoped<CurrencyService>();
