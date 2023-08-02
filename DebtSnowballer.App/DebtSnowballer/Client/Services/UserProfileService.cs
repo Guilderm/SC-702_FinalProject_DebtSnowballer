@@ -7,20 +7,20 @@ namespace DebtSnowballer.Client.Services;
 
 public class UserProfileService : IUserProfileService
 {
-	private readonly string _apiurl;
+	private readonly string _backendUrl;
 	private readonly HttpClient _httpClient;
 
-	public UserProfileService(HttpClient httpClient, IConfiguration configuration)
+	public UserProfileService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_apiurl = configuration["ApiEndpoint:Url"] + "/UserProfile";
+		_backendUrl = _httpClient.BaseAddress + "api/UserProfile";
 	}
 
 
 	public async Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user)
 	{
 		UserProfileDto rawUserProfile = await CreateUserProfileFromClaimsAsync(user);
-		HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"{_apiurl}", rawUserProfile);
+		HttpResponseMessage response = await _httpClient.PostAsJsonAsync($"{_backendUrl}", rawUserProfile);
 
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error validating user profile: {response.ReasonPhrase}");
@@ -35,7 +35,7 @@ public class UserProfileService : IUserProfileService
 	{
 		Console.WriteLine($"Entered function 'UpdateBaseCurrency' with input: {baseCurrency}");
 
-		HttpRequestMessage request = new(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{baseCurrency}");
+		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{baseCurrency}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
 		if (!response.IsSuccessStatusCode)
@@ -52,7 +52,7 @@ public class UserProfileService : IUserProfileService
 	{
 		Console.WriteLine($"Entered function 'UpdatePreferredMonthlyPayment' with input: {preferredMonthlyPayment}");
 
-		HttpRequestMessage request = new(HttpMethod.Put, $"{_apiurl}/UpdateBaseCurrency/{preferredMonthlyPayment}");
+		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{preferredMonthlyPayment}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
 		if (!response.IsSuccessStatusCode)

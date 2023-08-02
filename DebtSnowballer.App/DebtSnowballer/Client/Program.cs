@@ -37,5 +37,10 @@ WebAssemblyHost host = builder.Build();
 // Log a message when the application starts up
 ILogger<Program> logger = host.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("App client is starting up");
+logger.LogInformation("the ApiEndpoint URL is: " + builder.Configuration["ApiEndpoint:URL"]);
+
+var env = host.Services.GetRequiredService<IWebAssemblyHostEnvironment>();
+logger.LogInformation("Started in {EnvironmentName} environment", env.Environment);
+logger.LogInformation("Started in {BaseAddress} environment", env.BaseAddress);
 
 await host.RunAsync();

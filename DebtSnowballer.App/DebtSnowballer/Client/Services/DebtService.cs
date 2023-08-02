@@ -5,37 +5,38 @@ namespace DebtSnowballer.Client.Services;
 
 public class DebtService : IDebtService
 {
-	private readonly string _apiurl;
+	private readonly string _backendUrl;
 	private readonly HttpClient _httpClient;
 
-	public DebtService(HttpClient httpClient, IConfiguration configuration)
+	public DebtService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_apiurl = configuration["ApiEndpoint:Url"] + "/Debt";
+		_backendUrl = _httpClient.BaseAddress + "api/Debt";
 	}
+
 
 	public async Task DeleteDebt(int id)
 	{
-		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_apiurl}/{id}");
+		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_backendUrl}/{id}");
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error deleting debt: {response.ReasonPhrase}");
 	}
 
 	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency()
 	{
-		IList<DebtDto> debts = await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_apiurl}");
+		IList<DebtDto> debts = await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}");
 		return debts;
 	}
 
 	public async Task<DebtDto> GetDebtById(int id)
 	{
-		DebtDto debt = await _httpClient.GetFromJsonAsync<DebtDto>($"{_apiurl}/{id}");
+		DebtDto debt = await _httpClient.GetFromJsonAsync<DebtDto>($"{_backendUrl}/{id}");
 		return debt;
 	}
 
 	public async Task<DebtDto> AddDebt(DebtDto debtDto)
 	{
-		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_apiurl, debtDto);
+		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, debtDto);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error posting debt: {response.ReasonPhrase}");
 		DebtDto result = await response.Content.ReadFromJsonAsync<DebtDto>();
@@ -44,7 +45,7 @@ public class DebtService : IDebtService
 
 	public async Task<DebtDto> UpdateDebt(DebtDto debtDto)
 	{
-		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_apiurl}/{debtDto.Id}", debtDto);
+		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_backendUrl}/{debtDto.Id}", debtDto);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error updating debt: {response.ReasonPhrase}");
 		DebtDto result = await response.Content.ReadFromJsonAsync<DebtDto>();
@@ -54,7 +55,7 @@ public class DebtService : IDebtService
 	public async Task<IList<DebtDto>> GetAllDebtsInBaseCurrency()
 	{
 		IList<DebtDto> debts =
-			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_apiurl}/GetAllDebtsInBaseCurrency");
+			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}/GetAllDebtsInBaseCurrency");
 		return debts;
 	}
 }
