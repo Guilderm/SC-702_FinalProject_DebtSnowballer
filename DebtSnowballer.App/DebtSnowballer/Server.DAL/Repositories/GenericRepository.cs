@@ -33,7 +33,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 		Logger.LogInformation($"Entities inserted: {entities}");
 	}
 
-	public async Task<TEntity> Get(Expression<Func<TEntity, bool>> expression,
+	public async Task<TEntity?> Get(Expression<Func<TEntity, bool>> expression,
 		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
 	{
 		Logger.LogInformation($"Getting an entity of type {typeof(TEntity).Name} from the database.");
@@ -67,8 +67,15 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 	{
 		Logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
 		TEntity? entity = await DbSet.FindAsync(id);
-		DbSet.Remove(entity);
-		Logger.LogInformation($"Entity deleted: {entity}");
+		if (entity != null)
+		{
+			DbSet.Remove(entity);
+			Logger.LogInformation($"Entity deleted: {entity}");
+		}
+		else
+		{
+			Logger.LogInformation($"No entity of type {typeof(TEntity).Name} with id {id} found to delete.");
+		}
 	}
 
 	public void DeleteRange(IEnumerable<TEntity> entities)

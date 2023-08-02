@@ -8,7 +8,7 @@ public interface IGenericRepository<TEntity> where TEntity : class
 	Task Insert(TEntity entity);
 	Task InsertRange(IEnumerable<TEntity> entities);
 
-	Task<TEntity> Get(Expression<Func<TEntity, bool>> expression,
+	Task<TEntity?> Get(Expression<Func<TEntity, bool>> expression,
 		Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
 
 	Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>>? expression = null,

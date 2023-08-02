@@ -16,7 +16,7 @@ public abstract class BaseController : ControllerBase
 		Logger = logger;
 	}
 
-	protected string GetAuth0UserId()
+	protected string? GetAuth0UserId()
 	{
 		string? auth0UserId = User.Claims
 			.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
