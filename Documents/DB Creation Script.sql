@@ -27,22 +27,22 @@ end
 
 CREATE TABLE [UserProfile]
 (
-    [Id]         INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId]  NVARCHAR(75)       NOT NULL UNIQUE,
-    [GivenName]    NVARCHAR(50)       NULL,
-    [FamilyName]   NVARCHAR(50)       NULL,
-    [NickName]     NVARCHAR(50)       NULL,
-    [FullName]     NVARCHAR(100)      NULL,
-    [Email]        NVARCHAR(256)      NULL,
-    [Picture]      NVARCHAR(300)      NULL,
-    [Locale]       NVARCHAR(10)       NULL,
-    [BaseCurrency] NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
-            [TotalAmountOwed]    DECIMAL(18, 2)      NULL DEFAULT 0,
-        [ContractedMonthlyPayment]    DECIMAL(18, 2)      NULL DEFAULT 0,
-                [PreferredMonthlyPayment]    DECIMAL(18, 2)      NULL DEFAULT 0, -- Cannot be less than ContractedMonthlyPayment
-    [UserTypeId]   INT                NOT NULL DEFAULT 1,
-    [CreatedAt]    DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [LastUpdated]  DATETIME2          NOT NULL DEFAULT GETDATE()
+    [Id]                       INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Auth0UserId]              NVARCHAR(75)       NOT NULL UNIQUE,
+    [GivenName]                NVARCHAR(50)       NULL,
+    [FamilyName]               NVARCHAR(50)       NULL,
+    [NickName]                 NVARCHAR(50)       NULL,
+    [FullName]                 NVARCHAR(100)      NULL,
+    [Email]                    NVARCHAR(256)      NULL,
+    [Picture]                  NVARCHAR(300)      NULL,
+    [Locale]                   NVARCHAR(10)       NULL,
+    [BaseCurrency]             NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
+    [TotalAmountOwed]          DECIMAL(18, 2)     NULL     DEFAULT 0,
+    [ContractedMonthlyPayment] DECIMAL(18, 2)     NULL     DEFAULT 0,
+    [PreferredMonthlyPayment]  DECIMAL(18, 2)     NULL     DEFAULT 0,     -- Cannot be less than ContractedMonthlyPayment
+    [UserTypeId]               INT                NOT NULL DEFAULT 1,
+    [CreatedAt]                DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [LastUpdated]              DATETIME2          NOT NULL DEFAULT GETDATE()
 );
 
 -- Create UserType table to store different types of users
@@ -101,8 +101,9 @@ CREATE TABLE [Debt]
     [Auth0UserId]           NVARCHAR(125)      NOT NULL,
     [LoanNickName]          NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
-        [BankFees]              DECIMAL(18, 2)     NOT NULL,
-    [MonthlyPayment]        DECIMAL(18, 2)     NOT NULL, [InterestRate]          DECIMAL(6, 4)      NOT NULL,
+    [BankFees]              DECIMAL(18, 2)     NOT NULL,
+    [MonthlyPayment]        DECIMAL(18, 2)     NOT NULL,
+    [InterestRate]          DECIMAL(6, 4)      NOT NULL,
     [RemainingTermInMonths] INT                NOT NULL,
     [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD',
     [CardinalOrder]         INT                NOT NULL,
@@ -129,8 +130,8 @@ CREATE TABLE ExchangeRates
 (
     Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
     BaseCurrency   VARCHAR(3)         NOT NULL,
-    QuoteCurrency VARCHAR(3)         NOT NULL,
-    ConversionRate           DECIMAL(19, 9)     NOT NULL,
+    QuoteCurrency  VARCHAR(3)         NOT NULL,
+    ConversionRate DECIMAL(19, 9)     NOT NULL,
     NextUpdateTime DATETIME2          NOT NULL
 );
 
@@ -160,36 +161,3 @@ INSERT INTO OnetimeExtraPayments (UserId, Amount, Date)
 VALUES (1, 1000.00, '2023-07-18'),
        (2, 2000.00, '2023-07-18'),
        (3, 3000.00, '2023-07-18');
-
-
-
--------------
---TO DELETE--
--------------
-
-
--- Create CRUD table with different column types for testing
-CREATE TABLE [CRUD]
-(
-    [Id]           INT IDENTITY (1,1) NOT NULL,
-    [LoanName]     NVARCHAR(50)       NOT NULL,
-    [Principal]    DECIMAL(18, 2)     NOT NULL,
-    [InterestRate] DECIMAL(5, 2)      NOT NULL,
-    [TermMonths]   INT                NOT NULL,
-    [StartDate]    DATETIME2          NOT NULL,
-    [EndDate]      DATETIME2,
-    CONSTRAINT [PK_CRUD] PRIMARY KEY CLUSTERED ([Id] ASC)
-);
-
--- Insert sample data into CRUD
-INSERT INTO [CRUD] (LoanName, Principal, InterestRate, TermMonths, StartDate)
-VALUES ('Loan 1', 10000.00, 5.00, 60, GETDATE()),
-       ('Loan 2', 20000.00, 4.50, 48, GETDATE()),
-       ('Loan 3', 30000.00, 4.00, 36, GETDATE()),
-       ('Loan 4', 40000.00, 3.50, 24, GETDATE()),
-       ('Loan 5', 50000.00, 3.00, 12, GETDATE()),
-       ('Loan 6', 60000.00, 2.50, 60, GETDATE()),
-       ('Loan 7', 70000.00, 2.00, 48, GETDATE()),
-       ('Loan 8', 80000.00, 1.50, 36, GETDATE()),
-       ('Loan 9', 90000.00, 1.00, 24, GETDATE()),
-       ('Loan 10', 100000.00, 0.50, 12, GETDATE());

@@ -33,13 +33,13 @@ public class CurrencyService : ICurrencyService
 
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
-		return _exchangeRate.Rate;
+		return _exchangeRate.ConversionRate;
 	}
 
 
 	private async Task<ExchangeRate> GetExchangeRateFromDatabase(string baseCurrency, string quoteCurrency)
 	{
-		return await _repository.Get(er => er.BaseCurrency == baseCurrency && er.TargetCurrency == quoteCurrency);
+		return await _repository.Get(er => er.BaseCurrency == baseCurrency && er.QuoteCurrency == quoteCurrency);
 	}
 
 	private async Task UpdateExchangeRateFromApi(string baseCurrency)
@@ -97,8 +97,8 @@ public class CurrencyService : ICurrencyService
 		ExchangeRate newRate = new()
 		{
 			BaseCurrency = baseCurrency,
-			TargetCurrency = quoteCurrency,
-			Rate = exchangeRateValue,
+			QuoteCurrency = quoteCurrency,
+			ConversionRate = exchangeRateValue,
 			NextUpdateTime = nextUpdateTime
 		};
 		await _repository.Insert(newRate);

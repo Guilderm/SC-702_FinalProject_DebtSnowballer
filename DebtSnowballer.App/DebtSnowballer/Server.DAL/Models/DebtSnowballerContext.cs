@@ -13,7 +13,6 @@ public partial class DebtSnowballerContext : DbContext
 	{
 	}
 
-	public virtual DbSet<Crud> Cruds { get; set; } = null!;
 	public virtual DbSet<Debt> Debts { get; set; } = null!;
 	public virtual DbSet<DebtStrategy> DebtStrategies { get; set; } = null!;
 	public virtual DbSet<ExchangeRate> ExchangeRates { get; set; } = null!;
@@ -31,17 +30,6 @@ public partial class DebtSnowballerContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<Crud>(entity =>
-		{
-			entity.ToTable("CRUD");
-
-			entity.Property(e => e.InterestRate).HasColumnType("decimal(5, 2)");
-
-			entity.Property(e => e.LoanName).HasMaxLength(50);
-
-			entity.Property(e => e.Principal).HasColumnType("decimal(18, 2)");
-		});
-
 		modelBuilder.Entity<Debt>(entity =>
 		{
 			entity.ToTable("Debt");
@@ -75,13 +63,13 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.StrategyId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__Strat__52842541");
+				.HasConstraintName("FK__DebtStrat__Strat__46DD686B");
 
 			entity.HasOne(d => d.User)
 				.WithMany(p => p.DebtStrategies)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__DebtStrat__UserI__51900108");
+				.HasConstraintName("FK__DebtStrat__UserI__45E94432");
 		});
 
 		modelBuilder.Entity<ExchangeRate>(entity =>
@@ -90,9 +78,9 @@ public partial class DebtSnowballerContext : DbContext
 				.HasMaxLength(3)
 				.IsUnicode(false);
 
-			entity.Property(e => e.Rate).HasColumnType("decimal(19, 9)");
+			entity.Property(e => e.ConversionRate).HasColumnType("decimal(19, 9)");
 
-			entity.Property(e => e.TargetCurrency)
+			entity.Property(e => e.QuoteCurrency)
 				.HasMaxLength(3)
 				.IsUnicode(false);
 		});
@@ -105,7 +93,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.MonthlyExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__MonthlyEx__UserI__593122D0");
+				.HasConstraintName("FK__MonthlyEx__UserI__4D8A65FA");
 		});
 
 		modelBuilder.Entity<OnetimeExtraPayment>(entity =>
@@ -116,7 +104,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.OnetimeExtraPayments)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__OnetimeEx__UserI__5C0D8F7B");
+				.HasConstraintName("FK__OnetimeEx__UserI__5066D2A5");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -135,7 +123,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.SessionLogs)
 				.HasForeignKey(d => d.UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__UserI__4BD727B2");
+				.HasConstraintName("FK__SessionLo__UserI__40306ADC");
 		});
 
 		modelBuilder.Entity<StrategyType>(entity =>
@@ -149,7 +137,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("UserProfile");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F429084ADFA03")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F42906D7127A6")
 				.IsUnique();
 
 			entity.Property(e => e.Auth0UserId).HasMaxLength(75);
@@ -157,6 +145,10 @@ public partial class DebtSnowballerContext : DbContext
 			entity.Property(e => e.BaseCurrency)
 				.HasMaxLength(3)
 				.HasDefaultValueSql("('USD')");
+
+			entity.Property(e => e.ContractedMonthlyPayment)
+				.HasColumnType("decimal(18, 2)")
+				.HasDefaultValueSql("((0))");
 
 			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -175,6 +167,14 @@ public partial class DebtSnowballerContext : DbContext
 			entity.Property(e => e.NickName).HasMaxLength(50);
 
 			entity.Property(e => e.Picture).HasMaxLength(300);
+
+			entity.Property(e => e.PreferredMonthlyPayment)
+				.HasColumnType("decimal(18, 2)")
+				.HasDefaultValueSql("((0))");
+
+			entity.Property(e => e.TotalAmountOwed)
+				.HasColumnType("decimal(18, 2)")
+				.HasDefaultValueSql("((0))");
 
 			entity.Property(e => e.UserTypeId).HasDefaultValueSql("((1))");
 		});

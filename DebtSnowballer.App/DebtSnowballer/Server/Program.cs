@@ -20,22 +20,26 @@ try
 	Log.Information("App server is starting up");
 
 	// Add services to the container.
+	Log.Information("Configuring services...");
 	builder.Services.AddControllersWithViews();
 	builder.Services.AddRazorPages();
 
 	//Configure AddAutoMapper
+	Log.Information("Adding AutoMapper...");
 	builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 
 	// Add services for the DB.
+	Log.Information("Configuring DbContext...");
 	builder.Services.AddDbContext<DebtSnowballerContext>(options =>
 		options.UseSqlServer(builder.Configuration.GetConnectionString("AzureBDConnection")));
 
+	Log.Information("Adding scoped services...");
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 	builder.Services.AddScoped<DebtManagement>();
 	builder.Services.AddScoped<UserProfileManagement>();
 	builder.Services.AddScoped<CurrencyService>();
 
+	Log.Information("Configuring authentication...");
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
 		{
@@ -48,24 +52,31 @@ try
 		});
 
 	//This was added at the start of using data from an API module 5
+	Log.Information("Adding HttpContextAccessor...");
 	builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+	Log.Information("Configuring CORS...");
 	builder.Services.AddCors(options =>
 	{
 		options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 	});
 
+	Log.Information("Adding controllers...");
 	builder.Services.AddControllers();
 
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+	Log.Information("Configuring Swagger...");
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen();
 
-	builder.Host.UseSerilog(); // Use Serilog as the logging framework
+	Log.Information("Using Serilog...");
+	builder.Host.UseSerilog();
 
+	Log.Information("Building application...");
 	WebApplication app = builder.Build();
 
 	// Configure the HTTP request pipeline.
+	Log.Information("Configuring HTTP request pipeline...");
 	if (app.Environment.IsDevelopment())
 	{
 		app.UseWebAssemblyDebugging();
@@ -73,7 +84,6 @@ try
 	else
 	{
 		app.UseExceptionHandler("/Error");
-		// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 		app.UseHsts();
 	}
 
@@ -96,11 +106,15 @@ try
 	app.MapControllers();
 	app.MapFallbackToFile("index.html");
 
+	Log.Information("Running application...");
 	app.Run();
 }
 catch (Exception ex)
 {
-	Log.Fatal(ex, "Application start-up failed");
+	if (ex is HostAbortedException hostAbortedException && hostAbortedException.InnerException != null)
+		Log.Fatal(hostAbortedException.InnerException, "Application start-up failed");
+	else
+		Log.Fatal(ex, "Application start-up failed");
 }
 finally
 {

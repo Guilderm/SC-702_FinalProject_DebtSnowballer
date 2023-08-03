@@ -20,6 +20,9 @@ public class UserProfile
 	public string? Picture { get; set; }
 	public string? Locale { get; set; }
 	public string BaseCurrency { get; set; } = null!;
+	public decimal? TotalAmountOwed { get; set; }
+	public decimal? ContractedMonthlyPayment { get; set; }
+	public decimal? PreferredMonthlyPayment { get; set; }
 	public int UserTypeId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
