@@ -63,7 +63,7 @@ VALUES ('EndUser', 'The user that the application is inteded for'),
 CREATE TABLE [SessionLog]
 (
     [Id]              INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Auth0UserId]     NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [LogonTimeStamp]  DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LogoffTimeStamp] DATETIME2,
     [OperatingSystem] NVARCHAR(50)       NOT NULL,
@@ -88,7 +88,7 @@ VALUES ('Debt Snowball'),
 CREATE TABLE [DebtStrategy]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Auth0UserId] NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID)
 );
 
@@ -97,7 +97,7 @@ CREATE TABLE [DebtStrategy]
 CREATE TABLE [Debt]
 (
     [Id]                    INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Auth0UserId]           NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [LoanNickName]          NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
     [BankFees]              DECIMAL(18, 2)     NOT NULL,
@@ -112,11 +112,11 @@ CREATE TABLE [Debt]
 
 CREATE TABLE Snowflakes
 (
-    Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
-    Frequency int NOT NULL,
-    Amount DECIMAL(18, 2) NOT NULL,
-   );
+    Id            INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Auth0UserId] NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    Frequency     int                NOT NULL,
+    Amount        DECIMAL(18, 2)     NOT NULL,
+);
 
 -- Currency will be defined using ISO 4217
 CREATE TABLE ExchangeRates
