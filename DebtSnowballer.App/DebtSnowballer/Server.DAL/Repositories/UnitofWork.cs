@@ -13,6 +13,7 @@ public class UnitOfWork : IUnitOfWork
 	private IGenericRepository<Debt>? _debts;
 	private IGenericRepository<ExchangeRate>? _exchangeRate;
 	private IGenericRepository<UserProfile>? _userProfile;
+	private IGenericRepository<Snowflake>? _Snowflake;
 
 	public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 	{
@@ -29,6 +30,8 @@ public class UnitOfWork : IUnitOfWork
 
 	public IGenericRepository<UserProfile> UserProfileRepository => _userProfile ??=
 		new GenericRepository<UserProfile>(_loggerFactory.CreateLogger<GenericRepository<UserProfile>>(), _context);
+	public IGenericRepository<Snowflake> SnowflakeRepository => _Snowflake ??=
+		new GenericRepository<Snowflake>(_loggerFactory.CreateLogger<GenericRepository<Snowflake>>(), _context);
 
 	public async Task Save()
 	{
