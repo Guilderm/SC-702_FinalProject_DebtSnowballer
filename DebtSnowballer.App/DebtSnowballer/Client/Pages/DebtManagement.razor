@@ -23,7 +23,7 @@
 
 <DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<SnowflakeManagement Snowflakes="@_snowflakes" />
+<SnowflakeManagement Snowflakes="@_snowflakes"/>
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
@@ -109,9 +109,10 @@
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
 
-	
+
 	private async Task LoadSnowflakes()
 	{
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
 	}
-	}
+
+}

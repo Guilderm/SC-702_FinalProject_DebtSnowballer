@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Server.BLL.Services;
-using Server.UIL.Controllers;
+
+namespace Server.UIL.Controllers;
 
 public class UserProfileController : BaseController
 {

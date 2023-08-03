@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Server.DAL.Models;
 
-namespace Server.DAL.Models
+public class Snowflake
 {
-    public partial class Snowflake
-    {
-        public int Id { get; set; }
-        public string Auth0UserId { get; set; } = null!;
-        public int Frequency { get; set; }
-        public decimal Amount { get; set; }
+	public int Id { get; set; }
+	public string Auth0UserId { get; set; } = null!;
+	public string NickName { get; set; } = null!;
+	public int FrequencyInMonths { get; set; }
+	public decimal Amount { get; set; }
+	public DateTime StartingAt { get; set; }
+	public DateTime EndingAt { get; set; }
+	public string CurrencyCode { get; set; } = null!;
 
-        public virtual UserProfile Auth0User { get; set; } = null!;
-    }
+	public virtual UserProfile Auth0User { get; set; } = null!;
+	public virtual Currency CurrencyCodeNavigation { get; set; } = null!;
 }

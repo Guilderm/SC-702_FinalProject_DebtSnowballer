@@ -1,6 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-
 @inject ISnowflakeService SnowflakeService
 
 <br/>
@@ -10,25 +9,33 @@
 
 @if (Snowflakes == null)
 {
-	<p><em>Loading...</em></p>
+	<p>
+		<em>Loading...</em>
+	</p>
 }
 else
 {
 	<table class="table">
 		<thead>
 		<tr>
-			<th>Id</th>
-			<th>Frequency</th>
+			<th>NickName</th>
+			<th>Frequency In Months</th>
 			<th>Amount</th>
+			<th>Start Date</th>
+			<th>End Date</th>
+			<th>CurrencyCode</th>
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (var snowflake in Snowflakes)
+		@foreach (SnowflakeDto snowflake in Snowflakes)
 		{
 			<tr>
-				<td>@snowflake.Id</td>
-				<td>@snowflake.Frequency</td>
+				<td>@snowflake.NickName</td>
+				<td>@snowflake.FrequencyInMonths</td>
 				<td>@snowflake.Amount</td>
+				<td>@snowflake.StartingAt</td>
+				<td>@snowflake.EndingAt</td>
+				<td>@snowflake.CurrencyCode</td>
 			</tr>
 		}
 		</tbody>
@@ -36,7 +43,8 @@ else
 }
 
 @code {
+
 	[Parameter]
 	public List<SnowflakeDto> Snowflakes { get; set; }
-}
 
+}
