@@ -9,10 +9,17 @@
 	<div class="summary">
 		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwed.ToString("N2")</strong></p>
 		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @ContractedMonthlyPayment.ToString("N2")</strong></p>
-		<p>Preferred Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @PreferredMonthlyPayment.ToString("N2")</strong></p>
-		<input @bind-value="PreferredMonthlyPayment" @bind-value:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@ContractedMonthlyPayment" step="5"/>
+		@if (PreferredMonthlyPayment < ContractedMonthlyPayment)
+		{
+			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
+		}
+		<p>
+			Preferred Monthly Payment:
+			<input @bind="PreferredMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@ContractedMonthlyPayment"/>
+		</p>
 	</div>
 }
+
 
 @code {
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
