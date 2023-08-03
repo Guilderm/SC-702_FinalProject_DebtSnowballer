@@ -39,7 +39,7 @@ try
 	builder.Services.AddScoped<UserProfileManagement>();
 	builder.Services.AddScoped<CurrencyService>();
 	builder.Services.AddScoped<SnowflakeManagement>();
-	
+
 	Log.Information("Configuring authentication...");
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>

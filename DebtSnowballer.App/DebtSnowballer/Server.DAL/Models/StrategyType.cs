@@ -1,14 +1,18 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class StrategyType
+namespace Server.DAL.Models
 {
-	public StrategyType()
-	{
-		DebtStrategies = new HashSet<DebtStrategy>();
-	}
+    public partial class StrategyType
+    {
+        public StrategyType()
+        {
+            DebtStrategies = new HashSet<DebtStrategy>();
+        }
 
-	public int Id { get; set; }
-	public string Type { get; set; } = null!;
+        public int Id { get; set; }
+        public string Type { get; set; } = null!;
 
-	public virtual ICollection<DebtStrategy> DebtStrategies { get; set; }
+        public virtual ICollection<DebtStrategy> DebtStrategies { get; set; }
+    }
 }

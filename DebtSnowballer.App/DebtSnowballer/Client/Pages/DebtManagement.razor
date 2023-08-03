@@ -8,6 +8,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
+@inject ISnowflakeService SnowflakeService
 @attribute [Authorize]
 
 <PageTitle>Debt Management</PageTitle>
@@ -22,7 +23,7 @@
 
 <DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<SnowflakeManagement SnowflakeManagement/>
+<SnowflakeManagement Snowflakes="@_snowflakes" />
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
@@ -31,6 +32,7 @@
 	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
+	private List<SnowflakeDto> _snowflakes;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -41,6 +43,7 @@
 
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
+		await LoadSnowflakes();
 	}
 
 	private async Task LoadDebtsInQuoteCurrency()
@@ -106,4 +109,9 @@
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
 
-}
+	
+	private async Task LoadSnowflakes()
+	{
+		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
+	}
+	}
