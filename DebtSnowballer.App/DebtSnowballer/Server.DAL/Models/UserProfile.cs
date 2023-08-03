@@ -5,9 +5,9 @@ public class UserProfile
 	public UserProfile()
 	{
 		DebtStrategies = new HashSet<DebtStrategy>();
-		MonthlyExtraPayments = new HashSet<MonthlyExtraPayment>();
-		OnetimeExtraPayments = new HashSet<OnetimeExtraPayment>();
+		Debts = new HashSet<Debt>();
 		SessionLogs = new HashSet<SessionLog>();
+		Snowflakes = new HashSet<Snowflake>();
 	}
 
 	public int Id { get; set; }
@@ -28,7 +28,7 @@ public class UserProfile
 	public DateTime LastUpdated { get; set; }
 
 	public virtual ICollection<DebtStrategy> DebtStrategies { get; set; }
-	public virtual ICollection<MonthlyExtraPayment> MonthlyExtraPayments { get; set; }
-	public virtual ICollection<OnetimeExtraPayment> OnetimeExtraPayments { get; set; }
+	public virtual ICollection<Debt> Debts { get; set; }
 	public virtual ICollection<SessionLog> SessionLogs { get; set; }
+	public virtual ICollection<Snowflake> Snowflakes { get; set; }
 }

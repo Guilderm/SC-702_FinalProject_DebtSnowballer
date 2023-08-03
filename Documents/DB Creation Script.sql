@@ -63,7 +63,7 @@ VALUES ('EndUser', 'The user that the application is inteded for'),
 CREATE TABLE [SessionLog]
 (
     [Id]              INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [UserId]          INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
+[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [LogonTimeStamp]  DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LogoffTimeStamp] DATETIME2,
     [OperatingSystem] NVARCHAR(50)       NOT NULL,
@@ -88,8 +88,7 @@ VALUES ('Debt Snowball'),
 CREATE TABLE [DebtStrategy]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId] NVARCHAR(125)      NOT NULL,
-    [UserId]      INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
+[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [StrategyId]  INT                NOT NULL FOREIGN KEY REFERENCES [StrategyType] (ID)
 );
 
@@ -98,7 +97,7 @@ CREATE TABLE [DebtStrategy]
 CREATE TABLE [Debt]
 (
     [Id]                    INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId]           NVARCHAR(125)      NOT NULL,
+[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [LoanNickName]          NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
     [BankFees]              DECIMAL(18, 2)     NOT NULL,
@@ -110,21 +109,15 @@ CREATE TABLE [Debt]
     [CreatedAt]             DATETIME2          NOT NULL DEFAULT GETDATE()
 );
 
--- Create PaymentStrategyPlan table to store information about each user's payment strategy
-CREATE TABLE [MonthlyExtraPayments]
-(
-    [Id]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
-    [Amount] DECIMAL(10, 3)     NOT NULL
-);
 
-CREATE TABLE [OnetimeExtraPayments]
+CREATE TABLE Snowflakes
 (
-    [Id]     INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [UserId] INT                NOT NULL FOREIGN KEY REFERENCES [UserProfile] (ID),
-    [Amount] DECIMAL(10, 3)     NOT NULL,
-    [Date]   DATETIME2          NOT NULL
-);
+    Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+[Auth0UserId] NVARCHAR(75)  NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    Frequency int NOT NULL,
+    Amount DECIMAL(18, 2) NOT NULL,
+   );
+
 -- Currency will be defined using ISO 4217
 CREATE TABLE ExchangeRates
 (
@@ -135,11 +128,12 @@ CREATE TABLE ExchangeRates
     NextUpdateTime DATETIME2          NOT NULL
 );
 
+
 -- Insert data into UserProfile
 INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserTypeId)
 VALUES ('auth0|60d7b7f29b14170068e3244f', 'John', 'Doe', 'john.doe@example.com', 1),
        ('auth0|60d7b7f29b14170068e32450', 'Jane', 'Doe', 'jane.doe@example.com', 2),
-       ('auth0|60d7b7f29b14170068e32451', 'Jim', 'Doe', 'jim.doe@example.com', 3);
+       ('google-oauth2|116471976465148595031', 'Jim', 'Doe', 'jim.doe@example.com', 3);
 
 -- Insert data into Loan
 INSERT INTO Debt (Auth0UserId, LoanNickName, RemainingPrincipal, InterestRate, BankFees, MonthlyPayment,
@@ -149,15 +143,3 @@ VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125
        ('google-oauth2|116471976465148595031', 'Visa Credit Card', 3125000, 0.229, 0, 625000, 60, 'CRC', 3),
        ('google-oauth2|116471976465148595031', 'Federal Student Loan', 30000, 0.058, 0, 350, 120, 'USD', 4),
        ('google-oauth2|116471976465148595031', 'Personal Loan', 10000, 0.1, 0, 200, 60, 'USD', 5);
-
--- Insert data into MonthlyExtraPayments
-INSERT INTO MonthlyExtraPayments (UserId, Amount)
-VALUES (1, 100.00),
-       (2, 200.00),
-       (3, 300.00);
-
--- Insert data into OnetimeExtraPayments
-INSERT INTO OnetimeExtraPayments (UserId, Amount, Date)
-VALUES (1, 1000.00, '2023-07-18'),
-       (2, 2000.00, '2023-07-18'),
-       (3, 3000.00, '2023-07-18');

@@ -109,12 +109,9 @@ try
 	Log.Information("Running application...");
 	app.Run();
 }
-catch (Exception ex)
+catch (Exception ex) when (ex is not HostAbortedException)
 {
-	if (ex is HostAbortedException hostAbortedException && hostAbortedException.InnerException != null)
-		Log.Fatal(hostAbortedException.InnerException, "Application start-up failed");
-	else
-		Log.Fatal(ex, "Application start-up failed");
+	Log.Fatal(ex, "Host terminated unexpectedly.");
 }
 finally
 {

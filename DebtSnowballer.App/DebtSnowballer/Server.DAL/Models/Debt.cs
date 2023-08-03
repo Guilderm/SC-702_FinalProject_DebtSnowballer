@@ -13,4 +13,6 @@ public class Debt
 	public string CurrencyCode { get; set; } = null!;
 	public int CardinalOrder { get; set; }
 	public DateTime CreatedAt { get; set; }
+
+	public virtual UserProfile Auth0User { get; set; } = null!;
 }
