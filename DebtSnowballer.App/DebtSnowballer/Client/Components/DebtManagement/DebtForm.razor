@@ -8,7 +8,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">@(Debt.Id == 0 ? "Add A Loan" : "Edit: ") @Debt.LoanNickName</h5>
+					<h5 class="modal-title">@(Debt.Id == 0 ? "Add A Loan" : "Edit: ") @Debt.NickName</h5>
 					<button type="button" class="btn-close" @onclick="OnCancel"></button>
 				</div>
 				<div class="modal-body">
@@ -18,7 +18,7 @@
 
 						<div class="form-group">
 							<label for="LoanNickName">Loan NickName</label>
-							<InputText id="LoanNickName" @bind-Value="Debt.LoanNickName" class="form-control" placeholder="Loan NickName"/>
+							<InputText id="LoanNickName" @bind-Value="Debt.NickName" class="form-control" placeholder="Loan NickName"/>
 						</div>
 
 						<div class="form-group">

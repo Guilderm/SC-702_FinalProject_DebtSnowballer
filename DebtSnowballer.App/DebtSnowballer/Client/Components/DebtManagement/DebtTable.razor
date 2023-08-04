@@ -28,7 +28,7 @@ else
 		{
 			string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
 			<tr>
-				<td>@debt.LoanNickName</td>
+				<td>@debt.NickName</td>
 				<td>@currencySymbol @debt.RemainingPrincipal.ToString("N2")</td>
 				<td>@currencySymbol @debt.BankFees.ToString("N2")</td>
 				<td>@currencySymbol @debt.MonthlyPayment.ToString("N2")</td>

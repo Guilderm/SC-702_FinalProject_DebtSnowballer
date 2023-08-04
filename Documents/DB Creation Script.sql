@@ -154,7 +154,8 @@ CREATE TABLE Snowflakes
 
 -- Insert data into UserProfile
 INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserTypeId)
-VALUES ('google-oauth2|116471976465148595031', 'Jim', 'Doe', 'jim.doe@example.com', 3);
+VALUES ('google-oauth2|116471976465148595031', 'Jim', 'Doe', 'jim.doe@example.com', 1),
+       ('auth0|64cc577de4780fda44d0d662', 'Jim', 'Doe', 'jim.doe@example.com', 1);
 
 -- Insert data into Loan
 INSERT INTO Debt (Auth0UserId, NickName, RemainingPrincipal, InterestRate, BankFees, MonthlyPayment,
@@ -163,7 +164,13 @@ VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125
        ('google-oauth2|116471976465148595031', '2023 Honda Accord Loan', 25000, 0.042, 0, 460, 60, 'USD', 2),
        ('google-oauth2|116471976465148595031', 'Visa Credit Card', 3125000, 0.229, 0, 625000, 60, 'CRC', 3),
        ('google-oauth2|116471976465148595031', 'Federal Student Loan', 30000, 0.058, 0, 350, 120, 'USD', 4),
-       ('google-oauth2|116471976465148595031', 'Personal Loan', 10000, 0.1, 0, 200, 60, 'USD', 5);
+       ('google-oauth2|116471976465148595031', 'Personal Loan', 10000, 0.1, 0, 200, 60, 'USD', 5),
+
+       ('auth0|64cc577de4780fda44d0d662', 'Home Mortgage', 125000000, 0.125, 0, 562500, 360, 'CRC', 1),
+       ('auth0|64cc577de4780fda44d0d662', '2023 Honda Accord Loan', 25000, 0.042, 0, 460, 60, 'USD', 2),
+       ('auth0|64cc577de4780fda44d0d662', 'Visa Credit Card', 3125000, 0.229, 0, 625000, 60, 'CRC', 3),
+       ('auth0|64cc577de4780fda44d0d662', 'Federal Student Loan', 30000, 0.058, 0, 350, 120, 'USD', 4),
+       ('auth0|64cc577de4780fda44d0d662', 'Personal Loan', 10000, 0.1, 0, 200, 60, 'USD', 5);
 
 
 -- Insert data into Snowflakes
@@ -174,4 +181,12 @@ VALUES ('google-oauth2|116471976465148595031', 'Snowflake1', 12, 1000.00, GETDAT
        ('google-oauth2|116471976465148595031', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
        ('google-oauth2|116471976465148595031', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'CRC'),
-       ('google-oauth2|116471976465148595031', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
+       ('google-oauth2|116471976465148595031', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+
+       ('auth0|64cc577de4780fda44d0d662', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'USD'),
+       ('auth0|64cc577de4780fda44d0d662', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
+       ('auth0|64cc577de4780fda44d0d662', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('auth0|64cc577de4780fda44d0d662', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'CRC'),
+       ('auth0|64cc577de4780fda44d0d662', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');

@@ -10,7 +10,7 @@ public class DebtDto
 
 	[Required]
 	[StringLength(50, ErrorMessage = "Loan Nick Name must be less than 50 characters.")]
-	public string LoanNickName { get; set; }
+	public string NickName { get; set; }
 
 	[Required]
 	[Range(0, double.MaxValue, ErrorMessage = "Remaining Principal must be a positive number.")]
@@ -35,4 +35,6 @@ public class DebtDto
 	public string CurrencyCode { get; set; }
 
 	[Range(0, 25)] public int CardinalOrder { get; set; }
+
+	public DateTime CreatedAt { get; set; }
 }
