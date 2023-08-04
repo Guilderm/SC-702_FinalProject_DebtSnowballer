@@ -51,6 +51,7 @@
 	private async Task LoadDebtsInBaseCurrency()
 	{
 		_debtsInBaseCurrency = (await DebtService.GetAllDebtsInBaseCurrency()).ToList();
+		StateHasChanged();
 	}
 
 	private async Task UpdateBaseCurrency(string selectedCurrency)
@@ -69,5 +70,6 @@
 	private async Task LoadSnowflakesInQuoteCurrency()
 	{
 		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
+		StateHasChanged();
 	}
 }
