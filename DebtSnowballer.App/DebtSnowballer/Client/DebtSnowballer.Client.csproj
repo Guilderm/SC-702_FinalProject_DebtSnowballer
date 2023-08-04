@@ -16,9 +16,9 @@
 	<ItemGroup>
 		<None Include="Components\AuthenticationStatus.razor" />
 		<None Include="Components\DebtManagement\DebtForm.razor" />
-		<None Include="Components\DebtManagement\DebtTable.razor" />
+		<None Include="Components\DebtManagement\DebtManagement.razor" />
 		<None Include="Pages\Authentication.razor" />
-		<None Include="Pages\DebtManagement.razor" />
+		<None Include="Pages\DebtPlanManagement.razor" />
 		<None Include="Pages\Index.razor" />
 		<None Include="Pages\Profile.razor" />
 		<None Include="Shared\MainLayout.razor" />

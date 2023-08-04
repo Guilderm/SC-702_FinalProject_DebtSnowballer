@@ -89,12 +89,12 @@ CREATE TABLE [UserProfile]
 
     -- consider putting these into a different table called UserSettings
     [BaseCurrency]             NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
-    [PreferredMonthlyPayment]  DECIMAL(18, 2)     NULL     DEFAULT 0,     -- Cannot be less than ContractedMonthlyPayment
-    [SelectedStrategy]         INT                NULL     DEFAULT 1 REFERENCES [StrategyType] (Id),
+    [DebtPlanMonthlyPayment]  DECIMAL(18, 2)     NOT NULL     DEFAULT 0,     -- Cannot be less than AggregatedMonthlyPayment
+    [SelectedStrategy]         INT                NOT NULL     DEFAULT 1 REFERENCES [StrategyType] (Id),
 
     -- Consider deleting these
-    [TotalAmountOwed]          DECIMAL(18, 2)     NULL     DEFAULT 0,
-    [ContractedMonthlyPayment] DECIMAL(18, 2)     NULL     DEFAULT 0,
+    [TotalAmountOwed]          DECIMAL(18, 2)     NOT NULL     DEFAULT 0,
+    [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL     DEFAULT 0,
 );
 
 -- Create UserType table to store different types of users

@@ -32,7 +32,7 @@ public class SnowflakeDto
 
 	public static ValidationResult ValidateEndingAt(DateTime endingAt, ValidationContext context)
 	{
-		var instance = context.ObjectInstance as SnowflakeDto;
+		SnowflakeDto instance = context.ObjectInstance as SnowflakeDto;
 		if (instance == null) return ValidationResult.Success;
 
 		if (endingAt > instance.StartingAt.AddYears(45))

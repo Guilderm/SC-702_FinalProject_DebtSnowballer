@@ -8,14 +8,14 @@
 {
 	<div class="summary">
 		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwed.ToString("N2")</strong></p>
-		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @ContractedMonthlyPayment.ToString("N2")</strong></p>
-		@if (PreferredMonthlyPayment < ContractedMonthlyPayment)
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
 		{
 			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
 		}
 		<p>
 			Preferred Monthly Payment:
-			<input @bind="PreferredMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@ContractedMonthlyPayment"/>
+			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
 		</p>
 	</div>
 }
@@ -23,8 +23,8 @@
 
 @code {
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
-	private decimal ContractedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
-	private decimal PreferredMonthlyPayment { get; set; }
+	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
+	private decimal DebtPlanMonthlyPayment { get; set; }
 
 	[Parameter]
 	public List<DebtDto> DebtsInBaseCurrency { get; set; }
@@ -37,9 +37,9 @@
 
 	protected override Task OnParametersSetAsync()
 	{
-		if (DebtsInBaseCurrency != null && PreferredMonthlyPayment < ContractedMonthlyPayment)
+		if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
 		{
-			PreferredMonthlyPayment = ContractedMonthlyPayment;
+			DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
 		}
 		return Task.CompletedTask;
 	}
@@ -48,15 +48,14 @@
 	{
 		if (decimal.TryParse(e.Value?.ToString(), out decimal newPreferredMonthlyPayment))
 		{
-			if (newPreferredMonthlyPayment > ContractedMonthlyPayment)
+			if (newPreferredMonthlyPayment > AggregatedMonthlyPayment)
 			{
 				await UserProfileService.UpdatePreferredMonthlyPayment(newPreferredMonthlyPayment);
 			}
 			else
 			{
-				PreferredMonthlyPayment = ContractedMonthlyPayment;
+				DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
 			}
 		}
 	}
-
 }

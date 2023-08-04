@@ -16,9 +16,9 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrency UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+<BaseCurrencyManagement UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtTable Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol"/>
+<DebtManagement Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol"/>
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
@@ -35,7 +35,7 @@
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakes;
-	private SnowflakeDto newSnowflake = new();
+	private SnowflakeDto _newSnowflake = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -111,8 +111,7 @@
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
-
-
+	
 	private async Task LoadSnowflakes()
 	{
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
@@ -120,14 +119,14 @@
 
 	private async void OnAddNewSnowflake()
 	{
-		var addedSnowflake = await SnowflakeService.AddSnowflake(newSnowflake);
-		newSnowflake = new SnowflakeDto();
+		SnowflakeDto addedSnowflake = await SnowflakeService.AddSnowflake(_newSnowflake);
+		_newSnowflake = new SnowflakeDto();
 		await LoadSnowflakes();
 	}
 
 	private async Task GetSnowflake(int id)
 	{
-		var snowflake = await SnowflakeService.GetSnowflakeById(id);
+		SnowflakeDto snowflake = await SnowflakeService.GetSnowflakeById(id);
 	}
 
 	private async Task DeleteSnowflake(int id)
@@ -135,5 +134,4 @@
 		await SnowflakeService.DeleteSnowflake(id);
 		await LoadSnowflakes();
 	}
-
 }
