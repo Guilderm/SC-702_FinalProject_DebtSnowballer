@@ -7,8 +7,8 @@
 @if (DebtsInBaseCurrency != null)
     {
     <div class="summary">
-        <p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwed.ToString("N2")</strong></p>
-        <p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+        <p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
+        <p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
         @if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
             {
             <p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
@@ -24,21 +24,19 @@
 @code {
     private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
     private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
-    private decimal DebtPlanMonthlyPayment { get; set; }
+
+	[Parameter]
+	public decimal DebtPlanMonthlyPayment { get; set; }
 
     [Parameter]
     public List<DebtDto> DebtsInBaseCurrency { get; set; }
 
     [Parameter]
-    public string BaseCurrencyCode { get; set; }
+    public string BaseCurrency { get; set; }
 
     [Parameter]
     public Func<string, string> GetCurrencySymbol { get; set; }
 
-    protected override async Task OnInitializedAsync()
-        {
-        DebtPlanMonthlyPayment = await UserProfileService.GetDebtPlanMonthlyPayment();
-        }
 
     protected override Task OnParametersSetAsync()
         {
@@ -56,6 +54,7 @@
             if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
                 {
                 await UserProfileService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
+	                DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
                 }
             else
                 {

@@ -18,9 +18,7 @@
 
 <BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtManagement Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
-
-<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
+<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
 <MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
@@ -30,7 +28,6 @@
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
-	private DebtDto _selectedDebt;
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakes;
@@ -63,45 +60,7 @@
 		_userProfile.BaseCurrency = selectedCurrency;
 		await LoadDebtsInBaseCurrency();
 	}
-
-	private void OnAddNewDebt()
-	{
-		_selectedDebt = new DebtDto();
-	}
-
-	private async Task GetDebt(int id)
-	{
-		_selectedDebt = await DebtService.GetDebtById(id);
-	}
-
-	private async Task DeleteDebt(int id)
-	{
-		await DebtService.DeleteDebt(id);
-		await LoadDebtsInQuoteCurrency();
-		await LoadDebtsInBaseCurrency();
-	}
-
-	private async Task SaveDebt(DebtDto debtItem)
-	{
-		if (debtItem.Id == 0)
-		{
-			await DebtService.AddDebt(debtItem);
-		}
-		else
-		{
-			await DebtService.UpdateDebt(debtItem);
-		}
-
-		await LoadDebtsInQuoteCurrency();
-		await LoadDebtsInBaseCurrency();
-		_selectedDebt = null;
-	}
-
-	private void CancelEdit()
-	{
-		_selectedDebt = null;
-	}
-
+	
 	public string GetCurrencySymbol(string currencyCode)
 	{
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
