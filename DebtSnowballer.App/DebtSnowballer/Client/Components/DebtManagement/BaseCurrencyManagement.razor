@@ -5,7 +5,7 @@
 <h3>Select your base currency</h3>
 <p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
 <br>
-<select @onchange="OnChange" value="@UserCurrency">
+<select @onchange="OnChange" value="@BaseCurrency">
 	@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 	{
 		<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
@@ -16,7 +16,7 @@
 @code {
 
 	[Parameter]
-	public string UserCurrency { get; set; }
+	public string BaseCurrency { get; set; }
 
 	[Parameter]
 	public EventCallback<string> UpdateBaseCurrency { get; set; }

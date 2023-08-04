@@ -16,22 +16,21 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrencyManagement UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-<DebtManagement Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol"/>
+<DebtManagement Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol" />
 
-<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
 
-<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
-<SnowflakeManagement Snowflakes="@_snowflakes" OnAddNewSnowflake="OnAddNewSnowflake" EditSnowflake="GetSnowflake" DeleteSnowflake="DeleteSnowflake" GetCurrencySymbol="GetCurrencySymbol"/>
+<SnowflakeManagement Snowflakes="@_snowflakes" OnAddNewSnowflake="OnAddNewSnowflake" EditSnowflake="GetSnowflake" DeleteSnowflake="DeleteSnowflake" GetCurrencySymbol="GetCurrencySymbol" />
 
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
 	private DebtDto _selectedDebt;
-	private string _currentBaseCurrency;
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakes;
@@ -40,10 +39,8 @@
 	protected override async Task OnInitializedAsync()
 	{
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
 		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-		_currentBaseCurrency = _userProfile.BaseCurrency;
-
+	
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
 		await LoadSnowflakes();
@@ -63,7 +60,6 @@
 	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
-		_currentBaseCurrency = selectedCurrency;
 		_userProfile.BaseCurrency = selectedCurrency;
 		await LoadDebtsInBaseCurrency();
 	}

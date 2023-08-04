@@ -5,58 +5,62 @@
 <br>
 
 @if (DebtsInBaseCurrency != null)
-{
-	<div class="summary">
-		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwed.ToString("N2")</strong></p>
-		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
-		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
-		{
-			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
-		}
-		<p>
-			Preferred Monthly Payment:
-			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
-		</p>
-	</div>
-}
+    {
+    <div class="summary">
+        <p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @TotalAmountOwed.ToString("N2")</strong></p>
+        <p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrencyCode) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+        @if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+            {
+            <p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
+            }
+        <p>
+            Preferred Monthly Payment:
+            <input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment" />
+        </p>
+    </div>
+    }
 
 
 @code {
-	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
-	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
-	private decimal DebtPlanMonthlyPayment { get; set; }
+    private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
+    private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
+    private decimal DebtPlanMonthlyPayment { get; set; }
 
-	[Parameter]
-	public List<DebtDto> DebtsInBaseCurrency { get; set; }
+    [Parameter]
+    public List<DebtDto> DebtsInBaseCurrency { get; set; }
 
-	[Parameter]
-	public string BaseCurrencyCode { get; set; }
+    [Parameter]
+    public string BaseCurrencyCode { get; set; }
 
-	[Parameter]
-	public Func<string, string> GetCurrencySymbol { get; set; }
+    [Parameter]
+    public Func<string, string> GetCurrencySymbol { get; set; }
 
-	protected override Task OnParametersSetAsync()
-	{
-		if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
-		{
-			DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
-		}
-		return Task.CompletedTask;
-	}
+    protected override async Task OnInitializedAsync()
+        {
+        DebtPlanMonthlyPayment = await UserProfileService.GetDebtPlanMonthlyPayment();
+        }
 
-	private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
-	{
-		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
-		{
-			if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
-			{
-				await UserProfileService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
-			}
-			else
-			{
-				DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
-			}
-		}
-	}
+    protected override Task OnParametersSetAsync()
+        {
+        if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+            {
+            DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
+            }
+        return Task.CompletedTask;
+        }
 
+    private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
+        {
+        if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
+            {
+            if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
+                {
+                await UserProfileService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
+                }
+            else
+                {
+                DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
+                }
+            }
+        }
 }
