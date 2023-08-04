@@ -23,7 +23,8 @@
 
 <DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<SnowflakeManagement Snowflakes="@_snowflakes"/>
+<SnowflakeManagement Snowflakes="@_snowflakes" OnAddNewSnowflake="OnAddNewSnowflake" EditSnowflake="GetSnowflake" DeleteSnowflake="DeleteSnowflake" GetCurrencySymbol="GetCurrencySymbol" />
+
 
 @code {
 	private List<DebtDto> _debtsInQuoteCurrency;
@@ -115,4 +116,18 @@
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
 	}
 
+	private void OnAddNewSnowflake()
+	{
+	// Implement the logic for adding a new snowflake.
+	}
+
+	private async Task GetSnowflake(int id)
+	{
+	// Implement the logic for getting a snowflake by its ID.
+	}
+
+	private async Task DeleteSnowflake(int id)
+	{
+	// Implement the logic for deleting a snowflake by its ID.
+	}
 }

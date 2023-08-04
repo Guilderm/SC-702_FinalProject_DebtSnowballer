@@ -170,8 +170,8 @@ VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125
 INSERT INTO Snowflakes (Auth0UserId, NickName, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
 VALUES ('google-oauth2|116471976465148595031', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'USD'),
-       ('google-oauth2|116471976465148595031', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('google-oauth2|116471976465148595031', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
        ('google-oauth2|116471976465148595031', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
        ('google-oauth2|116471976465148595031', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
-        'USD'),
+        'CRC'),
        ('google-oauth2|116471976465148595031', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
