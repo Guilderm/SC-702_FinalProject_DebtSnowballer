@@ -22,7 +22,7 @@
 
 <MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
-<SnowflakeManagement Snowflakes="@_snowflakes" OnAddNewSnowflake="OnAddNewSnowflake" EditSnowflake="GetSnowflake" DeleteSnowflake="DeleteSnowflake" GetCurrencySymbol="GetCurrencySymbol" />
+<SnowflakeManagement Snowflakes="@_snowflakes" EditSnowflake="GetSnowflake" GetCurrencySymbol="GetCurrencySymbol" LoadSnowflakes="LoadSnowflakes" />
 
 
 @code {
@@ -31,7 +31,6 @@
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakes;
-	private SnowflakeDto _newSnowflake = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -71,23 +70,4 @@
 	{
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
 	}
-
-	private async void OnAddNewSnowflake()
-	{
-		SnowflakeDto addedSnowflake = await SnowflakeService.AddSnowflake(_newSnowflake);
-		_newSnowflake = new SnowflakeDto();
-		await LoadSnowflakes();
-	}
-
-	private async Task GetSnowflake(int id)
-	{
-		SnowflakeDto snowflake = await SnowflakeService.GetSnowflakeById(id);
-	}
-
-	private async Task DeleteSnowflake(int id)
-	{
-		await SnowflakeService.DeleteSnowflake(id);
-		await LoadSnowflakes();
-	}
-
 }

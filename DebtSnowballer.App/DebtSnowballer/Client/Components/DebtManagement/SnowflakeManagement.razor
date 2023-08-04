@@ -39,8 +39,8 @@ else
 				<td>@snowflake.EndingAt</td>
 				<td>@snowflake.CurrencyCode</td>
 				<td>
-					<button class="btn btn-primary" @onclick="() => EditSnowflake.InvokeAsync(snowflake.Id)">Edit</button>
-					<button class="btn btn-danger" @onclick="() => DeleteSnowflake.InvokeAsync(snowflake.Id)">Delete</button>
+					<button class="btn btn-primary" @onclick="() => EditSnowflake(snowflake.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteSnowflake(snowflake.Id)">Delete</button>
 				</td>
 			</tr>
 		}
@@ -54,19 +54,33 @@ else
 
 @code {
 
+	private SnowflakeDto _newSnowflake = new();
+
 	[Parameter]
 	public List<SnowflakeDto> Snowflakes { get; set; }
-
-	[Parameter]
-	public EventCallback OnAddNewSnowflake { get; set; }
-
-	[Parameter]
-	public EventCallback<int> EditSnowflake { get; set; }
-
-	[Parameter]
-	public EventCallback<int> DeleteSnowflake { get; set; }
-
+	
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
 
-}
+	[Parameter]
+	public Func<Task> LoadSnowflakes { get; set; }
+
+
+	private async void OnAddNewSnowflake()
+		{
+		SnowflakeDto addedSnowflake = await SnowflakeService.AddSnowflake(_newSnowflake);
+		_newSnowflake = new SnowflakeDto();
+		await LoadSnowflakes();
+		}
+
+	private async Task EditSnowflake(int id)
+		{
+		SnowflakeDto snowflake = await SnowflakeService.GetSnowflakeById(id);
+		}
+
+	private async Task DeleteSnowflake(int id)
+		{
+		await SnowflakeService.DeleteSnowflake(id);
+		await LoadSnowflakes();
+		}
+		}
