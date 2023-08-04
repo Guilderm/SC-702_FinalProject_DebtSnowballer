@@ -46,11 +46,11 @@
 
 	private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
 	{
-		if (decimal.TryParse(e.Value?.ToString(), out decimal newPreferredMonthlyPayment))
+		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
 		{
-			if (newPreferredMonthlyPayment > AggregatedMonthlyPayment)
+			if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
 			{
-				await UserProfileService.UpdatePreferredMonthlyPayment(newPreferredMonthlyPayment);
+				await UserProfileService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
 			}
 			else
 			{
@@ -58,4 +58,5 @@
 			}
 		}
 	}
+
 }

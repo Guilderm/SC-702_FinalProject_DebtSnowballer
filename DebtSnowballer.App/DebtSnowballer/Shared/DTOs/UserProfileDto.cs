@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace DebtSnowballer.Shared.DTOs;
+﻿namespace DebtSnowballer.Shared.DTOs;
 
 public class UserProfileDto
 {
@@ -13,11 +11,12 @@ public class UserProfileDto
 	public string Email { get; set; }
 	public string Picture { get; set; }
 	public string Locale { get; set; }
-
-	[StringLength(3, ErrorMessage = "Currency must be a valid ISO 4217 alpha code.")]
-	public string BaseCurrency { get; set; }
-
 	public int UserTypeId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
+	public string BaseCurrency { get; set; }
+	public decimal DebtPlanMonthlyPayment { get; set; }
+	public int SelectedStrategy { get; set; }
+	public decimal TotalAmountOwed { get; set; }
+	public decimal AggregatedMonthlyPayment { get; set; }
 }

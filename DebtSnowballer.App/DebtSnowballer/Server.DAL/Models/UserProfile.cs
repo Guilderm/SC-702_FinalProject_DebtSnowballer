@@ -22,12 +22,12 @@ public class UserProfile
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
 	public string BaseCurrency { get; set; } = null!;
-	public decimal? PreferredMonthlyPayment { get; set; }
-	public int? SelectedStrategy { get; set; }
-	public decimal? TotalAmountOwed { get; set; }
-	public decimal? ContractedMonthlyPayment { get; set; }
+	public decimal DebtPlanMonthlyPayment { get; set; }
+	public int SelectedStrategy { get; set; }
+	public decimal TotalAmountOwed { get; set; }
+	public decimal AggregatedMonthlyPayment { get; set; }
 
-	public virtual StrategyType? SelectedStrategyNavigation { get; set; }
+	public virtual StrategyType SelectedStrategyNavigation { get; set; } = null!;
 	public virtual ICollection<Debt> Debts { get; set; }
 	public virtual ICollection<SessionLog> SessionLogs { get; set; }
 	public virtual ICollection<Snowflake> Snowflakes { get; set; }

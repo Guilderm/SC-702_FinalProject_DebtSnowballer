@@ -45,10 +45,10 @@ public class UserProfileService : IUserProfileService
 		Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
 	}
 
-	public async Task UpdatePreferredMonthlyPayment(decimal preferredMonthlyPayment)
+	public async Task UpdateDebtPlanMonthlyPayment(decimal debtPlanMonthlyPayment)
 	{
-		Console.WriteLine($"Entered function 'UpdatePreferredMonthlyPayment' with input: {preferredMonthlyPayment}");
-		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{preferredMonthlyPayment}");
+		Console.WriteLine($"Entered function 'UpdateDebtPlanMonthlyPayment' with input: {debtPlanMonthlyPayment}");
+		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{debtPlanMonthlyPayment}");
 		HttpResponseMessage response = await _httpClient.SendAsync(request);
 
 		if (!response.IsSuccessStatusCode)
@@ -57,7 +57,7 @@ public class UserProfileService : IUserProfileService
 			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
 		}
 
-		Console.WriteLine($"Successfully updated base currency to: {preferredMonthlyPayment}");
+		Console.WriteLine($"Successfully updated base currency to: {debtPlanMonthlyPayment}");
 	}
 
 	private UserProfileDto CreateUserProfileFromClaims(ClaimsPrincipal user)

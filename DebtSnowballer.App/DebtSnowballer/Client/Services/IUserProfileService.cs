@@ -7,5 +7,5 @@ public interface IUserProfileService
 {
 	Task<UserProfileDto> CreateUpdateUserProfile(ClaimsPrincipal user);
 	Task UpdateBaseCurrency(string baseCurrency);
-	Task UpdatePreferredMonthlyPayment(decimal preferredMonthlyPayment);
+	Task UpdateDebtPlanMonthlyPayment(decimal debtPlanMonthlyPayment);
 }

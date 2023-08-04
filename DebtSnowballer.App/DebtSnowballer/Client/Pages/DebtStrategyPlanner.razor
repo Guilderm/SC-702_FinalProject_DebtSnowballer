@@ -1,5 +1,5 @@
-﻿@page "/Debt"
-@page "/DebtManagement"
+﻿@page "/DebtStrategyPlanner"
+@page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
 @using DebtSnowballer.Shared.Currency
@@ -16,13 +16,13 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrencyManagement UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
+<BaseCurrencyManagement UserCurrency="@_currentBaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
 <DebtManagement Debts="@_debtsInQuoteCurrency" EditDebt="GetDebt" DeleteDebt="DeleteDebt" OnAddNewLoan="OnAddNewDebt" GetCurrencySymbol="GetCurrencySymbol"/>
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
-<DebtSummary DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrencyCode="@_currentBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 <SnowflakeManagement Snowflakes="@_snowflakes" OnAddNewSnowflake="OnAddNewSnowflake" EditSnowflake="GetSnowflake" DeleteSnowflake="DeleteSnowflake" GetCurrencySymbol="GetCurrencySymbol"/>
 
@@ -111,7 +111,7 @@
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
-	
+
 	private async Task LoadSnowflakes()
 	{
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
@@ -134,4 +134,5 @@
 		await SnowflakeService.DeleteSnowflake(id);
 		await LoadSnowflakes();
 	}
+
 }
