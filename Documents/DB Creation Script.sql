@@ -81,18 +81,18 @@ CREATE TABLE [UserProfile]
     [NickName]                 NVARCHAR(50)       NULL,
     [FullName]                 NVARCHAR(100)      NULL,
     [Email]                    NVARCHAR(256)      NULL,
-    [Picture]                  NVARCHAR(300)      NULL,
+    [Picture]                  NVARCHAR(MAX)      NULL,
     [Locale]                   NVARCHAR(10)       NULL,
     [UserTypeId]               INT                NOT NULL DEFAULT 1,
     [CreatedAt]                DATETIME2          NOT NULL DEFAULT GETDATE(),
     [LastUpdated]              DATETIME2          NOT NULL DEFAULT GETDATE(),
 
-    -- consider putting these into a difrent table called UserSettings
+    -- consider putting these into a different table called UserSettings
     [BaseCurrency]             NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     [PreferredMonthlyPayment]  DECIMAL(18, 2)     NULL     DEFAULT 0,     -- Cannot be less than ContractedMonthlyPayment
     [SelectedStrategy]         INT                NULL     DEFAULT 1 REFERENCES [StrategyType] (Id),
 
--- Consider deleting these
+    -- Consider deleting these
     [TotalAmountOwed]          DECIMAL(18, 2)     NULL     DEFAULT 0,
     [ContractedMonthlyPayment] DECIMAL(18, 2)     NULL     DEFAULT 0,
 );

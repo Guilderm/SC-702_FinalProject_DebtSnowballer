@@ -9,6 +9,7 @@
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
 @inject ISnowflakeService SnowflakeService
+
 @attribute [Authorize]
 
 <PageTitle>Debt Management</PageTitle>
@@ -34,6 +35,7 @@
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakes;
+	private SnowflakeDto newSnowflake = new();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -116,19 +118,22 @@
 		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
 	}
 
-	private void OnAddNewSnowflake()
+	private async void OnAddNewSnowflake()
 	{
-	// Implement the logic for adding a new snowflake.
+		var addedSnowflake = await SnowflakeService.AddSnowflake(newSnowflake);
+		newSnowflake = new SnowflakeDto();
+		await LoadSnowflakes();
 	}
 
 	private async Task GetSnowflake(int id)
 	{
-	// Implement the logic for getting a snowflake by its ID.
+		var snowflake = await SnowflakeService.GetSnowflakeById(id);
 	}
 
 	private async Task DeleteSnowflake(int id)
 	{
-	// Implement the logic for deleting a snowflake by its ID.
+		await SnowflakeService.DeleteSnowflake(id);
+		await LoadSnowflakes();
 	}
 
 }
