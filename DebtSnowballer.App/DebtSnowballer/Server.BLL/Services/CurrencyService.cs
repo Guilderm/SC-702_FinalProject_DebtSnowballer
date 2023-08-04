@@ -46,8 +46,7 @@ public class CurrencyService : ICurrencyService
 	{
 		try
 		{
-			string url = BuildApiUrl(baseCurrency);
-			string apiResponse = await _httpClient.GetStringAsync(url);
+			string apiResponse = await _httpClient.GetStringAsync($"{_baseUrl}{_apiKey}/latest/{baseCurrency}");
 			JsonDocument jsonDocument = JsonDocument.Parse(apiResponse);
 
 			DateTime nextUpdateTime = GetNextUpdateTimeFromApiResponse(jsonDocument);
@@ -59,12 +58,6 @@ public class CurrencyService : ICurrencyService
 			Console.WriteLine($"Error fetching exchange rate: {ex.Message}");
 			throw;
 		}
-	}
-
-	private string BuildApiUrl(string baseCurrency)
-	{
-		string currencies = string.Join(",", Currencies.SupportedCurrencies.Select(c => c.AlphaCode));
-		return $"{_baseUrl}{_apiKey}/latest/{baseCurrency}?symbols={currencies}";
 	}
 
 	private DateTime GetNextUpdateTimeFromApiResponse(JsonDocument doc)

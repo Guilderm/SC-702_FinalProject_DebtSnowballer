@@ -22,7 +22,7 @@
 
 <MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
-<SnowflakeManagement Snowflakes="@_snowflakes" EditSnowflake="GetSnowflake" GetCurrencySymbol="GetCurrencySymbol" LoadSnowflakes="LoadSnowflakes" />
+<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
 
 @code {
@@ -30,7 +30,7 @@
 	private List<DebtDto> _debtsInBaseCurrency;
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
-	private List<SnowflakeDto> _snowflakes;
+	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -39,7 +39,7 @@
 	
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
-		await LoadSnowflakes();
+		await LoadSnowflakesInQuoteCurrency();
 	}
 
 	private async Task LoadDebtsInQuoteCurrency()
@@ -66,8 +66,8 @@
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
 	}
 
-	private async Task LoadSnowflakes()
+	private async Task LoadSnowflakesInQuoteCurrency()
 	{
-		_snowflakes = (await SnowflakeService.GetAllSnowflakes()).ToList();
+		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
 	}
 }
