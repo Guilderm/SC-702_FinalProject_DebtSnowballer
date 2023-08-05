@@ -28,8 +28,10 @@ public class CurrencyService : ICurrencyService
 	{
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
-		if (_exchangeRate == null || _exchangeRate.NextUpdateTime < DateTime.UtcNow)
-			await UpdateExchangeRateFromApi(baseCurrency);
+		bool exchangeRateIsNull = _exchangeRate == null;
+		bool exchangeRateIsStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
+
+		if (exchangeRateIsNull || exchangeRateIsStale) await UpdateExchangeRateFromApi(baseCurrency);
 
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
@@ -62,8 +64,16 @@ public class CurrencyService : ICurrencyService
 
 	private DateTime GetNextUpdateTimeFromApiResponse(JsonDocument doc)
 	{
-		return DateTime.Parse(doc.RootElement.GetProperty("time_next_update_utc").GetString() ??
-		                      DateTime.UtcNow.ToLongDateString());
+		//return DateTime.Parse(doc.RootElement.GetProperty("time_next_update_utc").GetString() ?? DateTime.UtcNow.AddHours(12).ToString("R"));
+
+		//return DateTime.UtcNow.AddHours(20);
+
+		DateTime time = doc.RootElement.TryGetProperty("time_next_update_utc", out JsonElement timeNextUpdateUtc) &&
+		                timeNextUpdateUtc.GetString() != null
+			? DateTime.Parse(timeNextUpdateUtc.GetString())
+			: DateTime.UtcNow.AddHours(12);
+
+		return time;
 	}
 
 	private async Task UpdateAllRatesForBaseCurrency(string baseCurrency, JsonDocument jsonDocument,
