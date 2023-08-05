@@ -1,6 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.Services
-
 @inject IDebtService DebtService
 
 
@@ -53,8 +52,8 @@ else
 	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
 
 	<br>
-	
-	<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
+
+	<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 }
 
 @code {
@@ -62,7 +61,7 @@ else
 
 	[Parameter]
 	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
-	
+
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
 
@@ -73,40 +72,41 @@ else
 	public Func<Task> LoadDebtsInBaseCurrency { get; set; }
 
 	private void OnAddNewDebt()
-		{
+	{
 		_selectedDebt = new DebtDto();
-		}
+	}
 
 	private async Task EditDebt(int id)
-		{
+	{
 		_selectedDebt = await DebtService.GetDebtById(id);
-		}
+	}
 
 	private async Task DeleteDebt(int id)
-		{
+	{
 		await DebtService.DeleteDebt(id);
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
-		}
+	}
 
 	private async Task SaveDebt(DebtDto debtItem)
-		{
+	{
 		if (debtItem.Id == 0)
-			{
+		{
 			await DebtService.AddDebt(debtItem);
-			}
+		}
 		else
-			{
+		{
 			await DebtService.UpdateDebt(debtItem);
-			}
+		}
 
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
 		_selectedDebt = null;
-		}
+	}
 
 	private void CancelEdit()
-		{
+	{
 		_selectedDebt = null;
-		}
-		}
+	}
+
+}

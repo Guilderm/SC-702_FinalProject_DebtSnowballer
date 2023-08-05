@@ -7,59 +7,59 @@ namespace Server.UIL.Controllers;
 
 public class UserProfileController : BaseController
 {
-    private readonly ILogger<UserProfileController> _logger;
-    private readonly UserProfileManagement _userProfileManagement;
+	private readonly ILogger<UserProfileController> _logger;
+	private readonly UserProfileManagement _userProfileManagement;
 
-    public UserProfileController(UserProfileManagement userProfileManagement, ILogger<UserProfileController> logger)
-        : base(logger)
-    {
-        _userProfileManagement = userProfileManagement;
-        _logger = logger;
-    }
+	public UserProfileController(UserProfileManagement userProfileManagement, ILogger<UserProfileController> logger)
+		: base(logger)
+	{
+		_userProfileManagement = userProfileManagement;
+		_logger = logger;
+	}
 
-    [HttpPost]
-    public async Task<IActionResult> GetValidateUserProfile([FromBody] UserProfileDto rawUserProfile)
-    {
-        _logger.LogInformation(
-            "Entered function 'GetValidateUserProfile' in 'UserProfileController' with HTTP POST request. Input: {@rawUserProfile}",
-            rawUserProfile);
+	[HttpPost]
+	public async Task<IActionResult> GetValidateUserProfile([FromBody] UserProfileDto rawUserProfile)
+	{
+		_logger.LogInformation(
+			"Entered function 'GetValidateUserProfile' in 'UserProfileController' with HTTP POST request. Input: {@rawUserProfile}",
+			rawUserProfile);
 
-        UserProfileDto validatedUserProfile =
-            await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
+		UserProfileDto validatedUserProfile =
+			await _userProfileManagement.GetValidateUserProfile(rawUserProfile, GetAuth0UserId());
 
-        _logger.LogInformation("Outcome of 'GetValidateUserProfile': {@validatedUserProfile}", validatedUserProfile);
+		_logger.LogInformation("Outcome of 'GetValidateUserProfile': {@validatedUserProfile}", validatedUserProfile);
 
-        return Ok(validatedUserProfile);
-    }
+		return Ok(validatedUserProfile);
+	}
 
-    [HttpPut("UpdateBaseCurrency/{baseCurrency}")]
-    public async Task<IActionResult> UpdateBaseCurrency(string baseCurrency)
-    {
-        _logger.LogInformation(
-            "Entered function 'UpdateBaseCurrency' in 'UserProfileController' with HTTP PUT request. Input: {baseCurrency}",
-            baseCurrency);
+	[HttpPut("UpdateBaseCurrency/{baseCurrency}")]
+	public async Task<IActionResult> UpdateBaseCurrency(string baseCurrency)
+	{
+		_logger.LogInformation(
+			"Entered function 'UpdateBaseCurrency' in 'UserProfileController' with HTTP PUT request. Input: {baseCurrency}",
+			baseCurrency);
 
-        bool isUpdated = await _userProfileManagement.UpdateBaseCurrency(baseCurrency, GetAuth0UserId());
+		bool isUpdated = await _userProfileManagement.UpdateBaseCurrency(baseCurrency, GetAuth0UserId());
 
-        _logger.LogInformation("Outcome of 'UpdateBaseCurrency': {isUpdated}", isUpdated);
+		_logger.LogInformation("Outcome of 'UpdateBaseCurrency': {isUpdated}", isUpdated);
 
-        if (isUpdated)
-            return Ok();
+		if (isUpdated)
+			return Ok();
 
-        return StatusCode(500, "An error occurred while updating the base currency.");
-    }
+		return StatusCode(500, "An error occurred while updating the base currency.");
+	}
 
-    [HttpGet("GetDebtPlanMonthlyPayment")]
-    public async Task<IActionResult> GetDebtPlanMonthlyPayment()
-    {
-        _logger.LogInformation(
-            "Entered function 'GetDebtPlanMonthlyPayment' in 'UserProfileController' with HTTP GET request.");
+	[HttpGet("GetDebtPlanMonthlyPayment")]
+	public async Task<IActionResult> GetDebtPlanMonthlyPayment()
+	{
+		_logger.LogInformation(
+			"Entered function 'GetDebtPlanMonthlyPayment' in 'UserProfileController' with HTTP GET request.");
 
-        decimal debtPlanMonthlyPayment = await _userProfileManagement.GetDebtPlanMonthlyPayment(GetAuth0UserId());
+		decimal debtPlanMonthlyPayment = await _userProfileManagement.GetDebtPlanMonthlyPayment(GetAuth0UserId());
 
-        _logger.LogInformation("Outcome of 'GetDebtPlanMonthlyPayment': {debtPlanMonthlyPayment}",
-            debtPlanMonthlyPayment);
+		_logger.LogInformation("Outcome of 'GetDebtPlanMonthlyPayment': {debtPlanMonthlyPayment}",
+			debtPlanMonthlyPayment);
 
-        return Ok(debtPlanMonthlyPayment);
-    }
+		return Ok(debtPlanMonthlyPayment);
+	}
 }

@@ -2,57 +2,57 @@
 @using DebtSnowballer.Client.Services
 @inject ISnowflakeService SnowflakeService
 
-<br />
-<br />
+<br/>
+<br/>
 
 <h3>Snowflake Management</h3>
 
 @if (SnowflakesInQuoteCurrency == null)
-	{
+{
 	<p>
 		<em>Loading...</em>
 	</p>
-	}
+}
 else
-	{
+{
 	<table class="table">
 		<thead>
-			<tr>
-				<th>NickName</th>
-				<th>Frequency In Months</th>
-				<th>Amount</th>
-				<th>Start Date</th>
-				<th>End Date</th>
-				<th>CurrencyCode</th>
-				<th>Actions</th>
-			</tr>
+		<tr>
+			<th>NickName</th>
+			<th>Frequency In Months</th>
+			<th>Amount</th>
+			<th>Start Date</th>
+			<th>End Date</th>
+			<th>CurrencyCode</th>
+			<th>Actions</th>
+		</tr>
 		</thead>
 		<tbody>
-			@foreach (SnowflakeDto snowflake in SnowflakesInQuoteCurrency)
-				{
-				string currencySymbol = GetCurrencySymbol(snowflake.CurrencyCode);
-				<tr>
-					<td>@snowflake.NickName</td>
-					<td>@snowflake.FrequencyInMonths</td>
-					<td>@currencySymbol @snowflake.Amount.ToString("N2")</td>
-					<td>@snowflake.StartingAt</td>
-					<td>@snowflake.EndingAt</td>
-					<td>@snowflake.CurrencyCode</td>
-					<td>
-						<button class="btn btn-primary" @onclick="() => EditSnowflake(snowflake.Id)">Edit</button>
-						<button class="btn btn-danger" @onclick="() => DeleteSnowflake(snowflake.Id)">Delete</button>
-					</td>
-				</tr>
-				}
+		@foreach (SnowflakeDto snowflake in SnowflakesInQuoteCurrency)
+		{
+			string currencySymbol = GetCurrencySymbol(snowflake.CurrencyCode);
+			<tr>
+				<td>@snowflake.NickName</td>
+				<td>@snowflake.FrequencyInMonths</td>
+				<td>@currencySymbol @snowflake.Amount.ToString("N2")</td>
+				<td>@snowflake.StartingAt</td>
+				<td>@snowflake.EndingAt</td>
+				<td>@snowflake.CurrencyCode</td>
+				<td>
+					<button class="btn btn-primary" @onclick="() => EditSnowflake(snowflake.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteSnowflake(snowflake.Id)">Delete</button>
+				</td>
+			</tr>
+		}
 		</tbody>
 	</table>
 
 	<button class="btn btn-success" @onclick="OnAddNewSnowflake">Add New Snowflake</button>
 
 	<br>
-	}
-	
-	<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel" />
+}
+
+<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
 
 
 @code {
@@ -70,40 +70,40 @@ else
 	public Func<Task> LoadSnowflakesInQuoteCurrency { get; set; }
 
 
-
 	private async Task EditSnowflake(int id)
 	{
 		SelectedSnowflake = await SnowflakeService.GetSnowflakeById(id);
 	}
 
 	private void OnAddNewSnowflake()
-		{
+	{
 		SelectedSnowflake = new SnowflakeDto();
-		}
+	}
 
 	private async Task OnSave(SnowflakeDto snowflake)
-		{
+	{
 		if (snowflake.Id == 0)
-			{
+		{
 			await SnowflakeService.AddSnowflake(snowflake);
-			}
+		}
 		else
-			{
+		{
 			await SnowflakeService.UpdateSnowflake(snowflake);
-			}
+		}
 		await LoadSnowflakesInQuoteCurrency();
 		SelectedSnowflake = null;
 		StateHasChanged();
-		}
+	}
 
 	private void OnCancel()
-		{
+	{
 		SelectedSnowflake = null;
-		}
+	}
 
 	private async Task DeleteSnowflake(int id)
-		{
+	{
 		await SnowflakeService.DeleteSnowflake(id);
 		await LoadSnowflakesInQuoteCurrency();
-		}
+	}
+
 }

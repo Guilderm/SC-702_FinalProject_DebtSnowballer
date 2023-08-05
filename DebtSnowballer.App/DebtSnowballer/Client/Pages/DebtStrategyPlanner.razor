@@ -16,13 +16,13 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
+<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
-<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
+<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
-<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 
 @code {
@@ -36,7 +36,7 @@
 	{
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-	
+
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
@@ -60,7 +60,7 @@
 		_userProfile.BaseCurrency = selectedCurrency;
 		await LoadDebtsInBaseCurrency();
 	}
-	
+
 	public string GetCurrencySymbol(string currencyCode)
 	{
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
@@ -72,4 +72,5 @@
 		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
 		StateHasChanged();
 	}
+
 }
