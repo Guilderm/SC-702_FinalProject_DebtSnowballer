@@ -8,21 +8,27 @@ namespace Server.UIL.Controllers;
 public class DebtController : BaseController
 {
 	private readonly DebtManagement _debtManagement;
+	private readonly ExchangeRateManagement _exchangeRateManagement;
 	private readonly ILogger<DebtController> _logger;
 
-	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger)
+	public DebtController(DebtManagement debtManagement, ILogger<DebtController> logger,
+		ExchangeRateManagement exchangeRateManagement)
 		: base(logger)
 	{
 		_debtManagement = debtManagement;
 		_logger = logger;
+		_exchangeRateManagement = exchangeRateManagement;
 	}
 
 	[HttpPost]
 	public async Task<IActionResult> Post([FromBody] DebtDto requestDto)
 	{
 		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Creating debt for user {userId}", auth0UserId);
 
 		DebtDto createdDebt = await _debtManagement.CreateDebt(requestDto, auth0UserId);
+
+		_logger.LogInformation("Debt created with id {debtId}", createdDebt.Id);
 
 		return CreatedAtAction(nameof(Get), new { id = createdDebt.Id }, createdDebt);
 	}
@@ -31,8 +37,11 @@ public class DebtController : BaseController
 	public async Task<IActionResult> Put(int id, [FromBody] DebtDto requestDto)
 	{
 		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Updating debt with id {debtId} for user {userId}", id, auth0UserId);
 
 		DebtDto updatedDebt = await _debtManagement.UpdateDebt(id, requestDto, auth0UserId);
+
+		_logger.LogInformation("Debt with id {debtId} updated for user {userId}", id, auth0UserId);
 
 		return Ok(updatedDebt);
 	}
@@ -41,18 +50,24 @@ public class DebtController : BaseController
 	public async Task<IActionResult> Delete(int id)
 	{
 		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Deleting debt with id {debtId} for user {userId}", id, auth0UserId);
 
 		await _debtManagement.DeleteDebt(id, auth0UserId);
+
+		_logger.LogInformation("Debt with id {debtId} deleted for user {userId}", id, auth0UserId);
 
 		return NoContent();
 	}
 
-	[HttpGet]
-	public async Task<IActionResult> Get()
+	[HttpGet("GetAllDebtsInQuoteCurrency")]
+	public async Task<IActionResult> GetAllDebtsInQuoteCurrency()
 	{
 		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Fetching all debts in quote currency for user {userId}", auth0UserId);
 
 		IList<DebtDto> debts = await _debtManagement.GetAllDebtsInQuoteCurrency(auth0UserId);
+
+		_logger.LogInformation("Fetched {count} debts in quote currency for user {userId}", debts.Count, auth0UserId);
 
 		return Ok(debts);
 	}
@@ -61,28 +76,24 @@ public class DebtController : BaseController
 	public async Task<IActionResult> Get(int id)
 	{
 		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Fetching debt with id {debtId} for user {userId}", id, auth0UserId);
 
 		DebtDto debt = await _debtManagement.GetDebt(id, auth0UserId);
+
+		_logger.LogInformation("Fetched debt with id {debtId} for user {userId}", id, auth0UserId);
 
 		return Ok(debt);
 	}
 
-	[HttpGet("GetAllDebtsInBaseCurrency")]
-	public async Task<IActionResult> GetAllDebtsInBaseCurrency()
+	[HttpGet("GetUsersExchangeRates")]
+	public async Task<IActionResult> GetUsersExchangeRates(string userId)
 	{
-		try
-		{
-			var debtsInBaseCurrency = await _debtManagement.GetAllDebtsInBaseCurrency(GetAuth0UserId());
+		_logger.LogInformation("Fetching exchange rates for user {userId}", userId);
 
-			if (debtsInBaseCurrency == null) return NotFound();
+		IEnumerable<ExchangeRateDto> exchangeRates = await _exchangeRateManagement.GetUsersExchangeRates(userId);
 
-			return Ok(debtsInBaseCurrency);
-		}
-		catch (Exception ex)
-		{
-			// Log the exception message
-			_logger.LogError(ex, $"Something went wrong in the {nameof(GetAllDebtsInBaseCurrency)}");
-			return StatusCode(500, "Internal server error");
-		}
+		_logger.LogInformation("Fetched {count} exchange rates for user {userId}", exchangeRates.Count(), userId);
+
+		return Ok(exchangeRates);
 	}
 }

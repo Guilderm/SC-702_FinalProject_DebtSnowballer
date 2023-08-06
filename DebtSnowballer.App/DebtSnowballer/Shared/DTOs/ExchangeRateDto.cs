@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Shared.DTOs;
-internal class ExchangeRateDto
-	{
-	}
+public class ExchangeRateDto
+{
+	public int Id { get; set; }
+	public string BaseCurrency { get; set; }
+	public string QuoteCurrency { get; set; }
+	public decimal ConversionRate { get; set; }
+	public DateTime NextUpdateTime { get; set; }
+}

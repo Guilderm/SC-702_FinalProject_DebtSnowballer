@@ -12,5 +12,5 @@ public class AutoMapperConfiguration : Profile
 		CreateMap<UserProfile, UserProfileDto>().ReverseMap();
 		CreateMap<Snowflake, SnowflakeDto>().ReverseMap();
 		CreateMap<ExchangeRate, ExchangeRateDto>().ReverseMap();
-		}
+	}
 }

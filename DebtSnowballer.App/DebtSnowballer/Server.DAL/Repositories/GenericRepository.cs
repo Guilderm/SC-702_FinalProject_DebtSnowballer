@@ -96,7 +96,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 	public async Task Delete(Expression<Func<TEntity, bool>> predicate)
 	{
 		Logger.LogInformation($"Deleting entities of type {typeof(TEntity).Name} from the database.");
-		var entities = await DbSet.Where(predicate).ToListAsync();
+		List<TEntity> entities = await DbSet.Where(predicate).ToListAsync();
 		DbSet.RemoveRange(entities);
 		Logger.LogInformation($"Entities deleted: {entities}");
 	}

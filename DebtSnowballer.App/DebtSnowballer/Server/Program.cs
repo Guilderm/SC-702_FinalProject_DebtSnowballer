@@ -36,7 +36,8 @@ try
 	Log.Information("Adding scoped services...");
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 	builder.Services.AddScoped<UserProfileManagement>();
-	
+	builder.Services.AddScoped<DebtManagement>();
+
 
 	Log.Information("Configuring authentication...");
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

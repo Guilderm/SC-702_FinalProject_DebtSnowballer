@@ -11,8 +11,7 @@ public class DebtManagement
 	private readonly IGenericRepository<Debt> _repository;
 	private readonly IUnitOfWork _unitOfWork;
 
-	public DebtManagement(IUnitOfWork unitOfWork, IMapper mapper, UserProfileManagement userProfileManagement,
-		ExchangeRateManagement exchangeRateManagement)
+	public DebtManagement(IUnitOfWork unitOfWork, IMapper mapper)
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
@@ -50,4 +49,9 @@ public class DebtManagement
 		return _mapper.Map<DebtDto>(debt);
 	}
 
+	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency(string auth0UserId)
+	{
+		IList<Debt> debts = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		return _mapper.Map<IList<DebtDto>>(debts);
+	}
 }

@@ -1,30 +1,47 @@
 ﻿using System.Text.Json;
+using AutoMapper;
 using DebtSnowballer.Shared.Currency;
+using DebtSnowballer.Shared.DTOs;
 using Microsoft.Extensions.Configuration;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 
 namespace Server.BLL.Services;
 
-public class CurrencyService : ICurrencyService
+public class ExchangeRateManagement
 {
 	private readonly string _apiKey;
 	private readonly string _baseUrl;
 	private readonly IHttpClientFactory _clientFactory;
+	private readonly IMapper _mapper;
 	private readonly IGenericRepository<ExchangeRate> _repository;
 	private readonly IUnitOfWork _unitOfWork;
+	private readonly UserProfileManagement _userProfileManagement;
 	private ExchangeRate _exchangeRate;
 
-	public CurrencyService(IUnitOfWork unitOfWork, IConfiguration configuration, IHttpClientFactory clientFactory)
+	public ExchangeRateManagement(IUnitOfWork unitOfWork, IConfiguration configuration,
+		IHttpClientFactory clientFactory,
+		IMapper mapper, UserProfileManagement userProfileManagement)
 	{
 		_unitOfWork = unitOfWork;
 		_clientFactory = clientFactory;
+		_mapper = mapper;
 		_apiKey = configuration["ExchangeRateApi:ApiKey"];
 		_baseUrl = configuration["ExchangeRateApi:BaseUrl"];
 		_repository = unitOfWork.GetRepository<ExchangeRate>();
+		_userProfileManagement = userProfileManagement;
 	}
 
-	public async Task<IEnumerable<ExchangeRate>> GetExchangeRate(string baseCurrency)
+	public async Task<IEnumerable<ExchangeRateDto>> GetUsersExchangeRates(string auth0UserId)
+	{
+		UserProfile userProfile = await _userProfileManagement.GetUserProfileModel(auth0UserId);
+		IEnumerable<ExchangeRate> usersExchangeRates =
+			await GetAndUpdateExchangeRatesForBaseCurrency(userProfile.BaseCurrency);
+
+		return _mapper.Map<IEnumerable<ExchangeRateDto>>(usersExchangeRates);
+	}
+
+	private async Task<IEnumerable<ExchangeRate>> GetAndUpdateExchangeRatesForBaseCurrency(string baseCurrency)
 	{
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency);
 
@@ -34,7 +51,7 @@ public class CurrencyService : ICurrencyService
 		if (isExchangeRateNull || isExchangeRateStale)
 			await UpdateExchangeRateFromApi(baseCurrency);
 
-		var exchangeRateList = await GetAllExchangeRatesFromDatabase(baseCurrency);
+		IEnumerable<ExchangeRate> exchangeRateList = await GetAllExchangeRatesFromDatabase(baseCurrency);
 
 		return exchangeRateList;
 	}
