@@ -7,19 +7,15 @@ namespace Server.BLL.Services;
 
 public class DebtManagement
 {
-	private readonly CurrencyService _currencyService;
 	private readonly IMapper _mapper;
 	private readonly IGenericRepository<Debt> _repository;
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly UserProfileManagement _userProfileManagement;
 
 	public DebtManagement(IUnitOfWork unitOfWork, IMapper mapper, UserProfileManagement userProfileManagement,
-		CurrencyService currencyService)
+		ExchangeRateManagement exchangeRateManagement)
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
-		_userProfileManagement = userProfileManagement;
-		_currencyService = currencyService;
 		_repository = unitOfWork.GetRepository<Debt>();
 	}
 
@@ -53,4 +49,5 @@ public class DebtManagement
 		Debt debt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		return _mapper.Map<DebtDto>(debt);
 	}
+
 }

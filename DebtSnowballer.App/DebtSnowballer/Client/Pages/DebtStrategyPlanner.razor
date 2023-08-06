@@ -16,7 +16,7 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-@if (isInitialized)
+@if (_isInitialized)
 {
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
@@ -32,7 +32,7 @@ else
 }
 
 @code {
-	private bool isInitialized;
+	private bool _isInitialized;
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
 	private UserProfileDto _userProfile;
@@ -48,7 +48,7 @@ else
 		await LoadDebtsInBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
 
-		isInitialized = true;
+		_isInitialized = true;
 	}
 
 	private async Task LoadDebtsInQuoteCurrency()

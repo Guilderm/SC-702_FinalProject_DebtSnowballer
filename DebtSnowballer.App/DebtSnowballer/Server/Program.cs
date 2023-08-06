@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.BLL.Configurations;
+using Server.BLL.Services;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using Server.DAL.Repositories;
@@ -34,6 +35,8 @@ try
 
 	Log.Information("Adding scoped services...");
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+	builder.Services.AddScoped<UserProfileManagement>();
+	
 
 	Log.Information("Configuring authentication...");
 	builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
