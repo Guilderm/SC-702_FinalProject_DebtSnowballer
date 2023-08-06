@@ -66,6 +66,20 @@ public class UserProfileManagement
 		return true;
 	}
 
+	public async Task<bool> UpdateSelectedStrategy(int strategyId, string auth0UserId)
+	{
+		UserProfile userProfileModel = await GetUserProfileModel(auth0UserId);
+
+		if (userProfileModel.SelectedStrategy == strategyId)
+			return false;
+
+		userProfileModel.SelectedStrategy = strategyId;
+		_repository.Update(userProfileModel);
+		await _unitOfWork.Save();
+
+		return true;
+	}
+
 	internal async Task<UserProfile> GetUserProfileModel(string auth0UserId)
 	{
 		UserProfile userProfileModel = await _repository.Get(u => u.Auth0UserId == auth0UserId) ??
