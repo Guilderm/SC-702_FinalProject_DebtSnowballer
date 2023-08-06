@@ -1,9 +1,9 @@
 ﻿@page "/DebtStrategyPlanner"
 @page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.Services
 @using DebtSnowballer.Shared.Currency
 @using DebtSnowballer.Client.Components.DebtManagement
+@using DebtSnowballer.Client.ClientServices
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
@@ -16,7 +16,7 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-@if (_isInitialized)
+@if (_isAllDataLoaded)
 {
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
@@ -24,33 +24,37 @@
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 }
 else
 {
-	<p>Loading...</p>
+	<p>Loading your data...</p>
 }
 
 @code {
-	private bool _isInitialized;
+	private bool _isAllDataLoaded;
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
+	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
+	private List<SnowflakeDto> _snowflakesInBaseCurrency;
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
-	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
 	private IList<ExchangeRateDto> _usersExchangeRates;
 
 	protected override async Task OnInitializedAsync()
 	{
+		// TODO: Need to get this data from the backend with out getting any data from front end.
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
 
 		await LoadExchangeRates();
 		await LoadDebtsInQuoteCurrency();
-		await ConvertDebtsToBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
 
-		_isInitialized = true;
+		_isAllDataLoaded = true;
+
+		await ConvertDebtsToBaseCurrency();
+		await ConvertSnowflakesToBaseCurrency();
 	}
 
 	private async Task LoadExchangeRates()
@@ -69,7 +73,7 @@ else
 		await ConvertDebtsToBaseCurrency();
 	}
 
-	private async Task ConvertDebtsToBaseCurrency()
+	private Task ConvertDebtsToBaseCurrency()
 	{
 		_debtsInBaseCurrency = new List<DebtDto>();
 
@@ -96,15 +100,47 @@ else
 			}
 			else
 			{
-	// If there's no exchange rate for the debt's currency, add the debt as is.
+				// If there's no exchange rate for the debt's currency, add the debt as is.
 				_debtsInBaseCurrency.Add(debt);
 			}
 		}
 
-		StateHasChanged();
+		return Task.CompletedTask;
 	}
 
+	private Task ConvertSnowflakesToBaseCurrency()
+	{
+		_snowflakesInBaseCurrency = new List<SnowflakeDto>();
 
+		foreach (SnowflakeDto snowflake in _snowflakesInQuoteCurrency)
+		{
+			ExchangeRateDto debtToBaseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == snowflake.CurrencyCode);
+
+			if (debtToBaseRate != null)
+			{
+				SnowflakeDto convertedSnowflake = new()
+				{
+					Id = snowflake.Id,
+					NickName = snowflake.NickName,
+					Amount = snowflake.Amount * debtToBaseRate.ConversionRate,
+					FrequencyInMonths = snowflake.FrequencyInMonths,
+					StartingAt = snowflake.StartingAt,
+					EndingAt = snowflake.EndingAt,
+					CurrencyCode = _userProfile.BaseCurrency
+				};
+
+				_snowflakesInBaseCurrency.Add(convertedSnowflake);
+			}
+			else
+			{
+				// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
+				_snowflakesInBaseCurrency.Add(snowflake);
+			}
+		}
+
+		return Task.CompletedTask;
+	}
+	
 	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
@@ -121,6 +157,7 @@ else
 	private async Task LoadSnowflakesInQuoteCurrency()
 	{
 		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
+		await ConvertSnowflakesToBaseCurrency();
 		StateHasChanged();
 	}
 

@@ -1,5 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.Services
+@using DebtSnowballer.Client.ClientServices
 @inject IDebtService DebtService
 
 <table class="table">
@@ -13,7 +13,10 @@
 		<th>Remaining Term</th>
 		<th>Cardinal Order</th>
 		<th>Currency</th>
-		<th>Actions</th>
+		@if (AreActionsShown)
+		{
+			<th>Actions</th>
+		}
 	</tr>
 	</thead>
 	<tbody>
@@ -29,16 +32,22 @@
 			<td>@debt.RemainingTermInMonths</td>
 			<td>@debt.CardinalOrder</td>
 			<td>@debt.CurrencyCode</td>
-			<td>
-				<button class="btn btn-primary" @onclick="() => EditDebt(debt.Id)">Edit</button>
-				<button class="btn btn-danger" @onclick="() => DeleteDebt(debt.Id)">Delete</button>
-			</td>
+			@if (AreActionsShown)
+			{
+				<td>
+					<button class="btn btn-primary" @onclick="() => EditDebt(debt.Id)">Edit</button>
+					<button class="btn btn-danger" @onclick="() => DeleteDebt(debt.Id)">Delete</button>
+				</td>
+			}
 		</tr>
 	}
 	</tbody>
 </table>
 
 @code {
+
+	[Parameter]
+	public bool AreActionsShown { get; set; }
 
 	[Parameter]
 	public List<DebtDto> Debts { get; set; }

@@ -1,0 +1,6 @@
+﻿<select @bind="selectedStrategy">
+	@foreach (var strategyType in strategyTypes)
+	{
+		<option value="@strategyType.Id">@strategyType.Type</option>
+	}
+</select>

@@ -1,28 +1,24 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.Services
+@using DebtSnowballer.Client.ClientServices
 @inject IDebtService DebtService
 
-<br>
-<br>
-@if (DebtsInQuoteCurrency == null)
-{
-	<p>
-		<em>Loading DebtsInQuoteCurrency</em>
-	</p>
-}
-else
-{
-	<h3>List all your debts</h3>
+<h3>
 	<br>
-	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt"/>
+</h3>
 
-	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
+<h3>List all your debts</h3>
+<br>
+<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="true"/>
+
+<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
+
+<h3>
 	<br>
-	<br>
-	<h3>Debts converted to base currency</h3>
-	<br>
-	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" />
-}
+</h3>
+
+<h3>Debts converted to base currency</h3>
+<br>
+<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false" />
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 

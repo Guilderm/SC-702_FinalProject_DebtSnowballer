@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.BLL.Configurations;
-using Server.BLL.Services;
+using Server.BLL.ServerServices;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using Server.DAL.Repositories;
@@ -39,6 +39,7 @@ try
 	builder.Services.AddScoped<DebtManagement>();
 	builder.Services.AddScoped<ExchangeRateManagement>();
 	builder.Services.AddScoped<SnowflakeManagement>();
+	builder.Services.AddScoped<MultiPurposeManagement>();
 
 
 	Log.Information("Configuring authentication...");

@@ -1,7 +1,7 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Server.BLL.Services;
+using Server.BLL.ServerServices;
 
 namespace Server.UIL.Controllers;
 
@@ -15,8 +15,8 @@ public class DebtController : BaseController
 		ExchangeRateManagement exchangeRateManagement)
 		: base(logger)
 	{
-		_debtManagement = debtManagement;
 		_logger = logger;
+		_debtManagement = debtManagement;
 		_exchangeRateManagement = exchangeRateManagement;
 	}
 
