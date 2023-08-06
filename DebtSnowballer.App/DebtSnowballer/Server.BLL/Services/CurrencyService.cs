@@ -48,7 +48,7 @@ public class CurrencyService : ICurrencyService
 	{
 		return await _repository.GetAll(er => er.BaseCurrency == baseCurrency);
 	}
-	
+
 	private async Task UpdateExchangeRateFromApi(string baseCurrency)
 	{
 		try

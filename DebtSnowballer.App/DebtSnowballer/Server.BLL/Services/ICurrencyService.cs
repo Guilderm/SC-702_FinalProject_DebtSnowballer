@@ -1,6 +1,8 @@
-﻿namespace Server.BLL.Services;
+﻿using Server.DAL.Models;
+
+namespace Server.BLL.Services;
 
 public interface ICurrencyService
 {
-	Task<decimal> GetExchangeRate(string baseCurrency);
+	Task<IEnumerable<ExchangeRate>> GetExchangeRate(string baseCurrency);
 }
