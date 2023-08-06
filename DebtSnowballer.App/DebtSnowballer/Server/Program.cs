@@ -57,8 +57,9 @@ try
 		options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 	});
 
-	Log.Information("Adding controllers...");
+	Log.Information("Adding services...");
 	builder.Services.AddControllers();
+	builder.Services.AddHttpClient();
 
 	// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 	Log.Information("Configuring Swagger...");

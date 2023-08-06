@@ -9,6 +9,7 @@ public class DebtManagement
 {
 	private readonly CurrencyService _currencyService;
 	private readonly IMapper _mapper;
+	private readonly IGenericRepository<Debt> _repository;
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly UserProfileManagement _userProfileManagement;
 
@@ -19,44 +20,43 @@ public class DebtManagement
 		_mapper = mapper;
 		_userProfileManagement = userProfileManagement;
 		_currencyService = currencyService;
+		_repository = unitOfWork.GetRepository<Debt>();
 	}
-
-	public IGenericRepository<Debt> Repository => _unitOfWork.GetRepository<Debt>();
 
 	public async Task<DebtDto> CreateDebt(DebtDto debtDto, string auth0UserId)
 	{
 		Debt debt = _mapper.Map<Debt>(debtDto);
 		debt.Auth0UserId = auth0UserId;
-		await Repository.Insert(debt);
+		await _repository.Insert(debt);
 		await _unitOfWork.Save();
 		return _mapper.Map<DebtDto>(debt);
 	}
 
 	public async Task<DebtDto> UpdateDebt(int id, DebtDto debtDto, string auth0UserId)
 	{
-		Debt existingDebt = await Repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
+		Debt existingDebt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		_mapper.Map(debtDto, existingDebt);
-		Repository.Update(existingDebt);
+		_repository.Update(existingDebt);
 		await _unitOfWork.Save();
 		return _mapper.Map<DebtDto>(existingDebt);
 	}
 
 	public async Task DeleteDebt(int id, string auth0UserId)
 	{
-		Debt debt = await Repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
-		await Repository.Delete(debt.Id);
+		Debt debt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
+		await _repository.Delete(debt.Id);
 		await _unitOfWork.Save();
 	}
 
 	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency(string auth0UserId)
 	{
-		IList<Debt> debts = await Repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		IList<Debt> debts = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
 		return _mapper.Map<IList<DebtDto>>(debts);
 	}
 
 	public async Task<DebtDto> GetDebt(int id, string auth0UserId)
 	{
-		Debt debt = await Repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
+		Debt debt = await _repository.Get(d => d.Id == id && d.Auth0UserId == auth0UserId);
 		return _mapper.Map<DebtDto>(debt);
 	}
 
@@ -64,7 +64,7 @@ public class DebtManagement
 	{
 		UserProfile userProfile = await _userProfileManagement.GetUserProfileModel(auth0UserId);
 
-		IList<Debt> debtsInQuoteCurrency = await Repository.GetAll(d => d.Auth0UserId == auth0UserId);
+		IList<Debt> debtsInQuoteCurrency = await _repository.GetAll(d => d.Auth0UserId == auth0UserId);
 		IList<DebtDto> debtsInBaseCurrency = _mapper.Map<IList<DebtDto>>(debtsInQuoteCurrency);
 
 		foreach (DebtDto debtDto in debtsInBaseCurrency)
