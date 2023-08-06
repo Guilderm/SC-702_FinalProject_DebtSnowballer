@@ -15,7 +15,7 @@ public class UserProfileManagement
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
-		_repository = _unitOfWork.UserProfileRepository;
+		_repository = _unitOfWork.GetRepository<UserProfile>();
 	}
 
 	public async Task<UserProfileDto> GetValidateUserProfile(UserProfileDto rawUserProfile, string auth0UserId)
@@ -49,8 +49,6 @@ public class UserProfileManagement
 	public async Task<decimal> GetDebtPlanMonthlyPayment(string auth0UserId)
 	{
 		UserProfile userProfileModel = await GetUserProfileModel(auth0UserId);
-
-
 		return userProfileModel.DebtPlanMonthlyPayment;
 	}
 
@@ -62,7 +60,6 @@ public class UserProfileManagement
 			return false;
 
 		userProfileModel.BaseCurrency = baseCurrency;
-
 		_repository.Update(userProfileModel);
 		await _unitOfWork.Save();
 

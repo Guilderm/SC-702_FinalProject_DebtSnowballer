@@ -15,7 +15,7 @@ public class SnowflakeManagement
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
-		_repository = _unitOfWork.SnowflakeRepository;
+		_repository = _unitOfWork.GetRepository<Snowflake>();
 	}
 
 	public async Task<SnowflakeDto> CreateSnowflake(SnowflakeDto snowflakeDto, string auth0UserId)

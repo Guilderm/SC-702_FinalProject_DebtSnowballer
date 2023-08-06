@@ -5,15 +5,11 @@ using Server.DAL.Models;
 
 namespace Server.DAL.Repositories;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork, IDisposable
 {
 	private readonly DebtSnowballerContext _context;
 	private readonly ILogger<UnitOfWork> _logger;
 	private readonly ILoggerFactory _loggerFactory;
-	private IGenericRepository<Debt>? _debts;
-	private IGenericRepository<ExchangeRate>? _exchangeRate;
-	private IGenericRepository<Snowflake>? _snowflake;
-	private IGenericRepository<UserProfile>? _userProfile;
 
 	public UnitOfWork(DebtSnowballerContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 	{
@@ -22,17 +18,11 @@ public class UnitOfWork : IUnitOfWork
 		_loggerFactory = loggerFactory;
 	}
 
-	public IGenericRepository<ExchangeRate> ExchangeRateRepository => _exchangeRate ??=
-		new GenericRepository<ExchangeRate>(_loggerFactory.CreateLogger<GenericRepository<ExchangeRate>>(), _context);
-
-	public IGenericRepository<Debt> DebtRepository => _debts ??=
-		new GenericRepository<Debt>(_loggerFactory.CreateLogger<GenericRepository<Debt>>(), _context);
-
-	public IGenericRepository<UserProfile> UserProfileRepository => _userProfile ??=
-		new GenericRepository<UserProfile>(_loggerFactory.CreateLogger<GenericRepository<UserProfile>>(), _context);
-
-	public IGenericRepository<Snowflake> SnowflakeRepository => _snowflake ??=
-		new GenericRepository<Snowflake>(_loggerFactory.CreateLogger<GenericRepository<Snowflake>>(), _context);
+	public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+	{
+		return new GenericRepository<TEntity>(
+			_loggerFactory.CreateLogger<GenericRepository<TEntity>>(), _context);
+	}
 
 	public async Task Save()
 	{
@@ -41,11 +31,12 @@ public class UnitOfWork : IUnitOfWork
 		try
 		{
 			await _context.SaveChangesAsync();
-			_logger.LogInformation("Changes saved to the database.");
+			_logger.LogInformation("Saved changes to the {DbContextName}.", nameof(_context));
 		}
 		catch (DbUpdateException ex)
 		{
-			_logger.LogError(ex, "We got a DbUpdateException");
+			_logger.LogError(ex, "We got a DbUpdateException while saving changes to the {DbContextName}.",
+				nameof(_context));
 		}
 		catch (Exception ex)
 		{
@@ -56,7 +47,7 @@ public class UnitOfWork : IUnitOfWork
 
 	public void Dispose()
 	{
-		_logger.LogInformation("Disposing the DbContext.");
+		_logger.LogInformation("Disposing the {DbContextName}.", nameof(_context));
 		_context.Dispose();
 	}
 }

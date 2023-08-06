@@ -1,12 +1,7 @@
-﻿using Server.DAL.Models;
-
-namespace Server.DAL.Interfaces;
+﻿namespace Server.DAL.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
-	IGenericRepository<UserProfile> UserProfileRepository { get; }
-	IGenericRepository<Debt> DebtRepository { get; }
-	IGenericRepository<ExchangeRate> ExchangeRateRepository { get; }
-	IGenericRepository<Snowflake> SnowflakeRepository { get; }
+	IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
 	Task Save();
 }

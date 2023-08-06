@@ -18,13 +18,13 @@
 
 @if (isInitialized)
 {
-<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
-<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
+	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
-<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 }
 else
 {
@@ -32,7 +32,7 @@ else
 }
 
 @code {
-	private bool isInitialized = false;
+	private bool isInitialized;
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
 	private UserProfileDto _userProfile;

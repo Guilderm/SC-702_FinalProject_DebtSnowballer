@@ -11,7 +11,6 @@ public class CurrencyService : ICurrencyService
 	private readonly string _apiKey;
 	private readonly string _baseUrl;
 	private readonly HttpClient _httpClient;
-	private readonly IGenericRepository<ExchangeRate> _repository;
 	private readonly IUnitOfWork _unitOfWork;
 	private ExchangeRate _exchangeRate;
 
@@ -19,10 +18,11 @@ public class CurrencyService : ICurrencyService
 	{
 		_unitOfWork = unitOfWork;
 		_httpClient = new HttpClient();
-		_repository = unitOfWork.ExchangeRateRepository;
 		_apiKey = configuration["ExchangeRateApi:ApiKey"];
 		_baseUrl = configuration["ExchangeRateApi:BaseUrl"];
 	}
+
+	public IGenericRepository<ExchangeRate> Repository => _unitOfWork.GetRepository<ExchangeRate>();
 
 	public async Task<decimal> GetExchangeRate(string baseCurrency, string quoteCurrency)
 	{
@@ -31,7 +31,8 @@ public class CurrencyService : ICurrencyService
 		bool exchangeRateIsNull = _exchangeRate == null;
 		bool exchangeRateIsStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
 
-		if (exchangeRateIsNull || exchangeRateIsStale) await UpdateExchangeRateFromApi(baseCurrency);
+		if (exchangeRateIsNull || exchangeRateIsStale)
+			await UpdateExchangeRateFromApi(baseCurrency);
 
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
 
@@ -41,7 +42,7 @@ public class CurrencyService : ICurrencyService
 
 	private async Task<ExchangeRate> GetExchangeRateFromDatabase(string baseCurrency, string quoteCurrency)
 	{
-		return await _repository.Get(er => er.BaseCurrency == baseCurrency && er.QuoteCurrency == quoteCurrency);
+		return await Repository.Get(er => er.BaseCurrency == baseCurrency && er.QuoteCurrency == quoteCurrency);
 	}
 
 	private async Task UpdateExchangeRateFromApi(string baseCurrency)
@@ -64,10 +65,6 @@ public class CurrencyService : ICurrencyService
 
 	private DateTime GetNextUpdateTimeFromApiResponse(JsonDocument doc)
 	{
-		//return DateTime.Parse(doc.RootElement.GetProperty("time_next_update_utc").GetString() ?? DateTime.UtcNow.AddHours(12).ToString("R"));
-
-		//return DateTime.UtcNow.AddHours(20);
-
 		DateTime time = doc.RootElement.TryGetProperty("time_next_update_utc", out JsonElement timeNextUpdateUtc) &&
 		                timeNextUpdateUtc.GetString() != null
 			? DateTime.Parse(timeNextUpdateUtc.GetString())
@@ -79,7 +76,7 @@ public class CurrencyService : ICurrencyService
 	private async Task UpdateAllRatesForBaseCurrency(string baseCurrency, JsonDocument jsonDocument,
 		DateTime nextUpdateTime)
 	{
-		await _repository.Delete(er => er.BaseCurrency == baseCurrency);
+		await Repository.Delete(er => er.BaseCurrency == baseCurrency);
 
 		JsonElement.ObjectEnumerator rates = jsonDocument.RootElement.GetProperty("conversion_rates").EnumerateObject();
 		foreach (JsonProperty rate in rates)
@@ -104,6 +101,6 @@ public class CurrencyService : ICurrencyService
 			ConversionRate = exchangeRateValue,
 			NextUpdateTime = nextUpdateTime
 		};
-		await _repository.Insert(newRate);
+		await Repository.Insert(newRate);
 	}
 }
