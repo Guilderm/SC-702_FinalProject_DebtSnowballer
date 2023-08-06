@@ -14,7 +14,6 @@ public class DebtService : IDebtService
 		_backendUrl = _httpClient.BaseAddress + "api/Debt";
 	}
 
-
 	public async Task DeleteDebt(int id)
 	{
 		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_backendUrl}/{id}");
@@ -24,7 +23,8 @@ public class DebtService : IDebtService
 
 	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency()
 	{
-		IList<DebtDto> debts = await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}");
+		IList<DebtDto> debts =
+			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}/GetAllDebtsInQuoteCurrency");
 		return debts;
 	}
 
@@ -52,10 +52,11 @@ public class DebtService : IDebtService
 		return result;
 	}
 
-	public async Task<IList<DebtDto>> GetAllDebtsInBaseCurrency()
+	public async Task<IList<ExchangeRateDto>> GetUsersExchangeRates(string userId)
 	{
-		IList<DebtDto> debts =
-			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}/GetAllDebtsInBaseCurrency");
-		return debts;
+		IList<ExchangeRateDto> exchangeRates =
+			await _httpClient.GetFromJsonAsync<IList<ExchangeRateDto>>(
+				$"{_backendUrl}/GetUsersExchangeRates?userId={userId}");
+		return exchangeRates;
 	}
 }
