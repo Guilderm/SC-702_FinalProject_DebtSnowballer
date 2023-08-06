@@ -26,7 +26,7 @@
 
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
-	<StrategyTypesManagement />
+	<StrategyTypesManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 }
 else
 {
@@ -162,5 +162,10 @@ else
 		await ConvertSnowflakesToBaseCurrency();
 		StateHasChanged();
 	}
-
-}
+	
+	private async Task UpdateSelectedStrategy(int selectedCurrency)
+		{
+		_userProfile.SelectedStrategy = selectedCurrency;
+		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
+		}
+} 

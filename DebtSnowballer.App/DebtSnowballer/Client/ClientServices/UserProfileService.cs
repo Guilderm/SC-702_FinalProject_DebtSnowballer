@@ -76,6 +76,23 @@ public class UserProfileService : IUserProfileService
 		return debtPlanMonthlyPayment;
 	}
 
+	public async Task<UserProfileDto> UpdateSelectedStrategy(int strategyTypeId)
+	{
+		Console.WriteLine($"Entered function 'UpdateSelectedStrategy' with input: {strategyTypeId}");
+		HttpRequestMessage request = new(HttpMethod.Patch, $"{_backendUrl}/PatchSelectedStrategy/{strategyTypeId}");
+		HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+		if (!response.IsSuccessStatusCode)
+		{
+			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
+			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
+		}
+
+		UserProfileDto updatedUserProfile = await response.Content.ReadFromJsonAsync<UserProfileDto>();
+		Console.WriteLine($"Successfully updated strategy type to: {strategyTypeId}");
+		return updatedUserProfile;
+	}
+
 	private UserProfileDto CreateUserProfileFromClaims(ClaimsPrincipal user)
 	{
 		DateTime.TryParse(user.Claims.FirstOrDefault(c => c.Type == "updated_at")?.Value, out DateTime createdAt);

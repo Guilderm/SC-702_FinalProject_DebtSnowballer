@@ -1,6 +1,7 @@
-﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.ClientServices
+﻿@using DebtSnowballer.Client.ClientServices
+@using DebtSnowballer.Shared.DTOs
 @inject IMultiPurposeService MultiPurposeService
+
 
 <h3>Choose your strategy</h3>
 
@@ -10,25 +11,32 @@
 	}
 else
 	{
-	<select @onchange="OnStrategyChange">
+	<select @onchange="OnStrategyChange" value="@UserStrategyType">
 		@foreach (StrategyTypeDto strategyType in _strategyTypes)
 			{
-			<option value="@strategyType.Id">@strategyType.Type</option>
+			<option value="@strategyType.Id">@strategyType.Name</option>
 			}
 	</select>
 	}
 
 @code {
+
 	private IList<StrategyTypeDto> _strategyTypes;
 
+	[Parameter]
+	public int UserStrategyType { get; set; }
+
+	[Parameter]
+	public EventCallback<int> UpdateSelectedStrategy { get; set; }
+	
 	protected override async Task OnInitializedAsync()
 		{
 		_strategyTypes = await MultiPurposeService.GetAllStrategyTypes();
 		}
+	private async Task OnStrategyChange(ChangeEventArgs selectedStrategyId)
+	{
+		if (int.TryParse(selectedStrategyId.Value.ToString(), out int parsedValue))
+			await UpdateSelectedStrategy.InvokeAsync(parsedValue);
+	}
 
-	private void OnStrategyChange(ChangeEventArgs e)
-		{
-		string selectedStrategyId = e.Value.ToString();
-		// Use the selectedStrategyId to do something...
-		}
 }

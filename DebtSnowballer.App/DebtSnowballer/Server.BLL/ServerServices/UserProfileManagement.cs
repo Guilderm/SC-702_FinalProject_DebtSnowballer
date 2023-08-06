@@ -66,7 +66,7 @@ public class UserProfileManagement
 		return true;
 	}
 
-	public async Task<UserProfileDto> UpdateSelectedStrategy(string auth0UserId, int strategyTypeId)
+	public async Task<UserProfileDto> PatchSelectedStrategy(string auth0UserId, int strategyTypeId)
 	{
 		UserProfile userProfileModel = await GetUserProfileModel(auth0UserId);
 		if (userProfileModel == null) return null;
