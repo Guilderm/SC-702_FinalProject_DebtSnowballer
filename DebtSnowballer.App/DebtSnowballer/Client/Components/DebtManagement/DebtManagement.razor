@@ -21,7 +21,7 @@ else
 	<br>
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt"/>
+	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" />
 }
 
 <DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>

@@ -37,6 +37,8 @@ try
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 	builder.Services.AddScoped<UserProfileManagement>();
 	builder.Services.AddScoped<DebtManagement>();
+	builder.Services.AddScoped<ExchangeRateManagement>();
+	builder.Services.AddScoped<SnowflakeManagement>();
 
 
 	Log.Information("Configuring authentication...");

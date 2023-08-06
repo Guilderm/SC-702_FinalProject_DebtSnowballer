@@ -86,13 +86,15 @@ public class DebtController : BaseController
 	}
 
 	[HttpGet("GetUsersExchangeRates")]
-	public async Task<IActionResult> GetUsersExchangeRates(string userId)
+	public async Task<IActionResult> GetUsersExchangeRates()
 	{
-		_logger.LogInformation("Fetching exchange rates for user {userId}", userId);
+		string? auth0UserId = GetAuth0UserId();
 
-		IEnumerable<ExchangeRateDto> exchangeRates = await _exchangeRateManagement.GetUsersExchangeRates(userId);
+		_logger.LogInformation("Fetching exchange rates for user {userId}", auth0UserId);
 
-		_logger.LogInformation("Fetched {count} exchange rates for user {userId}", exchangeRates.Count(), userId);
+		IEnumerable<ExchangeRateDto> exchangeRates = await _exchangeRateManagement.GetUsersExchangeRates(auth0UserId);
+
+		_logger.LogInformation("Fetched {count} exchange rates for user {userId}", exchangeRates.Count(), auth0UserId);
 
 		return Ok(exchangeRates);
 	}
