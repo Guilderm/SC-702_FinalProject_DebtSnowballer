@@ -63,13 +63,12 @@ CREATE TABLE ExchangeRates
 CREATE TABLE [StrategyType]
 (
     [Id]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Type] NVARCHAR(50)       NOT NULL
+    Name NVARCHAR(50)       NOT NULL
 );
 
 -- Insert the three debt strategies into the DebtStrategyType table
-INSERT INTO StrategyType (Type)
-VALUES ('Debt Snowball'),
-       ('Strict Debt Snowball'),
+INSERT INTO StrategyType (Name)
+VALUES        ('Strict Debt Snowball'),
        ('Debt Avalanche');
 
 CREATE TABLE [UserProfile]

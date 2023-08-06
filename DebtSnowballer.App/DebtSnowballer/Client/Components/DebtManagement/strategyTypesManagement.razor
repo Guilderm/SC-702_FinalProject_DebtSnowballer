@@ -1,6 +1,34 @@
-﻿<select @bind="selectedStrategy">
-	@foreach (var strategyType in strategyTypes)
+﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Client.ClientServices
+@inject IMultiPurposeService MultiPurposeService
+
+<h3>Choose your strategy</h3>
+
+@if (_strategyTypes == null)
 	{
-		<option value="@strategyType.Id">@strategyType.Type</option>
+	<p><em>Loading...</em></p>
 	}
-</select>
+else
+	{
+	<select @onchange="OnStrategyChange">
+		@foreach (StrategyTypeDto strategyType in _strategyTypes)
+			{
+			<option value="@strategyType.Id">@strategyType.Type</option>
+			}
+	</select>
+	}
+
+@code {
+	private IList<StrategyTypeDto> _strategyTypes;
+
+	protected override async Task OnInitializedAsync()
+		{
+		_strategyTypes = await MultiPurposeService.GetAllStrategyTypes();
+		}
+
+	private void OnStrategyChange(ChangeEventArgs e)
+		{
+		string selectedStrategyId = e.Value.ToString();
+		// Use the selectedStrategyId to do something...
+		}
+}

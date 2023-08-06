@@ -20,7 +20,7 @@ public class MultiPurposeService : IMultiPurposeService
 	{
 		_logger.LogInformation("Fetching all strategy types");
 
-		HttpResponseMessage response = await _httpClient.GetAsync($"{_backendUrl}/GetAllStrategyTypes");
+		HttpResponseMessage response = await _httpClient.GetAsync($"{_backendUrl}GetAllStrategyTypes");
 
 		if (response.IsSuccessStatusCode)
 		{
