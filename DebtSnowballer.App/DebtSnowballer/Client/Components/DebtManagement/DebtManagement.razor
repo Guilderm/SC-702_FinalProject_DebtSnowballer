@@ -2,59 +2,25 @@
 @using DebtSnowballer.Client.Services
 @inject IDebtService DebtService
 
-
 <br>
 <br>
 @if (DebtsInQuoteCurrency == null)
-{
+	{
 	<p>
 		<em>Loading DebtsInQuoteCurrency</em>
 	</p>
-}
+	}
 else
-{
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Loan Nickname</th>
-			<th>Principal</th>
-			<th>BankFees</th>
-			<th>Monthly Payment</th>
-			<th>Interest Rate</th>
-			<th>Remaining Term</th>
-			<th>Cardinal Order</th>
-			<th>Currency</th>
-			<th>Actions</th>
-		</tr>
-		</thead>
-		<tbody>
-		@foreach (DebtDto debt in DebtsInQuoteCurrency)
-		{
-			string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
-			<tr>
-				<td>@debt.NickName</td>
-				<td>@currencySymbol @debt.RemainingPrincipal.ToString("N2")</td>
-				<td>@currencySymbol @debt.BankFees.ToString("N2")</td>
-				<td>@currencySymbol @debt.MonthlyPayment.ToString("N2")</td>
-				<td>@debt.InterestRate.ToString("P2")</td>
-				<td>@debt.RemainingTermInMonths</td>
-				<td>@debt.CardinalOrder</td>
-				<td>@debt.CurrencyCode</td>
-				<td>
-					<button class="btn btn-primary" @onclick="() => EditDebt(debt.Id)">Edit</button>
-					<button class="btn btn-danger" @onclick="() => DeleteDebt(debt.Id)">Delete</button>
-				</td>
-			</tr>
-		}
-		</tbody>
-	</table>
+	{
+	<DebtTable DebtsInQuoteCurrency="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" />
 
 	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
 
 	<br>
 
-	<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
-}
+	}
+	
+<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
 
 @code {
 	private DebtDto _selectedDebt;
@@ -108,5 +74,4 @@ else
 	{
 		_selectedDebt = null;
 	}
-
-}
+	}

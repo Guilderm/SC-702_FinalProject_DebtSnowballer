@@ -38,18 +38,30 @@ else
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
+	private List<ExchangeRateDto> _usersExchangeRates;
 
 	protected override async Task OnInitializedAsync()
 	{
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-
+		await LoadUserProfile();
+		
+		await LoadExchangeRates();
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
 
 		_isInitialized = true;
 	}
+	
+	private async Task LoadExchangeRates()
+	{
+		_usersExchangeRates = await DebtService.GetUsersExchangeRates(_authState.User);
+	}
+
+	private async Task LoadUserProfile()
+		{
+		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
+		}
 
 	private async Task LoadDebtsInQuoteCurrency()
 	{

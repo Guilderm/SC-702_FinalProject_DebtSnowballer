@@ -1,0 +1,63 @@
+﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Client.Services
+@inject IDebtService DebtService
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Loan Nickname</th>
+		<th>Principal</th>
+		<th>BankFees</th>
+		<th>Monthly Payment</th>
+		<th>Interest Rate</th>
+		<th>Remaining Term</th>
+		<th>Cardinal Order</th>
+		<th>Currency</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (DebtDto debt in DebtsInQuoteCurrency)
+	{
+		string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
+		<tr>
+			<td>@debt.NickName</td>
+			<td>@currencySymbol @debt.RemainingPrincipal.ToString("N2")</td>
+			<td>@currencySymbol @debt.BankFees.ToString("N2")</td>
+			<td>@currencySymbol @debt.MonthlyPayment.ToString("N2")</td>
+			<td>@debt.InterestRate.ToString("P2")</td>
+			<td>@debt.RemainingTermInMonths</td>
+			<td>@debt.CardinalOrder</td>
+			<td>@debt.CurrencyCode</td>
+			<td>
+				<button class="btn btn-primary" @onclick="() => EditDebt(debt.Id)">Edit</button>
+				<button class="btn btn-danger" @onclick="() => DeleteDebt(debt.Id)">Delete</button>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
+
+@code {
+	[Parameter]
+	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
+
+	[Parameter]
+	public Func<string, string> GetCurrencySymbol { get; set; }
+
+	[Parameter]
+	public EventCallback<int> OnEditDebt { get; set; }
+
+	[Parameter]
+	public EventCallback<int> OnDeleteDebt { get; set; }
+
+	private async Task EditDebt(int id)
+	{
+		await OnEditDebt.InvokeAsync(id);
+	}
+
+	private async Task DeleteDebt(int id)
+	{
+		await OnDeleteDebt.InvokeAsync(id);
+	}
+}
