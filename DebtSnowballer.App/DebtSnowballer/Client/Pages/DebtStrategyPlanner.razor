@@ -1,9 +1,9 @@
 ﻿@page "/DebtStrategyPlanner"
 @page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Client.ClientServices
 @using DebtSnowballer.Shared.Currency
 @using DebtSnowballer.Client.Components.DebtManagement
-@using DebtSnowballer.Client.ClientServices
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDebtService DebtService
@@ -24,7 +24,7 @@
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<StrategyTypesManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 }
@@ -45,7 +45,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		// TODO: Need to get this data from the backend with out getting any data from front end.
+	// TODO: Need to get this data from the backend with out getting any data from front end.
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
 
@@ -102,7 +102,7 @@ else
 			}
 			else
 			{
-				// If there's no exchange rate for the debt's currency, add the debt as is.
+	// If there's no exchange rate for the debt's currency, add the debt as is.
 				_debtsInBaseCurrency.Add(debt);
 			}
 		}
@@ -135,14 +135,14 @@ else
 			}
 			else
 			{
-				// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
+	// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
 				_snowflakesInBaseCurrency.Add(snowflake);
 			}
 		}
 
 		return Task.CompletedTask;
 	}
-	
+
 	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
@@ -162,10 +162,11 @@ else
 		await ConvertSnowflakesToBaseCurrency();
 		StateHasChanged();
 	}
-	
+
 	private async Task UpdateSelectedStrategy(int selectedCurrency)
-		{
+	{
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
-		}
-} 
+	}
+
+}
