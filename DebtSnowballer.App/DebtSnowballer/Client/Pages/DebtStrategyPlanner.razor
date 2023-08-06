@@ -16,6 +16,8 @@
 
 <h3>Create a strategy to become debt free</h3>
 
+@if (isInitialized)
+{
 <BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
 <DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
@@ -23,9 +25,14 @@
 <MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
 <SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
-
+}
+else
+{
+	<p>Loading...</p>
+}
 
 @code {
+	private bool isInitialized = false;
 	private List<DebtDto> _debtsInQuoteCurrency;
 	private List<DebtDto> _debtsInBaseCurrency;
 	private UserProfileDto _userProfile;
@@ -40,6 +47,8 @@
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
+
+		isInitialized = true;
 	}
 
 	private async Task LoadDebtsInQuoteCurrency()
