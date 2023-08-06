@@ -24,31 +24,36 @@ public class CurrencyService : ICurrencyService
 		_repository = unitOfWork.GetRepository<ExchangeRate>();
 	}
 
-	public async Task<decimal> GetExchangeRate(string baseCurrency, string quoteCurrency)
+	public async Task<IEnumerable<ExchangeRate>> GetExchangeRate(string baseCurrency)
 	{
-		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
+		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency);
 
-		bool exchangeRateIsNull = _exchangeRate == null;
-		bool exchangeRateIsStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
+		bool isExchangeRateNull = _exchangeRate == null;
+		bool isExchangeRateStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
 
-		if (exchangeRateIsNull || exchangeRateIsStale)
+		if (isExchangeRateNull || isExchangeRateStale)
 			await UpdateExchangeRateFromApi(baseCurrency);
 
-		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency, quoteCurrency);
+		var exchangeRateList = await GetAllExchangeRatesFromDatabase(baseCurrency);
 
-		return _exchangeRate.ConversionRate;
+		return exchangeRateList;
 	}
 
-	private async Task<ExchangeRate> GetExchangeRateFromDatabase(string baseCurrency, string quoteCurrency)
+	private async Task<ExchangeRate> GetExchangeRateFromDatabase(string baseCurrency)
 	{
-		return await _repository.Get(er => er.BaseCurrency == baseCurrency && er.QuoteCurrency == quoteCurrency);
+		return await _repository.Get(er => er.BaseCurrency == baseCurrency);
 	}
 
+	private async Task<IEnumerable<ExchangeRate>> GetAllExchangeRatesFromDatabase(string baseCurrency)
+	{
+		return await _repository.GetAll(er => er.BaseCurrency == baseCurrency);
+	}
+	
 	private async Task UpdateExchangeRateFromApi(string baseCurrency)
 	{
 		try
 		{
-			var client = _clientFactory.CreateClient();
+			HttpClient client = _clientFactory.CreateClient();
 			string apiResponse = await client.GetStringAsync($"{_baseUrl}{_apiKey}/latest/{baseCurrency}");
 			JsonDocument jsonDocument = JsonDocument.Parse(apiResponse);
 
