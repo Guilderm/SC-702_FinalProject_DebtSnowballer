@@ -5,28 +5,35 @@
 <br>
 <br>
 @if (DebtsInQuoteCurrency == null)
-	{
+{
 	<p>
 		<em>Loading DebtsInQuoteCurrency</em>
 	</p>
-	}
+}
 else
-	{
-	<DebtTable DebtsInQuoteCurrency="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" />
+{
+	<h3>List all your debts</h3>
+	<br>
+	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt"/>
 
 	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
-
 	<br>
+	<br>
+	<h3>Debts converted to base currency</h3>
+	<br>
+	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt"/>
+}
 
-	}
-	
-<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit" />
+<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
 @code {
 	private DebtDto _selectedDebt;
 
 	[Parameter]
 	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
+
+	[Parameter]
+	public List<DebtDto> DebtsInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -74,4 +81,5 @@ else
 	{
 		_selectedDebt = null;
 	}
-	}
+
+}

@@ -20,7 +20,7 @@
 {
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
-	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="LoadDebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
 
@@ -38,48 +38,78 @@ else
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
-	private List<ExchangeRateDto> _usersExchangeRates;
+	private IList<ExchangeRateDto> _usersExchangeRates;
 
 	protected override async Task OnInitializedAsync()
 	{
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
-		
+
 		await LoadExchangeRates();
 		await LoadDebtsInQuoteCurrency();
-		await LoadDebtsInBaseCurrency();
+		await ConvertDebtsToBaseCurrency();
 		await LoadSnowflakesInQuoteCurrency();
 
 		_isInitialized = true;
 	}
-	
+
 	private async Task LoadExchangeRates()
 	{
 		_usersExchangeRates = await DebtService.GetUsersExchangeRates(_authState.User);
 	}
 
 	private async Task LoadUserProfile()
-		{
+	{
 		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-		}
+	}
 
 	private async Task LoadDebtsInQuoteCurrency()
 	{
 		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();
-		await LoadDebtsInBaseCurrency();
+		await ConvertDebtsToBaseCurrency();
 	}
 
-	private async Task LoadDebtsInBaseCurrency()
+	private async Task ConvertDebtsToBaseCurrency()
 	{
-		_debtsInBaseCurrency = (await DebtService.GetAllDebtsInBaseCurrency()).ToList();
+		_debtsInBaseCurrency = new List<DebtDto>();
+
+		foreach (DebtDto debt in _debtsInQuoteCurrency)
+		{
+			ExchangeRateDto debtToBaseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == debt.CurrencyCode);
+
+			if (debtToBaseRate != null)
+			{
+				DebtDto convertedDebt = new()
+				{
+					Id = debt.Id,
+					NickName = debt.NickName,
+					RemainingPrincipal = debt.RemainingPrincipal * debtToBaseRate.ConversionRate,
+					BankFees = debt.BankFees * debtToBaseRate.ConversionRate,
+					MonthlyPayment = debt.MonthlyPayment * debtToBaseRate.ConversionRate,
+					InterestRate = debt.InterestRate,
+					RemainingTermInMonths = debt.RemainingTermInMonths,
+					CardinalOrder = debt.CardinalOrder,
+					CurrencyCode = _userProfile.BaseCurrency
+				};
+
+				_debtsInBaseCurrency.Add(convertedDebt);
+			}
+			else
+			{
+	// If there's no exchange rate for the debt's currency, add the debt as is.
+				_debtsInBaseCurrency.Add(debt);
+			}
+		}
+
 		StateHasChanged();
 	}
+
 
 	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_userProfile.BaseCurrency = selectedCurrency;
-		await LoadDebtsInBaseCurrency();
+		await ConvertDebtsToBaseCurrency();
 	}
 
 	public string GetCurrencySymbol(string currencyCode)

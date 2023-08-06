@@ -17,7 +17,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	@foreach (DebtDto debt in DebtsInQuoteCurrency)
+	@foreach (DebtDto debt in Debts)
 	{
 		string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
 		<tr>
@@ -39,8 +39,9 @@
 </table>
 
 @code {
+
 	[Parameter]
-	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
+	public List<DebtDto> Debts { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -60,4 +61,5 @@
 	{
 		await OnDeleteDebt.InvokeAsync(id);
 	}
+
 }
