@@ -62,4 +62,22 @@ public class UserProfileController : BaseController
 
 		return Ok(debtPlanMonthlyPayment);
 	}
+
+	[HttpPatch("{strategyTypeId:int}")]
+	public async Task<IActionResult> Patch(int strategyTypeId)
+	{
+		string? auth0UserId = GetAuth0UserId();
+		_logger.LogInformation("Patching User Profile with StrategyTypeID {strategyTypeId} for user {userId}",
+			strategyTypeId, auth0UserId);
+
+		var userProfileDto = await _userProfileManagement.UpdateSelectedStrategy(auth0UserId, strategyTypeId);
+
+		if (userProfileDto == null)
+			return NotFound($"there was a problem updating user profile not found for Auth0UserId: {auth0UserId}");
+
+		_logger.LogInformation("Patched User Profile with StrategyTypeID {strategyTypeId} for user {userId}",
+			strategyTypeId, auth0UserId);
+
+		return Ok(userProfileDto);
+	}
 }
