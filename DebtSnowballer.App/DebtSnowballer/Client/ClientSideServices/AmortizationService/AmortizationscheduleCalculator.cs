@@ -2,19 +2,19 @@
 
 namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
-public class DebtPlanCalculator
+public class AmortizationscheduleCalculator
 {
 	private readonly DebtSortingStrategies _debtSortingStrategies;
 	private readonly MonthlyPaymentCalculator _monthlyPaymentCalculator;
 
-	public DebtPlanCalculator(MonthlyPaymentCalculator monthlyPaymentCalculator,
+	public AmortizationscheduleCalculator(MonthlyPaymentCalculator monthlyPaymentCalculator,
 		DebtSortingStrategies debtSortingStrategies)
 	{
 		_monthlyPaymentCalculator = monthlyPaymentCalculator;
 		_debtSortingStrategies = debtSortingStrategies;
 	}
 
-	public PaymentPlanDetails CalculateStrategy(List<DebtDto> debts, decimal debtPlanMonthlyPayment, string strategy)
+	public Amortizationschedule CalculateStrategy(List<DebtDto> debts, decimal debtPlanMonthlyPayment, string strategy)
 	{
 		switch (strategy)
 		{
@@ -33,21 +33,21 @@ public class DebtPlanCalculator
 		if (debtPlanMonthlyPayment < totalMinimumPayments)
 			extraPayment = 0;
 
-		PaymentPlanDetails debtPlan = new()
+		Amortizationschedule debtPlan = new()
 		{
-			AmortizationSchedule = new Dictionary<DebtDto, List<MonthlyPaymentDetails>>()
+			AmortizationSchedule = new Dictionary<DebtDto, List<MonthlyPayment>>()
 		};
 
 		foreach (DebtDto debt in debts)
 		{
-			List<MonthlyPaymentDetails> amortizationSchedule =
+			List<MonthlyPayment> amortizationSchedule =
 				_monthlyPaymentCalculator.CalculateAmortizationSchedule(debt, DateTime.Now, extraPayment);
 
 			if (amortizationSchedule.Count > 0)
 			{
 				debtPlan.AmortizationSchedule.Add(debt, amortizationSchedule);
 
-				MonthlyPaymentDetails lastMonthlyPaymentPeriod = amortizationSchedule[^1];
+				MonthlyPayment lastMonthlyPaymentPeriod = amortizationSchedule[^1];
 
 				debtPlan.TotalInterestPaid += lastMonthlyPaymentPeriod.AccumulatedInterest;
 				debtPlan.TotalBankFeesPaid += lastMonthlyPaymentPeriod.AccumulatedBankFees;
