@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server.BLL.Configurations;
-using Server.BLL.ServerServices;
+using Server.BLL.ServerSideServices;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 using Server.DAL.Repositories;

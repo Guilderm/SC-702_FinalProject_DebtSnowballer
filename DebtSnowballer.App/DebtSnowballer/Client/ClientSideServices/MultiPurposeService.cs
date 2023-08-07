@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientServices;
+namespace DebtSnowballer.Client.ClientSideServices;
 
 public class MultiPurposeService : IMultiPurposeService
 {

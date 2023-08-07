@@ -1,7 +1,7 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Server.BLL.ServerServices;
+using Server.BLL.ServerSideServices;
 
 namespace Server.UIL.Controllers;
 

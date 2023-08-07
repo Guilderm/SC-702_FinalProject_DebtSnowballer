@@ -3,7 +3,7 @@ using DebtSnowballer.Shared.DTOs;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 
-namespace Server.BLL.ServerServices;
+namespace Server.BLL.ServerSideServices;
 
 public class UserProfileManagement
 {

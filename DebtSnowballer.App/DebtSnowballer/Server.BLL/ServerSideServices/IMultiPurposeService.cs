@@ -1,6 +1,6 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace Server.BLL.ServerServices;
+namespace Server.BLL.ServerSideServices;
 
 public interface IMultiPurposeService
 {

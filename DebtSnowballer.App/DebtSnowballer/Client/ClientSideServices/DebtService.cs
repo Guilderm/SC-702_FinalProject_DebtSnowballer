@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientServices;
+namespace DebtSnowballer.Client.ClientSideServices;
 
 public class DebtService : IDebtService
 {
