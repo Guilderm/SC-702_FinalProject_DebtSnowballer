@@ -12,25 +12,26 @@ public class AmortizationCalculator
 		_logger = logger;
 	}
 
-	public List<PaymentPeriodDetail> CalculateAmortizationSchedule(DebtDto debt, DateTime startDate,
-		decimal extraPayment)
+	public List<PaymentPeriodDetail> CalculateAmortizationSchedule(DebtDto debt, decimal extraPayment)
 	{
 		_logger.LogInformation(
 			"Calculating amortization schedule for loan amount: {LoanAmount}, annual interest rate: {AnnualInterestRate}, term in months: {TermInMonths}, monthly bank fee: {MonthlyBankFee}, start date: {StartDate}",
-			debt.RemainingPrincipal, debt.AnnualInterestRate, debt.RemainingTermInMonths, debt.BankFees, startDate);
+			debt.RemainingPrincipal, debt.AnnualInterestRate, debt.RemainingTermInMonths, debt.BankFees,
+			debt.StartDate);
 
 		List<PaymentPeriodDetail> amortizationSchedule = new List<PaymentPeriodDetail>();
 		decimal monthlyInterestRate = debt.AnnualInterestRate / 12 / 100;
-		decimal monthlyPayment = debt.RemainingPrincipal * monthlyInterestRate /
-			(1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -debt.RemainingTermInMonths)) + extraPayment;
 
 		decimal accumulatedInterest = 0;
 		decimal accumulatedBankFees = 0;
 
 		for (int month = 1; month <= debt.RemainingTermInMonths; month++)
 		{
+			decimal monthlyPayment = debt.RemainingPrincipal * monthlyInterestRate /
+				(1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -debt.RemainingTermInMonths)) + extraPayment;
+
 			decimal interestPaid = debt.RemainingPrincipal * monthlyInterestRate;
-			decimal principalPaid = monthlyPayment - interestPaid;
+			decimal principalPaid = monthlyPayment - interestPaid - debt.BankFees;
 			decimal endingBalance = debt.RemainingPrincipal - principalPaid;
 			decimal amountAmortized = principalPaid + interestPaid + debt.BankFees;
 
@@ -39,19 +40,30 @@ public class AmortizationCalculator
 
 			amortizationSchedule.Add(new PaymentPeriodDetail
 			{
+				AssociatedDebt = new DebtDto
+				{
+					Id = debt.Id,
+					Auth0UserId = debt.Auth0UserId,
+					NickName = debt.NickName,
+					RemainingPrincipal = endingBalance,
+					BankFees = debt.BankFees,
+					MonthlyPayment = monthlyPayment,
+					AnnualInterestRate = debt.AnnualInterestRate,
+					RemainingTermInMonths = debt.RemainingTermInMonths - month,
+					CurrencyCode = debt.CurrencyCode,
+					CardinalOrder = debt.CardinalOrder,
+					StartDate = debt.StartDate.AddMonths(month)
+				},
 				Month = month,
-				PaymentPeriodDate = startDate.AddMonths(month - 1),
-				StartingBalance = debt.RemainingPrincipal,
 				InterestPaid = interestPaid,
 				AccumulatedInterest = accumulatedInterest,
 				PrincipalPaid = principalPaid,
-				BankFee = debt.BankFees,
-				AccumulatedBankFees = accumulatedBankFees,
 				AmountAmortized = amountAmortized,
 				EndingBalance = endingBalance
 			});
 
 			debt.RemainingPrincipal = endingBalance;
+			debt.RemainingTermInMonths--;
 		}
 
 		_logger.LogInformation(
