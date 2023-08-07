@@ -9,7 +9,8 @@ public class PaymentPeriodDetail
 	public int Month { get; set; }
 	public decimal InterestPaid { get; set; }
 	public decimal AccumulatedInterest { get; set; }
+	public decimal AccumulatedBankFees { get; set; }
 	public decimal PrincipalPaid { get; set; }
 	public decimal AmountAmortized { get; set; }
-	public decimal EndingBalance { get; set; }
+	public decimal StartingBalance { get; set; }
 }
