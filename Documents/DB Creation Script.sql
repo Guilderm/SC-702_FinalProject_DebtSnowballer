@@ -135,9 +135,8 @@ CREATE TABLE [Debt]
     [RemainingTermInMonths] INT                NOT NULL,
     [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
     [CardinalOrder]         INT                NOT NULL,
-    [CreatedAt]             DATETIME2          NOT NULL DEFAULT GETDATE()
-);
-
+    StartDate             DATETIME2          NOT NULL DEFAULT GETDATE()
+)
 
 CREATE TABLE Snowflakes
 (

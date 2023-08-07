@@ -11,6 +11,6 @@ public class DebtSortingStrategies
 
 	public void SortByInterestRate(List<DebtDto> debts)
 	{
-		debts.Sort((a, b) => b.InterestRate.CompareTo(a.InterestRate));
+		debts.Sort((a, b) => b.AnnualInterestRate.CompareTo(a.AnnualInterestRate));
 	}
 }

@@ -8,11 +8,11 @@ public class Debt
 	public decimal RemainingPrincipal { get; set; }
 	public decimal BankFees { get; set; }
 	public decimal MonthlyPayment { get; set; }
-	public decimal InterestRate { get; set; }
+	public decimal AnnualInterestRate { get; set; }
 	public int RemainingTermInMonths { get; set; }
 	public string CurrencyCode { get; set; } = null!;
 	public int CardinalOrder { get; set; }
-	public DateTime CreatedAt { get; set; }
+	public DateTime StartDate { get; set; }
 
 	public virtual UserProfile Auth0User { get; set; } = null!;
 	public virtual Currency CurrencyCodeNavigation { get; set; } = null!;

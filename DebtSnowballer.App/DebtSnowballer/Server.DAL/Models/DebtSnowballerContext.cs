@@ -31,7 +31,7 @@ public partial class DebtSnowballerContext : DbContext
 	{
 		modelBuilder.Entity<Currency>(entity =>
 		{
-			entity.HasIndex(e => e.AlphaCode, "UQ__Currenci__C0B0B3A276A01DFA")
+			entity.HasIndex(e => e.AlphaCode, "UQ__Currenci__C0B0B3A207B6A751")
 				.IsUnique();
 
 			entity.Property(e => e.AlphaCode).HasMaxLength(3);
@@ -45,17 +45,15 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("Debt");
 
+			entity.Property(e => e.AnnualInterestRate).HasColumnType("decimal(6, 4)");
+
 			entity.Property(e => e.Auth0UserId).HasMaxLength(75);
 
 			entity.Property(e => e.BankFees).HasColumnType("decimal(18, 2)");
 
-			entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-
 			entity.Property(e => e.CurrencyCode)
 				.HasMaxLength(3)
 				.HasDefaultValueSql("('USD')");
-
-			entity.Property(e => e.InterestRate).HasColumnType("decimal(6, 4)");
 
 			entity.Property(e => e.MonthlyPayment).HasColumnType("decimal(18, 2)");
 
@@ -63,19 +61,21 @@ public partial class DebtSnowballerContext : DbContext
 
 			entity.Property(e => e.RemainingPrincipal).HasColumnType("decimal(18, 2)");
 
+			entity.Property(e => e.StartDate).HasDefaultValueSql("(getdate())");
+
 			entity.HasOne(d => d.Auth0User)
 				.WithMany(p => p.Debts)
 				.HasPrincipalKey(p => p.Auth0UserId)
 				.HasForeignKey(d => d.Auth0UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Debt__Auth0UserI__48B0A244");
+				.HasConstraintName("FK__Debt__Auth0UserI__280EC888");
 
 			entity.HasOne(d => d.CurrencyCodeNavigation)
 				.WithMany(p => p.Debts)
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.CurrencyCode)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Debt__CurrencyCo__4A98EAB6");
+				.HasConstraintName("FK__Debt__CurrencyCo__29F710FA");
 		});
 
 		modelBuilder.Entity<ExchangeRate>(entity =>
@@ -95,14 +95,14 @@ public partial class DebtSnowballerContext : DbContext
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.BaseCurrency)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__ExchangeR__BaseC__30D918B3");
+				.HasConstraintName("FK__ExchangeR__BaseC__10373EF7");
 
 			entity.HasOne(d => d.QuoteCurrencyNavigation)
 				.WithMany(p => p.ExchangeRateQuoteCurrencyNavigations)
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.QuoteCurrency)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__ExchangeR__Quote__32C16125");
+				.HasConstraintName("FK__ExchangeR__Quote__121F8769");
 		});
 
 		modelBuilder.Entity<SessionLog>(entity =>
@@ -124,7 +124,7 @@ public partial class DebtSnowballerContext : DbContext
 				.HasPrincipalKey(p => p.Auth0UserId)
 				.HasForeignKey(d => d.Auth0UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__SessionLo__Auth0__44E01160");
+				.HasConstraintName("FK__SessionLo__Auth0__243E37A4");
 		});
 
 		modelBuilder.Entity<Snowflake>(entity =>
@@ -148,14 +148,14 @@ public partial class DebtSnowballerContext : DbContext
 				.HasPrincipalKey(p => p.Auth0UserId)
 				.HasForeignKey(d => d.Auth0UserId)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Snowflake__Auth0__4E697B9A");
+				.HasConstraintName("FK__Snowflake__Auth0__2DC7A1DE");
 
 			entity.HasOne(d => d.CurrencyCodeNavigation)
 				.WithMany(p => p.Snowflakes)
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.CurrencyCode)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__Snowflake__Curre__523A0C7E");
+				.HasConstraintName("FK__Snowflake__Curre__319832C2");
 		});
 
 		modelBuilder.Entity<StrategyType>(entity =>
@@ -169,7 +169,7 @@ public partial class DebtSnowballerContext : DbContext
 		{
 			entity.ToTable("UserProfile");
 
-			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F4290601A4FD8")
+			entity.HasIndex(e => e.Auth0UserId, "UQ__UserProf__1C8F4290BFB1CDF1")
 				.IsUnique();
 
 			entity.Property(e => e.AggregatedMonthlyPayment).HasColumnType("decimal(18, 2)");
@@ -208,7 +208,7 @@ public partial class DebtSnowballerContext : DbContext
 				.WithMany(p => p.UserProfiles)
 				.HasForeignKey(d => d.SelectedStrategy)
 				.OnDelete(DeleteBehavior.ClientSetNull)
-				.HasConstraintName("FK__UserProfi__Selec__3E3313D1");
+				.HasConstraintName("FK__UserProfi__Selec__1D913A15");
 		});
 
 		modelBuilder.Entity<UserType>(entity =>
