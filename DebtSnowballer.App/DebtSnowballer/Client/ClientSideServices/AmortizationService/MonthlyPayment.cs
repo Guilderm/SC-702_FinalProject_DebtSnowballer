@@ -4,7 +4,7 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class PaymentPeriodDetail
 {
-	public DebtDto AssociatedDebt { get; set; }
+	public DebtDto AssociatedDebtState { get; set; }
 
 	public int Month { get; set; }
 	public decimal InterestPaid { get; set; }

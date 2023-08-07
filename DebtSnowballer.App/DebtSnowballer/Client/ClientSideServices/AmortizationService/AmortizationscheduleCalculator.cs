@@ -4,13 +4,13 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class DebtPlanCalculator
 {
-	private readonly AmortizationCalculator _amortizationCalculator;
 	private readonly DebtSortingStrategies _debtSortingStrategies;
+	private readonly MonthlyPaymentCalculator _monthlyPaymentCalculator;
 
-	public DebtPlanCalculator(AmortizationCalculator amortizationCalculator,
+	public DebtPlanCalculator(MonthlyPaymentCalculator monthlyPaymentCalculator,
 		DebtSortingStrategies debtSortingStrategies)
 	{
-		_amortizationCalculator = amortizationCalculator;
+		_monthlyPaymentCalculator = monthlyPaymentCalculator;
 		_debtSortingStrategies = debtSortingStrategies;
 	}
 
@@ -35,28 +35,28 @@ public class DebtPlanCalculator
 
 		PaymentPlanDetails debtPlan = new()
 		{
-			AmortizationSchedule = new Dictionary<DebtDto, List<PaymentPeriodDetail>>()
+			AmortizationSchedule = new Dictionary<DebtDto, List<MonthlyPaymentDetails>>()
 		};
 
 		foreach (DebtDto debt in debts)
 		{
-			List<PaymentPeriodDetail> amortizationSchedule =
-				_amortizationCalculator.CalculateAmortizationSchedule(debt, DateTime.Now, extraPayment);
+			List<MonthlyPaymentDetails> amortizationSchedule =
+				_monthlyPaymentCalculator.CalculateAmortizationSchedule(debt, DateTime.Now, extraPayment);
 
 			if (amortizationSchedule.Count > 0)
 			{
 				debtPlan.AmortizationSchedule.Add(debt, amortizationSchedule);
 
-				PaymentPeriodDetail lastPaymentPeriod = amortizationSchedule[^1];
+				MonthlyPaymentDetails lastMonthlyPaymentPeriod = amortizationSchedule[^1];
 
-				debtPlan.TotalInterestPaid += lastPaymentPeriod.AccumulatedInterest;
-				debtPlan.TotalBankFeesPaid += lastPaymentPeriod.AccumulatedBankFees;
+				debtPlan.TotalInterestPaid += lastMonthlyPaymentPeriod.AccumulatedInterest;
+				debtPlan.TotalBankFeesPaid += lastMonthlyPaymentPeriod.AccumulatedBankFees;
 
-				if (lastPaymentPeriod.PaymentPeriodDate > debtPlan.DebtFreeDate)
-					debtPlan.DebtFreeDate = lastPaymentPeriod.PaymentPeriodDate;
+				if (lastMonthlyPaymentPeriod.PaymentPeriodDate > debtPlan.DebtFreeDate)
+					debtPlan.DebtFreeDate = lastMonthlyPaymentPeriod.PaymentPeriodDate;
 
 				// Update the extra payment for the next debt
-				extraPayment += debtPlanMonthlyPayment - lastPaymentPeriod.AmountAmortized;
+				extraPayment += debtPlanMonthlyPayment - lastMonthlyPaymentPeriod.AmountAmortized;
 			}
 		}
 

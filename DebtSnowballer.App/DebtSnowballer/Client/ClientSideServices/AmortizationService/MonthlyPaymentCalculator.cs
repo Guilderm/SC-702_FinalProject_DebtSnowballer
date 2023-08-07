@@ -3,11 +3,11 @@ using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
-public class AmortizationCalculator
+public class MonthlyPaymentCalculator
 {
-	private readonly ILogger<AmortizationCalculator> _logger;
+	private readonly ILogger<MonthlyPaymentCalculator> _logger;
 
-	public AmortizationCalculator(ILogger<AmortizationCalculator> logger)
+	public MonthlyPaymentCalculator(ILogger<MonthlyPaymentCalculator> logger)
 	{
 		_logger = logger;
 	}
@@ -72,7 +72,7 @@ public class AmortizationCalculator
 	{
 		return new PaymentPeriodDetail
 		{
-			AssociatedDebt = new DebtDto
+			AssociatedDebtState = new DebtDto
 			{
 				// ... (same as before)
 			},
@@ -95,7 +95,7 @@ public class AmortizationCalculator
 	{
 		_logger.LogInformation(
 			"Amortization schedule calculated successfully for {TermInMonths} months. Total payment periods: {TotalPaymentPeriods}",
-			amortizationSchedule.Last().AssociatedDebt.RemainingTermInMonths, amortizationSchedule.Count);
+			amortizationSchedule.Last().AssociatedDebtState.RemainingTermInMonths, amortizationSchedule.Count);
 
 		JsonSerializerOptions options = new() { WriteIndented = true };
 		_logger.LogInformation("Amortization schedule: {AmortizationSchedule}",
