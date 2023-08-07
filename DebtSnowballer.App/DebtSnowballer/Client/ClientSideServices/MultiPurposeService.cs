@@ -24,7 +24,7 @@ public class MultiPurposeService : IMultiPurposeService
 
 		if (response.IsSuccessStatusCode)
 		{
-			var strategyTypes = await response.Content.ReadFromJsonAsync<IList<StrategyTypeDto>>();
+			IList<StrategyTypeDto> strategyTypes = await response.Content.ReadFromJsonAsync<IList<StrategyTypeDto>>();
 			_logger.LogInformation("Fetched {count} strategy types", strategyTypes?.Count);
 			return strategyTypes;
 		}
