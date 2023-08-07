@@ -12,7 +12,7 @@ public class AmortizationCalculator
 	}
 
 	public List<PaymentPeriodDetail> CalculateAmortizationSchedule(decimal loanAmount, decimal annualInterestRate,
-		int termInMonths, decimal monthlyBankFee, DateTime startDate)
+		int termInMonths, decimal monthlyBankFee, DateTime startDate, decimal extraPayment)
 	{
 		_logger.LogInformation(
 			"Calculating amortization schedule for loan amount: {LoanAmount}, annual interest rate: {AnnualInterestRate}, term in months: {TermInMonths}, monthly bank fee: {MonthlyBankFee}, start date: {StartDate}",
@@ -21,7 +21,8 @@ public class AmortizationCalculator
 		List<PaymentPeriodDetail> amortizationSchedule = new List<PaymentPeriodDetail>();
 		decimal monthlyInterestRate = annualInterestRate / 12 / 100;
 		decimal monthlyPayment = loanAmount * monthlyInterestRate /
-		                         (1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -termInMonths));
+			(1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -termInMonths)) + extraPayment;
+
 
 		decimal accumulatedInterest = 0;
 		decimal accumulatedBankFees = 0;
