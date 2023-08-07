@@ -12,14 +12,14 @@ public class MonthlyPaymentCalculator
 		_logger = logger;
 	}
 
-	public List<MonthlyPayment> CalculateAmortizationSchedule(DebtDto debt, decimal extraPayment)
+	public List<MonthlyAmortizationDetail> CalculateAmortizationSchedule(DebtDto debt, decimal extraPayment)
 	{
 		_logger.LogInformation(
 			"Calculating amortization schedule for loan amount: {LoanAmount}, annual interest rate: {AnnualInterestRate}, term in months: {TermInMonths}, monthly bank fee: {MonthlyBankFee}, start date: {StartDate}",
 			debt.RemainingPrincipal, debt.AnnualInterestRate, debt.RemainingTermInMonths, debt.BankFees,
 			debt.StartDate);
 
-		List<MonthlyPayment> amortizationSchedule = new List<MonthlyPayment>();
+		List<MonthlyAmortizationDetail> amortizationSchedule = new List<MonthlyAmortizationDetail>();
 		decimal monthlyInterestRate = CalculateMonthlyInterestRate(debt.AnnualInterestRate);
 
 		decimal accumulatedInterest = 0;
@@ -34,9 +34,9 @@ public class MonthlyPaymentCalculator
 			accumulatedInterest += interestPaid;
 			accumulatedBankFees += debt.BankFees;
 
-			MonthlyPayment paymentDetail = CreatePaymentDetail(debt, month, interestPaid, accumulatedInterest,
+			MonthlyAmortizationDetail amortizationDetailDetail = CreatePaymentDetail(debt, month, interestPaid, accumulatedInterest,
 				accumulatedBankFees, principalPaid, calculatedMonthlyPayment);
-			amortizationSchedule.Add(paymentDetail);
+			amortizationSchedule.Add(amortizationDetailDetail);
 
 			UpdateDebt(debt, principalPaid);
 		}
@@ -67,13 +67,13 @@ public class MonthlyPaymentCalculator
 		return calculatedMonthlyPayment - interestPaid - bankFees;
 	}
 
-	private MonthlyPayment CreatePaymentDetail(DebtDto debt, int month, decimal interestPaid,
+	private MonthlyAmortizationDetail CreatePaymentDetail(DebtDto debt, int month, decimal interestPaid,
 		decimal accumulatedInterest, decimal accumulatedBankFees, decimal principalPaid,
 		decimal calculatedMonthlyPayment)
 	{
-		return new MonthlyPayment
+		return new MonthlyAmortizationDetail
 		{
-			AssociatedDebtState = new DebtDto
+			DebtEndState = new DebtDto
 			{
 				Id = debt.Id,
 				Auth0UserId = debt.Auth0UserId,
@@ -102,11 +102,11 @@ public class MonthlyPaymentCalculator
 		debt.RemainingTermInMonths--;
 	}
 
-	private void LogAmortizationSchedule(List<MonthlyPayment> amortizationSchedule)
+	private void LogAmortizationSchedule(List<MonthlyAmortizationDetail> amortizationSchedule)
 	{
 		_logger.LogInformation(
 			"Amortization schedule calculated successfully for {TermInMonths} months. Total payment periods: {TotalPaymentPeriods}",
-			amortizationSchedule.Last().AssociatedDebtState.RemainingTermInMonths, amortizationSchedule.Count);
+			amortizationSchedule.Last().DebtEndState.RemainingTermInMonths, amortizationSchedule.Count);
 
 		JsonSerializerOptions options = new() { WriteIndented = true };
 		_logger.LogInformation("Amortization schedule: {AmortizationSchedule}",
