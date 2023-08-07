@@ -1,4 +1,6 @@
-﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
+﻿using DebtSnowballer.Shared.DTOs;
+
+namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class DebtPlanCalculator
 {
@@ -12,7 +14,7 @@ public class DebtPlanCalculator
 		_debtSortingStrategies = debtSortingStrategies;
 	}
 
-	public PaymentPlanDetails CalculateStrategy(List<Debt> debts, decimal debtPlanMonthlyPayment, string strategy)
+	public PaymentPlanDetails CalculateStrategy(List<DebtDto> debts, decimal debtPlanMonthlyPayment, string strategy)
 	{
 		switch (strategy)
 		{
@@ -26,25 +28,24 @@ public class DebtPlanCalculator
 				throw new ArgumentException($"Invalid strategy: {strategy}");
 		}
 
-		decimal totalMinimumPayments = debts.Sum(d => d.MinimumPayment);
+		decimal totalMinimumPayments = debts.Sum(d => d.MonthlyPayment);
 		decimal extraPayment = debtPlanMonthlyPayment - totalMinimumPayments;
-		if (debtPlanMonthlyPayment < totalMinimumPayments) extraPayment = 0;
-
+		if (debtPlanMonthlyPayment < totalMinimumPayments)
+			extraPayment = 0;
 
 		PaymentPlanDetails debtPlan = new()
 		{
-			AmortizationSchedule = new Dictionary<Debt, List<PaymentPeriodDetail>>()
+			AmortizationSchedule = new Dictionary<DebtDto, List<PaymentPeriodDetail>>()
 		};
 
-		foreach (Debt loan in debts)
+		foreach (DebtDto debt in debts)
 		{
-			List<PaymentPeriodDetail> amortizationSchedule = _amortizationCalculator.CalculateAmortizationSchedule(
-				loan.Balance, loan.AnnualInterestRate, loan.TermInMonths, loan.MonthlyBankFee, DateTime.Now,
-				debtPlanMonthlyPayment + extraPayment);
+			List<PaymentPeriodDetail> amortizationSchedule =
+				_amortizationCalculator.CalculateAmortizationSchedule(debt, DateTime.Now, extraPayment);
 
 			if (amortizationSchedule.Count > 0)
 			{
-				debtPlan.AmortizationSchedule.Add(loan, amortizationSchedule);
+				debtPlan.AmortizationSchedule.Add(debt, amortizationSchedule);
 
 				PaymentPeriodDetail lastPaymentPeriod = amortizationSchedule[^1];
 

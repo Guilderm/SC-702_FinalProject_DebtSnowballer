@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
@@ -11,52 +12,51 @@ public class AmortizationCalculator
 		_logger = logger;
 	}
 
-	public List<PaymentPeriodDetail> CalculateAmortizationSchedule(decimal loanAmount, decimal annualInterestRate,
-		int termInMonths, decimal monthlyBankFee, DateTime startDate, decimal extraPayment)
+	public List<PaymentPeriodDetail> CalculateAmortizationSchedule(DebtDto debt, DateTime startDate,
+		decimal extraPayment)
 	{
 		_logger.LogInformation(
 			"Calculating amortization schedule for loan amount: {LoanAmount}, annual interest rate: {AnnualInterestRate}, term in months: {TermInMonths}, monthly bank fee: {MonthlyBankFee}, start date: {StartDate}",
-			loanAmount, annualInterestRate, termInMonths, monthlyBankFee, startDate);
+			debt.RemainingPrincipal, debt.InterestRate, debt.RemainingTermInMonths, debt.BankFees, startDate);
 
 		List<PaymentPeriodDetail> amortizationSchedule = new List<PaymentPeriodDetail>();
-		decimal monthlyInterestRate = annualInterestRate / 12 / 100;
-		decimal monthlyPayment = loanAmount * monthlyInterestRate /
-			(1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -termInMonths)) + extraPayment;
-
+		decimal monthlyInterestRate = debt.InterestRate / 12 / 100;
+		decimal monthlyPayment = debt.RemainingPrincipal * monthlyInterestRate /
+			(1 - (decimal)Math.Pow(1 + (double)monthlyInterestRate, -debt.RemainingTermInMonths)) + extraPayment;
 
 		decimal accumulatedInterest = 0;
 		decimal accumulatedBankFees = 0;
 
-		for (int month = 1; month <= termInMonths; month++)
+		for (int month = 1; month <= debt.RemainingTermInMonths; month++)
 		{
-			decimal interestPaid = loanAmount * monthlyInterestRate;
+			decimal interestPaid = debt.RemainingPrincipal * monthlyInterestRate;
 			decimal principalPaid = monthlyPayment - interestPaid;
-			decimal endingBalance = loanAmount - principalPaid;
-			decimal amountAmortized = principalPaid + interestPaid + monthlyBankFee;
+			decimal endingBalance = debt.RemainingPrincipal - principalPaid;
+			decimal amountAmortized = principalPaid + interestPaid + debt.BankFees;
 
-			accumulatedBankFees += monthlyBankFee;
+			accumulatedBankFees += debt.BankFees;
 			accumulatedInterest += interestPaid;
 
 			amortizationSchedule.Add(new PaymentPeriodDetail
 			{
 				Month = month,
 				PaymentPeriodDate = startDate.AddMonths(month - 1),
-				StartingBalance = loanAmount,
+				StartingBalance = debt.RemainingPrincipal,
 				InterestPaid = interestPaid,
 				AccumulatedInterest = accumulatedInterest,
 				PrincipalPaid = principalPaid,
-				BankFee = monthlyBankFee,
+				BankFee = debt.BankFees,
 				AccumulatedBankFees = accumulatedBankFees,
 				AmountAmortized = amountAmortized,
 				EndingBalance = endingBalance
 			});
 
-			loanAmount = endingBalance;
+			debt.RemainingPrincipal = endingBalance;
 		}
 
 		_logger.LogInformation(
 			"Amortization schedule calculated successfully for {TermInMonths} months. Total payment periods: {TotalPaymentPeriods}",
-			termInMonths, amortizationSchedule.Count);
+			debt.RemainingTermInMonths, amortizationSchedule.Count);
 
 		JsonSerializerOptions options = new() { WriteIndented = true };
 		_logger.LogInformation("Amortization schedule: {AmortizationSchedule}",
