@@ -20,24 +20,26 @@ public class SnowflakeDto
 	[Range(0, double.MaxValue, ErrorMessage = "Amount must be a positive number.")]
 	public decimal Amount { get; set; }
 
-	[Required] public DateTime StartingAt { get; set; }
+	[Required] public DateTime? StartingAt { get; set; }
 
 	[Required]
 	[CustomValidation(typeof(SnowflakeDto), "ValidateEndingAt")]
-	public DateTime EndingAt { get; set; }
+	public DateTime? EndingAt { get; set; }
 
 	[Required]
 	[StringLength(3, ErrorMessage = "Currency must be a valid ISO 4217 alpha code.")]
 	public string CurrencyCode { get; set; }
 
-	public static ValidationResult ValidateEndingAt(DateTime endingAt, ValidationContext context)
+	public static ValidationResult ValidateEndingAt(DateTime? endingAt, ValidationContext context)
 	{
 		SnowflakeDto instance = context.ObjectInstance as SnowflakeDto;
-		if (instance == null) return ValidationResult.Success;
+		if (instance == null || instance.StartingAt == null)
+			return ValidationResult.Success;
 
-		if (endingAt > instance.StartingAt.AddYears(45))
+		if (endingAt > instance.StartingAt.Value.AddYears(45))
 			return new ValidationResult("EndingAt must be less than 45 years from StartingAt.");
 
 		return ValidationResult.Success;
 	}
-}
+
+	}

@@ -7,10 +7,18 @@ public class AmortizationScheduleService : IAmortizationScheduleService
 	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<DebtDto> debts, List<SnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
 	{
-		// Instantiate PaymentPlanCalculator directly
-		var paymentPlanCalculator = new PaymentPlanCalculator(new AmortizationScheduleCalculator());
+	// Determine the maximum amount of time that the schedule will last
+	int maxTime = debts.Max(d => d.RemainingTermInMonths);
 
-		// Here you can use the snowflakes and debtPlanMonthlyPayment to modify the debts as needed before passing them to the PaymentPlanCalculator
+	SnowflakesScheduleCalculator snowflakesScheduleCalculator = new SnowflakesScheduleCalculator();
+
+	var snowflakesSchedule = snowflakesScheduleCalculator.CalculateSnowflakes(snowflakes, maxTime);
+
+
+
+
+	PaymentPlanCalculator paymentPlanCalculator = new PaymentPlanCalculator(new AmortizationScheduleCalculator());
+
 
 		return await paymentPlanCalculator.CalculatePaymentPlansAsync(debts);
 	}
