@@ -41,5 +41,4 @@ public class SnowflakeDto
 
 		return ValidationResult.Success;
 	}
-
-	}
+}
