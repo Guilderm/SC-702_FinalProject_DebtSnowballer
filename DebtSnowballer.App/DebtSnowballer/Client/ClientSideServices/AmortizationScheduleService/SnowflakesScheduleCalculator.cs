@@ -6,7 +6,7 @@ public class SnowflakesScheduleCalculator
 {
 	public List<SnowflakesScheduleDetail> CalculateSnowflakes(List<SnowflakeDto> snowflakes, int maxTime)
 	{
-		var calculations = new List<SnowflakesScheduleDetail>();
+		var snowflakesSchedule = new List<SnowflakesScheduleDetail>();
 
 		foreach (SnowflakeDto snowflake in snowflakes)
 		{
@@ -14,23 +14,22 @@ public class SnowflakesScheduleCalculator
 			DateTime startDate = snowflake.StartingAt ?? DateTime.Today;
 			DateTime endDate = snowflake.EndingAt ?? DateTime.Today.AddMonths(maxTime);
 
-			// Calculate the Snowflake amounts
 			DateTime date = startDate;
 			do
 			{
-				SnowflakesScheduleDetail existingCalculation = calculations.FirstOrDefault(c => c.Date == date);
+				SnowflakesScheduleDetail snowflakeEntry = snowflakesSchedule.FirstOrDefault(c => c.Date == date);
 
-				if (existingCalculation != null)
-					// If a calculation already exists for this date, add to the existing amount
-					existingCalculation.Amount += snowflake.Amount;
-				else
+				if (snowflakeEntry == null)
 					// If no calculation exists for this date, create a new one
-					calculations.Add(new SnowflakesScheduleDetail { Date = date, Amount = snowflake.Amount });
+					snowflakesSchedule.Add(new SnowflakesScheduleDetail { Date = date, Amount = snowflake.Amount });
+				else
+					// If a calculation already exists for this date, add to the existing amount
+					snowflakeEntry.Amount += snowflake.Amount;
 
 				date = date.AddMonths(snowflake.FrequencyInMonths);
 			} while (date <= endDate);
 		}
 
-		return calculations;
+		return snowflakesSchedule;
 	}
 }

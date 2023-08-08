@@ -9,14 +9,17 @@ public class AmortizationScheduleService : IAmortizationScheduleService
 	{
 		// Determine the maximum amount of time that the schedule will last
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
-
 		SnowflakesScheduleCalculator snowflakesScheduleCalculator = new();
-
 		var snowflakesSchedule = snowflakesScheduleCalculator.CalculateSnowflakes(snowflakes, maxTime);
 
 
-		PaymentPlanCalculator paymentPlanCalculator = new(new AmortizationScheduleCalculator());
+		decimal totalMonthlyPayments = debts.Sum(d => d.MonthlyPayment);
 
+		if (debtPlanMonthlyPayment < totalMonthlyPayments) debtPlanMonthlyPayment = totalMonthlyPayments;
+
+		debtPlanMonthlyPayment -= totalMonthlyPayments;
+
+		PaymentPlanCalculator paymentPlanCalculator = new(new AmortizationScheduleCalculator());
 
 		return await paymentPlanCalculator.CalculatePaymentPlansAsync(debts);
 	}
