@@ -30,10 +30,8 @@ builder.Services
 		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services
-	.AddHttpClient<IAmortizationScheduleService, AmortizationScheduleService>(client =>
-		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+builder.Services.AddScoped<IAmortizationScheduleService, AmortizationScheduleService>();
+
 
 
 builder.Services.AddOidcAuthentication(options =>

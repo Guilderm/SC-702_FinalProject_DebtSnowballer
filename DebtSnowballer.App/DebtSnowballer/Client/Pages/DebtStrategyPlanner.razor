@@ -2,13 +2,18 @@
 @page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
+@using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
 @using DebtSnowballer.Shared.Currency
 @using DebtSnowballer.Client.Components.DebtManagement
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
 @inject ISnowflakeService SnowflakeService
+@inject IAmortizationScheduleService AmortizationScheduleService
+
 
 @attribute [Authorize]
 
@@ -33,6 +38,9 @@ else
 {
 	<p>Loading your data...</p>
 }
+
+<button @onclick="NavigateToAmortizationSchedule">View Amortization Schedule</button>
+
 
 @code {
 	private bool _isAllDataLoaded;
@@ -169,5 +177,15 @@ else
 	{
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
+	}
+	private async Task NavigateToAmortizationSchedule()
+	{
+	// Assuming the AmortizationScheduleService.CalculatePaymentPlansAsync method takes the same parameters
+		var paymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
+        
+	// You may want to store the paymentPlanDetails somewhere accessible to the Amortization Schedule page
+	// e.g., a shared state, a local storage, or pass it as a query string if appropriate
+
+		NavigationManager.NavigateTo("/amortizationSchedule");
 	}
 	}
