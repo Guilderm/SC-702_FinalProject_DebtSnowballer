@@ -33,7 +33,6 @@ builder.Services
 builder.Services.AddScoped<IAmortizationScheduleService, AmortizationScheduleService>();
 
 
-
 builder.Services.AddOidcAuthentication(options =>
 {
 	builder.Configuration.Bind("Auth0", options.ProviderOptions);

@@ -1,5 +1,6 @@
 ﻿@page "/amortizationschedule"
 @using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
+@using DebtSnowballer.Shared.DTOs
 
 @inject IAmortizationScheduleService AmortizationScheduleService
 
@@ -7,28 +8,24 @@
 
 @foreach (var plan in PaymentPlanDetails.PaymentPlans)
 {
-	<h3>@plan.Key</h3>
+	<h3>@plan.Key</h3> <!-- Strategy Name -->
 	<table class="table">
 		<thead>
 		<tr>
 			<th>Month</th>
-			<th>Starting Balance</th>
 			<th>Interest Paid</th>
+			<th>Bank Fees Paid</th>
 			<th>Principal Paid</th>
-			<th>Ending Balance</th>
-			<!-- Add other relevant columns -->
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (var detail in plan.Value)
+		@foreach (MonthlyAmortizationDetail detail in plan.Value.SelectMany(a => a.MonthlyDetails))
 		{
 			<tr>
-				<td>@detail.NickName</td>
-				<td>@detail.MonthlyDetails..p.</td>
+				<td>@detail.Month</td>
 				<td>@detail.InterestPaid</td>
+				<td>@detail.BankFeesPaid</td>
 				<td>@detail.PrincipalPaid</td>
-				<td>@detail.EndingBalance</td>
-				<!-- Add other relevant columns -->
 			</tr>
 		}
 		</tbody>
@@ -38,10 +35,14 @@
 @code {
 	private PaymentPlanDetail PaymentPlanDetails { get; set; }
 
-	// Add the necessary parameters for the calculation
+	/*
+	private List<DebtDto> _debtsInBaseCurrency;
+	private List<SnowflakeDto> _snowflakesInBaseCurrency;
+	private decimal debtPlanMonthlyPayment;
 
 	protected override async Task OnInitializedAsync()
 	{
-		PaymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync(/* pass the necessary parameters here */);
-	}
+		PaymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync();
+}
+*/
 }
