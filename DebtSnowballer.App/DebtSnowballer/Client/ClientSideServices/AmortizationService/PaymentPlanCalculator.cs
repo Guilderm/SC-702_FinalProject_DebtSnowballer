@@ -11,23 +11,25 @@ public class PaymentPlanCalculator
 		_scheduleCalculator = amortizationScheduleCalculator;
 	}
 
-	public PaymentPlanDetail CalculatePaymentPlans(List<DebtDto> debts)
+	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<DebtDto> debts)
 	{
 		PaymentPlanDetail paymentPlanDetail = new();
 
 		List<DebtDto> unsortedDebtsForBaseline = debts;
-		List<DebtDto> sortedDebtsForSnowball = debts.OrderByDescending(d => d.RemainingPrincipal).ToList();
-		List<DebtDto> sortedDebtsForAvalanche = debts.OrderByDescending(d => d.AnnualInterestRate).ToList();
-		List<DebtDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
-
 		paymentPlanDetail.PaymentPlans["Baseline"] =
-			_scheduleCalculator.CalculateAmortizationSchedule(unsortedDebtsForBaseline);
+			await Task.Run(() => _scheduleCalculator.CalculateAmortizationSchedule(unsortedDebtsForBaseline));
+
+		List<DebtDto> sortedDebtsForSnowball = debts.OrderByDescending(d => d.RemainingPrincipal).ToList();
 		paymentPlanDetail.PaymentPlans["Snowball"] =
-			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForSnowball);
+			await Task.Run(() => _scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForSnowball));
+
+		List<DebtDto> sortedDebtsForAvalanche = debts.OrderByDescending(d => d.AnnualInterestRate).ToList();
 		paymentPlanDetail.PaymentPlans["Avalanche"] =
-			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForAvalanche);
+			await Task.Run(() => _scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForAvalanche));
+
+		List<DebtDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
 		paymentPlanDetail.PaymentPlans["Custom"] =
-			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForCustom);
+			await Task.Run(() => _scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForCustom));
 
 		return paymentPlanDetail;
 	}

@@ -9,7 +9,7 @@ public class AmortizationScheduleCalculator
 		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
 
 		decimal paymentReallocationAmount = 0;
-		DateTime paymentReallocationStartDate  = DateTime.Now.AddYears(45);
+		DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
 
 		foreach (DebtDto debt in debts)
 		{
@@ -43,7 +43,7 @@ public class AmortizationScheduleCalculator
 
 			// Actions done when a debt is paid off:
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
-			
+
 			paymentReallocationStartDate = lastMonthDetail.DebtStateAtMonthEnd.StartDate;
 			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
 

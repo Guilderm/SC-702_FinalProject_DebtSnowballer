@@ -49,12 +49,12 @@ else
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
 
+		_isAllDataLoaded = true;
+
 		await LoadExchangeRates();
 		await LoadDebtsInQuoteCurrency();
 		await LoadSnowflakesInQuoteCurrency();
-
-		_isAllDataLoaded = true;
-
+		
 		await ConvertDebtsToBaseCurrency();
 		await ConvertSnowflakesToBaseCurrency();
 	}
