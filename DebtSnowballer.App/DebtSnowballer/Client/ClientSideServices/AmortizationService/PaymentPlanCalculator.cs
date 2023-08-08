@@ -4,22 +4,30 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class PaymentPlanCalculator
 {
-	private readonly List<DebtDto> _debts;
+	private readonly AmortizationScheduleCalculator _scheduleCalculator;
 
-	public PaymentPlanCalculator(List<DebtDto> debts)
+	public PaymentPlanCalculator(AmortizationScheduleCalculator amortizationScheduleCalculator)
 	{
-		_debts = debts;
+		_scheduleCalculator = amortizationScheduleCalculator;
 	}
 
-	public PaymentPlanDetail CalculatePaymentPlan()
+	public PaymentPlanDetail CalculatePaymentPlans(List<DebtDto> debts)
 	{
-		PaymentPlanDetail paymentPlanDetail = new()
-		{
-			AmortizationSchedules = new List<AmortizationScheduleDetails>()
-		};
+		PaymentPlanDetail paymentPlanDetail = new();
 
-		AmortizationScheduleCalculator amortizationScheduleCalculator = new(_debts);
-		paymentPlanDetail.AmortizationSchedules = amortizationScheduleCalculator.CalculateAmortizationSchedules();
+		List<DebtDto> unsortedDebtsForBaseline = debts;
+		List<DebtDto> sortedDebtsForSnowball = debts.OrderByDescending(d => d.RemainingPrincipal).ToList();
+		List<DebtDto> sortedDebtsForAvalanche = debts.OrderByDescending(d => d.AnnualInterestRate).ToList();
+		List<DebtDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
+
+		paymentPlanDetail.PaymentPlans["Baseline"] =
+			_scheduleCalculator.CalculateAmortizationSchedules(unsortedDebtsForBaseline);
+		paymentPlanDetail.PaymentPlans["Snowball"] =
+			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForSnowball);
+		paymentPlanDetail.PaymentPlans["Avalanche"] =
+			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForAvalanche);
+		paymentPlanDetail.PaymentPlans["Custom"] =
+			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForCustom);
 
 		return paymentPlanDetail;
 	}

@@ -2,5 +2,10 @@
 
 public class PaymentPlanDetail
 {
-	public List<AmortizationScheduleDetails> AmortizationSchedules { get; set; }
+	public PaymentPlanDetail()
+	{
+		PaymentPlans = new Dictionary<string, List<AmortizationScheduleDetails>>();
+	}
+
+	public Dictionary<string, List<AmortizationScheduleDetails>> PaymentPlans { get; set; }
 }

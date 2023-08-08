@@ -4,21 +4,14 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class AmortizationScheduleCalculator
 {
-	private readonly List<DebtDto> _debts;
-
-	public AmortizationScheduleCalculator(List<DebtDto> debts)
+	public List<AmortizationScheduleDetails> CalculateAmortizationSchedules(List<DebtDto> debts)
 	{
-		_debts = debts;
-	}
-
-	public List<AmortizationScheduleDetails> CalculateAmortizationSchedules()
-	{
-		var schedules = new List<AmortizationScheduleDetails>();
+		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
 
 		decimal extraPayment = 0;
 		//DateTime extraPaymentStartDate = DateTime.Now.AddMonths(1);
 
-		foreach (DebtDto debt in _debts)
+		foreach (DebtDto debt in debts)
 		{
 			AmortizationScheduleDetails amortizationSchedule = new()
 			{
