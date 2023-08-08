@@ -1,8 +1,9 @@
-﻿using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
-using DebtSnowballer.Shared.DTOs;
+﻿using DebtSnowballer.Shared.DTOs;
+
+namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public interface IAmortizationScheduleService
 {
-	Task<Dictionary<string, List<PaymentPlanDetail>>> CalculatePaymentPlansAsync(List<DebtDto> debts,
-		List<SnowflakeDto> snowflakes, decimal debtPlanMonthlyPayment);
+	Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<DebtDto> debts, List<SnowflakeDto> snowflakes,
+		decimal debtPlanMonthlyPayment);
 }
