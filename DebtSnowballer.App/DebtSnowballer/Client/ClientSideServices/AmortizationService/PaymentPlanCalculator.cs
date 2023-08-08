@@ -21,13 +21,13 @@ public class PaymentPlanCalculator
 		List<DebtDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
 
 		paymentPlanDetail.PaymentPlans["Baseline"] =
-			_scheduleCalculator.CalculateAmortizationSchedules(unsortedDebtsForBaseline);
+			_scheduleCalculator.CalculateAmortizationSchedule(unsortedDebtsForBaseline);
 		paymentPlanDetail.PaymentPlans["Snowball"] =
-			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForSnowball);
+			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForSnowball);
 		paymentPlanDetail.PaymentPlans["Avalanche"] =
-			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForAvalanche);
+			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForAvalanche);
 		paymentPlanDetail.PaymentPlans["Custom"] =
-			_scheduleCalculator.CalculateAmortizationSchedules(sortedDebtsForCustom);
+			_scheduleCalculator.CalculateAmortizationSchedule(sortedDebtsForCustom);
 
 		return paymentPlanDetail;
 	}

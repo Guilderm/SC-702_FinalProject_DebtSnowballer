@@ -4,12 +4,12 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
 public class AmortizationScheduleCalculator
 {
-	public List<AmortizationScheduleDetails> CalculateAmortizationSchedules(List<DebtDto> debts)
+	public List<AmortizationScheduleDetails> CalculateAmortizationSchedule(List<DebtDto> debts)
 	{
 		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
 
-		decimal extraPayment = 0;
-		//DateTime extraPaymentStartDate = DateTime.Now.AddMonths(1);
+		decimal paymentReallocationAmount = 0;
+		DateTime paymentReallocationStartDate  = DateTime.Now.AddYears(45);
 
 		foreach (DebtDto debt in debts)
 		{
@@ -28,24 +28,24 @@ public class AmortizationScheduleCalculator
 
 			do
 			{
-				decimal allocatedPayment = amortizationSchedule.ContractedMonthlyPayment + extraPayment;
-				//if (extraPaymentStartDate <= DateTime.Now) allocatedPayment += extraPayment;
-
 				MonthlyAmortizationDetail previousMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
-				MonthlyAmortizationCalculator calculator = new(previousMonthDetail, allocatedPayment);
-				MonthlyAmortizationDetail monthlyDetail = calculator.CalculateMonthlyDetail();
+				decimal allocatedPayment = 0;
+				if (paymentReallocationStartDate <= previousMonthDetail.DebtStateAtMonthEnd.StartDate)
+					allocatedPayment += paymentReallocationAmount;
 
-				amortizationSchedule.MonthlyDetails.Add(monthlyDetail);
-				debt.RemainingPrincipal = monthlyDetail.DebtStateAtMonthEnd.RemainingPrincipal;
+				MonthlyAmortizationCalculator calculator = new(previousMonthDetail, allocatedPayment);
+				MonthlyAmortizationDetail monthsDetail = calculator.CalculateMonthlyDetail();
+
+				amortizationSchedule.MonthlyDetails.Add(monthsDetail);
+				debt.RemainingPrincipal = monthsDetail.DebtStateAtMonthEnd.RemainingPrincipal;
 			} while (debt.RemainingPrincipal > 0);
 
-			// When a debt is paid off, its minimum payment is added to the extra payment for the next debts
-			extraPayment += debt.MonthlyPayment;
-
+			// Actions done when a debt is paid off:
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
-
-			extraPayment += amortizationSchedule.ContractedMonthlyPayment;
+			
+			paymentReallocationStartDate = lastMonthDetail.DebtStateAtMonthEnd.StartDate;
+			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
 
 			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
 			amortizationSchedule.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;

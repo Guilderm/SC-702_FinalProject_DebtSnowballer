@@ -34,7 +34,6 @@ public class MonthlyAmortizationCalculator
 		_finalAmortizationDetail.PrincipalPaid =
 			_debtAtMonthStart.RemainingPrincipal - _debtAtMonthEnd.RemainingPrincipal;
 
-		_finalAmortizationDetail.AccumulatedInterestPaid += _finalAmortizationDetail.BankFeesPaid;
 		_finalAmortizationDetail.Month++;
 
 		CopyDebtDetails();
@@ -44,7 +43,6 @@ public class MonthlyAmortizationCalculator
 
 	private void CopyDebtDetails()
 	{
-		_debtAtMonthEnd.AnnualInterestRate = _debtAtMonthStart.AnnualInterestRate;
 		_debtAtMonthEnd.MonthlyPayment = CalculateMinimumMonthlyPayment(_debtAtMonthEnd);
 		_debtAtMonthEnd.RemainingTermInMonths = CalculateRemainingTerm(_debtAtMonthEnd);
 		_debtAtMonthEnd.StartDate = _debtAtMonthStart.StartDate.AddMonths(1);
