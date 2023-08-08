@@ -1,14 +1,16 @@
 ﻿@page "/amortizationschedule"
 @using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
-@using DebtSnowballer.Shared.DTOs
+@using System.Text.Json
 
 @inject IAmortizationScheduleService AmortizationScheduleService
+@inject NavigationManager NavigationManager
 
 <h1>Amortization Schedule</h1>
 
 @foreach (var plan in PaymentPlanDetails.PaymentPlans)
 {
-	<h3>@plan.Key</h3> <!-- Strategy Name -->
+	<h3>@plan.Key</h3>
+	<!-- Strategy Name -->
 	<table class="table">
 		<thead>
 		<tr>
@@ -32,17 +34,15 @@
 	</table>
 }
 
+
 @code {
 	private PaymentPlanDetail PaymentPlanDetails { get; set; }
 
-	/*
-	private List<DebtDto> _debtsInBaseCurrency;
-	private List<SnowflakeDto> _snowflakesInBaseCurrency;
-	private decimal debtPlanMonthlyPayment;
-
-	protected override async Task OnInitializedAsync()
+	protected override Task OnInitializedAsync()
 	{
-		PaymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync();
-}
-*/
+		string paymentPlanDetailsJson = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split(new[] { '?' })[1].Split(new[] { '=' })[1];
+		PaymentPlanDetails = JsonSerializer.Deserialize<PaymentPlanDetail>(Uri.UnescapeDataString(paymentPlanDetailsJson));
+		return Task.CompletedTask;
+	}
+
 }

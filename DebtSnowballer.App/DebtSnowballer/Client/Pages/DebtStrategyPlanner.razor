@@ -4,6 +4,7 @@
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
 @using DebtSnowballer.Shared.Currency
+@using System.Text.Json
 @using DebtSnowballer.Client.Components.DebtManagement
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -22,9 +23,9 @@
 <h3>Create a strategy to become debt free</h3>
 
 @if (_isAllDataLoaded)
-	{ 
+{
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
-	
+
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
@@ -32,7 +33,7 @@
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
-	}
+}
 
 else
 {
@@ -56,7 +57,7 @@ else
 	// TODO: Make sure all are running concorenlly
 	protected override async Task OnInitializedAsync()
 	{
-		// TODO: Need to get this data from the backend with out getting any data from front end.
+	// TODO: Need to get this data from the backend with out getting any data from front end.
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
 		_isAllDataLoaded = true;
@@ -78,7 +79,7 @@ else
 	{
 		_usersExchangeRates = await DebtService.GetUsersExchangeRates();
 	}
-	
+
 	private async Task LoadDebtsInQuoteCurrency()
 	{
 		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();
@@ -112,7 +113,7 @@ else
 			}
 			else
 			{
-				// If there's no exchange rate for the debt's currency, add the debt as is.
+	// If there's no exchange rate for the debt's currency, add the debt as is.
 				_debtsInBaseCurrency.Add(debt);
 			}
 		}
@@ -145,7 +146,7 @@ else
 			}
 			else
 			{
-				// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
+	// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
 				_snowflakesInBaseCurrency.Add(snowflake);
 			}
 		}
@@ -178,14 +179,12 @@ else
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
 	}
+
 	private async Task NavigateToAmortizationSchedule()
 	{
-	// Assuming the AmortizationScheduleService.CalculatePaymentPlansAsync method takes the same parameters
-		var paymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
-        
-	// You may want to store the paymentPlanDetails somewhere accessible to the Amortization Schedule page
-	// e.g., a shared state, a local storage, or pass it as a query string if appropriate
+		PaymentPlanDetail paymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
+		string paymentPlanDetailsJson = JsonSerializer.Serialize(paymentPlanDetails);
+		NavigationManager.NavigateTo($"/amortizationSchedule?paymentPlanDetails={Uri.EscapeDataString(paymentPlanDetailsJson)}");
+	}
 
-		NavigationManager.NavigateTo("/amortizationSchedule");
-	}
-	}
+}
