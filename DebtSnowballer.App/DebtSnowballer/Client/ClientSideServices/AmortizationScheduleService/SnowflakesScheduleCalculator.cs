@@ -14,14 +14,10 @@ public class SnowflakesScheduleCalculator
 			DateTime startDate = snowflake.StartingAt ?? DateTime.Today;
 			DateTime endDate = snowflake.EndingAt ?? DateTime.Today.AddMonths(maxTime);
 
-			// Calculate the total number of times this Snowflake will be applied
-			int totalTimes = ((endDate.Year - startDate.Year) * 12 + endDate.Month - startDate.Month) /
-			                 snowflake.FrequencyInMonths;
-
 			// Calculate the Snowflake amounts
-			for (int i = 0; i < totalTimes; i++)
+			DateTime date = startDate;
+			do
 			{
-				DateTime date = startDate.AddMonths(i * snowflake.FrequencyInMonths);
 				SnowflakesScheduleDetail existingCalculation = calculations.FirstOrDefault(c => c.Date == date);
 
 				if (existingCalculation != null)
@@ -30,7 +26,9 @@ public class SnowflakesScheduleCalculator
 				else
 					// If no calculation exists for this date, create a new one
 					calculations.Add(new SnowflakesScheduleDetail { Date = date, Amount = snowflake.Amount });
-			}
+
+				date = date.AddMonths(snowflake.FrequencyInMonths);
+			} while (date <= endDate);
 		}
 
 		return calculations;
