@@ -37,15 +37,20 @@ public class AmortizationScheduleCalculator
 				MonthlyAmortizationDetail monthlyDetail = calculator.CalculateMonthlyDetail();
 
 				amortizationSchedule.MonthlyDetails.Add(monthlyDetail);
+				debt.RemainingPrincipal = monthlyDetail.DebtStateAtMonthEnd.RemainingPrincipal;
 			} while (debt.RemainingPrincipal > 0);
 
 			// When a debt is paid off, its minimum payment is added to the extra payment for the next debts
 			extraPayment += debt.MonthlyPayment;
 
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
+
+			extraPayment += amortizationSchedule.ContractedMonthlyPayment;
+
 			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
 			amortizationSchedule.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;
 			amortizationSchedule.TotalPrincipalPaid = lastMonthDetail.AccumulatedPrincipalPaid;
+
 			schedules.Add(amortizationSchedule);
 		}
 
