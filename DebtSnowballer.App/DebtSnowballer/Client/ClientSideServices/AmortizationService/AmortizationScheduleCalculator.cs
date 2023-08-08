@@ -16,49 +16,50 @@ public class AmortizationScheduleCalculator
 		var schedules = new List<AmortizationScheduleDetails>();
 
 		decimal extraPayment = 0;
-		DateTime extraPaymentStartDate = DateTime.Now;
+		//DateTime extraPaymentStartDate = DateTime.Now.AddMonths(1);
 
-		foreach (var debt in _debts)
+		foreach (DebtDto debt in _debts)
 		{
 			AmortizationScheduleDetails amortizationSchedule = new()
 			{
 				DebtId = debt.Id,
+				Auth0UserId = debt.Auth0UserId,
+				NickName = debt.NickName,
+				BankFees = debt.BankFees,
 				ContractedMonthlyPayment = debt.MonthlyPayment,
+				AnnualInterestRate = debt.MonthlyPayment,
+				CurrencyCode = debt.CurrencyCode,
+				CardinalOrder = debt.CardinalOrder,
 				MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateInitialMonthlyDetail(debt) }
 			};
 
 			do
 			{
-				// Determine the payment allocated to this debt for the month
-				var allocatedPayment = debt.MonthlyPayment;
+				decimal allocatedPayment = amortizationSchedule.ContractedMonthlyPayment + extraPayment;
+				//if (extraPaymentStartDate <= DateTime.Now) allocatedPayment += extraPayment;
 
-				if (extraPaymentStartDate <= DateTime.Now) allocatedPayment += extraPayment;
-
-
-				var previousMonthDetail = amortizationSchedule.MonthlyDetails.Last();
+				MonthlyAmortizationDetail previousMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
 				MonthlyAmortizationCalculator calculator = new(previousMonthDetail, allocatedPayment);
 				MonthlyAmortizationDetail monthlyDetail = calculator.CalculateMonthlyDetail();
 
 				amortizationSchedule.MonthlyDetails.Add(monthlyDetail);
-
-				// Update the debt's remaining principal for the next iteration
-				debt.RemainingPrincipal = monthlyDetail.DebtStateAtMonthEnd.RemainingPrincipal;
-
-				// Update the extra payment start date to the next month
-				extraPaymentStartDate = monthlyDetail.MonthYear.AddMonths(1);
 			} while (debt.RemainingPrincipal > 0);
 
 			// When a debt is paid off, its minimum payment is added to the extra payment for the next debts
 			extraPayment += debt.MonthlyPayment;
 
+			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
+			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
+			amortizationSchedule.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;
+			amortizationSchedule.TotalPrincipalPaid = lastMonthDetail.AccumulatedPrincipalPaid;
 			schedules.Add(amortizationSchedule);
 		}
 
 		return schedules;
 	}
 
-	public MonthlyAmortizationDetail CreateInitialMonthlyDetail(DebtDto debt)
+	private static MonthlyAmortizationDetail CreateInitialMonthlyDetail(DebtDto debt)
 	{
 		return new MonthlyAmortizationDetail
 		{
