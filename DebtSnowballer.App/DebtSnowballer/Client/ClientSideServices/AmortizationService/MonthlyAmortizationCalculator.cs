@@ -2,56 +2,59 @@
 
 namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 
-//This class will take the DebtDto (representing the state of the loan at the start of the month) as input and produce a MonthlyAmortizationDetail as output.
 public class MonthlyAmortizationCalculator
 {
 	private readonly decimal _allocatedExtraPayment;
-	private readonly MonthlyAmortizationDetail _debtAtMonthEnd;
-	private readonly MonthlyAmortizationDetail _debtAtMonthStart;
+	private readonly DebtDto _debtAtMonthEnd;
+	private readonly DebtDto _debtAtMonthStart;
+	private readonly MonthlyAmortizationDetail _finalAmortizationDetail;
 
-	public MonthlyAmortizationCalculator(MonthlyAmortizationDetail debtAtMonthStart, decimal allocatedExtraPayment)
+	public MonthlyAmortizationCalculator(MonthlyAmortizationDetail debtAtPreviousMonthEnd,
+		decimal allocatedExtraPayment)
 	{
-		_debtAtMonthStart = debtAtMonthStart;
-		_allocatedExtraPayment = allocatedExtraPayment;
-		_debtAtMonthEnd = new MonthlyAmortizationDetail();
+		_debtAtMonthStart = debtAtPreviousMonthEnd.DebtStateAtMonthEnd;
+		_finalAmortizationDetail = new MonthlyAmortizationDetail();
+		_debtAtMonthEnd = _finalAmortizationDetail.DebtStateAtMonthEnd;
+		_allocatedExtraPayment = allocatedExtraPayment >= 0
+			? allocatedExtraPayment
+			: throw new ArgumentException("Extra payment cannot be negative", nameof(allocatedExtraPayment));
 	}
 
 	public MonthlyAmortizationDetail CalculateMonthlyDetail()
 	{
-		decimal paymentAmount = CalculateMinimumMonthlyPayment(_debtAtMonthStart.DebtStateAtMonthEnd) +
-		                        _allocatedExtraPayment;
+		decimal paymentAmount = CalculateMinimumMonthlyPayment(_debtAtMonthStart) + _allocatedExtraPayment;
 
-		_debtAtMonthEnd.InterestPaid =
-			_debtAtMonthStart.DebtStateAtMonthEnd.RemainingPrincipal *
-			(_debtAtMonthStart.DebtStateAtMonthEnd.AnnualInterestRate / 12);
+		_finalAmortizationDetail.InterestPaid =
+			_debtAtMonthStart.RemainingPrincipal * (_debtAtMonthStart.AnnualInterestRate / 12);
+		_finalAmortizationDetail.AccumulatedInterestPaid += _finalAmortizationDetail.InterestPaid;
 
-		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingPrincipal =
-			paymentAmount - _debtAtMonthEnd.InterestPaid - _debtAtMonthEnd.BankFeesPaid;
+		_debtAtMonthEnd.RemainingPrincipal = paymentAmount - _finalAmortizationDetail.InterestPaid -
+		                                     _finalAmortizationDetail.BankFeesPaid;
 
-		_debtAtMonthEnd.DebtStateAtMonthEnd.Id = _debtAtMonthStart.DebtStateAtMonthEnd.Id;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.Auth0UserId = _debtAtMonthStart.DebtStateAtMonthEnd.Auth0UserId;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.NickName = _debtAtMonthStart.DebtStateAtMonthEnd.NickName;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingPrincipal =
-			_debtAtMonthStart.DebtStateAtMonthEnd.RemainingPrincipal - _debtAtMonthEnd.PrincipalPaid;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.BankFees = _debtAtMonthStart.DebtStateAtMonthEnd.BankFees;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.MonthlyPayment =
-			CalculateMinimumMonthlyPayment(_debtAtMonthEnd.DebtStateAtMonthEnd);
-		_debtAtMonthEnd.DebtStateAtMonthEnd.AnnualInterestRate =
-			_debtAtMonthStart.DebtStateAtMonthEnd.AnnualInterestRate;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingTermInMonths =
-			CalculateRemainingTerm(_debtAtMonthEnd.DebtStateAtMonthEnd);
-		_debtAtMonthEnd.DebtStateAtMonthEnd.CurrencyCode = _debtAtMonthStart.DebtStateAtMonthEnd.CurrencyCode;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.CardinalOrder = _debtAtMonthStart.DebtStateAtMonthEnd.CardinalOrder;
-		_debtAtMonthEnd.DebtStateAtMonthEnd.StartDate = _debtAtMonthStart.DebtStateAtMonthEnd.StartDate.AddMonths(1);
+		_finalAmortizationDetail.PrincipalPaid =
+			_debtAtMonthStart.RemainingPrincipal - _debtAtMonthEnd.RemainingPrincipal;
 
-		_debtAtMonthEnd.AccumulatedInterest += _debtAtMonthEnd.InterestPaid;
-		_debtAtMonthEnd.AccumulatedBankFees += _debtAtMonthEnd.BankFeesPaid;
+		_finalAmortizationDetail.AccumulatedInterestPaid += _finalAmortizationDetail.BankFeesPaid;
+		_finalAmortizationDetail.Month++;
 
-		return _debtAtMonthEnd;
+		CopyDebtDetails();
+
+		return _finalAmortizationDetail;
+	}
+
+	private void CopyDebtDetails()
+	{
+		_debtAtMonthEnd.AnnualInterestRate = _debtAtMonthStart.AnnualInterestRate;
+		_debtAtMonthEnd.MonthlyPayment = CalculateMinimumMonthlyPayment(_debtAtMonthEnd);
+		_debtAtMonthEnd.RemainingTermInMonths = CalculateRemainingTerm(_debtAtMonthEnd);
+		_debtAtMonthEnd.StartDate = _debtAtMonthStart.StartDate.AddMonths(1);
 	}
 
 	private decimal CalculateMinimumMonthlyPayment(DebtDto debt)
 	{
+		if (debt == null)
+			throw new ArgumentNullException(nameof(debt));
+
 		decimal principal = debt.RemainingPrincipal;
 		decimal rate = debt.AnnualInterestRate / 12;
 		int installments = debt.RemainingTermInMonths;
@@ -67,6 +70,9 @@ public class MonthlyAmortizationCalculator
 
 	private int CalculateRemainingTerm(DebtDto debt)
 	{
+		if (debt == null)
+			throw new ArgumentNullException(nameof(debt));
+
 		decimal monthlyPayment = debt.MonthlyPayment;
 		decimal remainingPrincipal = debt.RemainingPrincipal;
 		decimal monthlyInterestRate = debt.AnnualInterestRate / 12;

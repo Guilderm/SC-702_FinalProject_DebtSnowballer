@@ -9,9 +9,10 @@ public class MonthlyAmortizationDetail
 	public int Month { get; set; }
 
 	public decimal InterestPaid { get; set; }
-	public decimal AccumulatedInterest { get; set; }
 	public decimal BankFeesPaid { get; set; }
-	public decimal AccumulatedBankFees { get; set; }
-
 	public decimal PrincipalPaid { get; set; }
+
+	public decimal AccumulatedInterestPaid { get; set; }
+	public decimal AccumulatedBankFeesPaid { get; set; }
+	public decimal AccumulatedPrincipalPaid { get; set; }
 }
