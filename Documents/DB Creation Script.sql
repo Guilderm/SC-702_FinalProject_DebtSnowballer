@@ -130,7 +130,7 @@ CREATE TABLE [Debt]
     [NickName]              NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
     [BankFees]              DECIMAL(18, 2)     NOT NULL,
-    MonthsPayment        DECIMAL(18, 2)     NOT NULL,
+    ContractedMonthlyPayment        DECIMAL(18, 2)     NOT NULL,
     AnnualInterestRate          DECIMAL(6, 4)      NOT NULL,
     [RemainingTermInMonths] INT                NOT NULL,
     [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
@@ -156,7 +156,7 @@ VALUES ('google-oauth2|116471976465148595031', 'Jim', 'Doe', 'jim.doe@example.co
        ('auth0|64cc577de4780fda44d0d662', 'Jim', 'Doe', 'jim.doe@example.com', 1);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, NickName, RemainingPrincipal, AnnualInterestRate, BankFees, MonthsPayment,
+INSERT INTO Debt (Auth0UserId, NickName, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
                   RemainingTermInMonths, CurrencyCode, CardinalOrder)
 VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125, 0, 562500, 360, 'CRC', 1),
        ('google-oauth2|116471976465148595031', '2023 Honda Accord Loan', 25000, 0.042, 0, 460, 60, 'USD', 2),

@@ -6,50 +6,48 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
 public class MonthlyAmortizationCalculator
 {
 	private readonly decimal _allocatedExtraPayment;
-	private readonly DebtDto _debtAtMonthStart;
-	private readonly MonthlyAmortizationDetail _monthlyDetail;
+	private readonly MonthlyAmortizationDetail _debtAtMonthEnd;
+	private readonly MonthlyAmortizationDetail _debtAtMonthStart;
 
-	public MonthlyAmortizationCalculator(DebtDto debtAtMonthStart, decimal allocatedExtraPayment)
+	public MonthlyAmortizationCalculator(MonthlyAmortizationDetail debtAtMonthStart, decimal allocatedExtraPayment)
 	{
 		_debtAtMonthStart = debtAtMonthStart;
 		_allocatedExtraPayment = allocatedExtraPayment;
-		_monthlyDetail = new MonthlyAmortizationDetail();
+		_debtAtMonthEnd = new MonthlyAmortizationDetail();
 	}
 
 	public MonthlyAmortizationDetail CalculateMonthlyDetail()
 	{
-		//TODO the upper class shuld store this in the dto
-		_monthlyDetail.MonthYear = DateTime.Now;
+		decimal paymentAmount = CalculateMinimumMonthlyPayment(_debtAtMonthStart.DebtStateAtMonthEnd) +
+		                        _allocatedExtraPayment;
 
-		decimal paymentAmount = CalculateMinimumMonthlyPayment(_debtAtMonthStart) + _allocatedExtraPayment;
+		_debtAtMonthEnd.InterestPaid =
+			_debtAtMonthStart.DebtStateAtMonthEnd.RemainingPrincipal *
+			(_debtAtMonthStart.DebtStateAtMonthEnd.AnnualInterestRate / 12);
 
-		_monthlyDetail.InterestPaid =
-			_debtAtMonthStart.RemainingPrincipal * (_debtAtMonthStart.AnnualInterestRate / 12);
+		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingPrincipal =
+			paymentAmount - _debtAtMonthEnd.InterestPaid - _debtAtMonthEnd.BankFeesPaid;
 
-		if (_debtAtMonthStart.RemainingPrincipal < paymentAmount)
-		{
-			//TODO: report that not all the allocated amount was used
-			//_allocatedExtraPayment = monthlyDetail.StartingBalance;
-		}
+		_debtAtMonthEnd.DebtStateAtMonthEnd.Id = _debtAtMonthStart.DebtStateAtMonthEnd.Id;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.Auth0UserId = _debtAtMonthStart.DebtStateAtMonthEnd.Auth0UserId;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.NickName = _debtAtMonthStart.DebtStateAtMonthEnd.NickName;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingPrincipal =
+			_debtAtMonthStart.DebtStateAtMonthEnd.RemainingPrincipal - _debtAtMonthEnd.PrincipalPaid;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.BankFees = _debtAtMonthStart.DebtStateAtMonthEnd.BankFees;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.MonthlyPayment =
+			CalculateMinimumMonthlyPayment(_debtAtMonthEnd.DebtStateAtMonthEnd);
+		_debtAtMonthEnd.DebtStateAtMonthEnd.AnnualInterestRate =
+			_debtAtMonthStart.DebtStateAtMonthEnd.AnnualInterestRate;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.RemainingTermInMonths =
+			CalculateRemainingTerm(_debtAtMonthEnd.DebtStateAtMonthEnd);
+		_debtAtMonthEnd.DebtStateAtMonthEnd.CurrencyCode = _debtAtMonthStart.DebtStateAtMonthEnd.CurrencyCode;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.CardinalOrder = _debtAtMonthStart.DebtStateAtMonthEnd.CardinalOrder;
+		_debtAtMonthEnd.DebtStateAtMonthEnd.StartDate = _debtAtMonthStart.DebtStateAtMonthEnd.StartDate.AddMonths(1);
 
-		_monthlyDetail.DebtStateAtMonthEnd.RemainingPrincipal =
-			paymentAmount - _monthlyDetail.InterestPaid - _monthlyDetail.BankFeesPaid;
+		_debtAtMonthEnd.AccumulatedInterest += _debtAtMonthEnd.InterestPaid;
+		_debtAtMonthEnd.AccumulatedBankFees += _debtAtMonthEnd.BankFeesPaid;
 
-		_monthlyDetail.DebtStateAtMonthEnd.Id = _debtAtMonthStart.Id;
-		_monthlyDetail.DebtStateAtMonthEnd.Auth0UserId = _debtAtMonthStart.Auth0UserId;
-		_monthlyDetail.DebtStateAtMonthEnd.NickName = _debtAtMonthStart.NickName;
-		_monthlyDetail.DebtStateAtMonthEnd.RemainingPrincipal =
-			_debtAtMonthStart.RemainingPrincipal - _monthlyDetail.PrincipalPaid;
-		_monthlyDetail.DebtStateAtMonthEnd.BankFees = _debtAtMonthStart.BankFees;
-		_monthlyDetail.DebtStateAtMonthEnd.MonthlyPayment =
-			CalculateMinimumMonthlyPayment(_monthlyDetail.DebtStateAtMonthEnd);
-		_monthlyDetail.DebtStateAtMonthEnd.AnnualInterestRate = _debtAtMonthStart.AnnualInterestRate;
-		_monthlyDetail.DebtStateAtMonthEnd.RemainingTermInMonths = _debtAtMonthStart.RemainingTermInMonths - 1;
-		_monthlyDetail.DebtStateAtMonthEnd.CurrencyCode = _debtAtMonthStart.CurrencyCode;
-		_monthlyDetail.DebtStateAtMonthEnd.CardinalOrder = _debtAtMonthStart.CardinalOrder;
-		_monthlyDetail.DebtStateAtMonthEnd.StartDate = _debtAtMonthStart.StartDate.AddMonths(1);
-
-		return _monthlyDetail;
+		return _debtAtMonthEnd;
 	}
 
 	private decimal CalculateMinimumMonthlyPayment(DebtDto debt)
@@ -65,5 +63,20 @@ public class MonthlyAmortizationCalculator
 		minimumMonthlyPayment += debt.BankFees;
 
 		return minimumMonthlyPayment;
+	}
+
+	private int CalculateRemainingTerm(DebtDto debt)
+	{
+		decimal monthlyPayment = debt.MonthlyPayment;
+		decimal remainingPrincipal = debt.RemainingPrincipal;
+		decimal monthlyInterestRate = debt.AnnualInterestRate / 12;
+
+		// Calculate the remaining term using the formula for the number of periods in an ordinary annuity
+		int remainingTerm =
+			(int)Math.Ceiling(
+				Math.Log((double)(monthlyPayment / (monthlyPayment - monthlyInterestRate * remainingPrincipal))) /
+				Math.Log(1 + (double)monthlyInterestRate));
+
+		return remainingTerm;
 	}
 }
