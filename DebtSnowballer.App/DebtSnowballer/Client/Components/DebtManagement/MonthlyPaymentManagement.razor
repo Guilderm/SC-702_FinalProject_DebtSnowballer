@@ -2,22 +2,29 @@
 @using DebtSnowballer.Client.ClientSideServices
 @inject IUserProfileService UserProfileService
 
-<h3>
-	<br>
-</h3>
+<h3> Summary </h3>
 
-<div class="summary">
-	<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
-	<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
-	@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
-	{
-		<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
-	}
+@if (DebtsInBaseCurrency == null)
+{
 	<p>
-		Preferred Monthly Payment:
-		<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
+		<em>Loading Summary...</em>
 	</p>
-</div>
+}
+else
+{
+	<div class="summary">
+		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+		{
+			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
+		}
+		<p>
+			Preferred Monthly Payment:
+			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
+		</p>
+	</div>
+}
 
 
 @code {

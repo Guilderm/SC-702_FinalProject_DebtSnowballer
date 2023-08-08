@@ -8,19 +8,29 @@
 
 <h3>List all your debts</h3>
 <br>
-<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="true"/>
+@if (DebtsInQuoteCurrency == null)
+{
+	<p>
+		<em>Loading debts...</em>
+	</p>
+}
+else
+{
+	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="true"/>
 
-<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
+	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
 
-<h3>
+	<h3>
+		<br>
+	</h3>
+
+	<h3>Debts converted to base currency</h3>
 	<br>
-</h3>
+	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
 
-<h3>Debts converted to base currency</h3>
-<br>
-<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
+	<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+}
 
-<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 
 @code {
 	private DebtDto _selectedDebt;

@@ -8,18 +8,28 @@
 
 <h3>List all your Snowflakes</h3>
 <br>
-<SnowflakeTable Snowflakes="SnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="true"/>
-<button class="btn btn-success" @onclick="OnAddNewSnowflake">Add New Snowflake</button>
 
-<h3>
+@if (SnowflakesInQuoteCurrency == null)
+{
+	<p>
+		<em>Loading your Snowflakes...</em>
+	</p>
+}
+else
+{
+	<SnowflakeTable Snowflakes="SnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="true"/>
+	<button class="btn btn-success" @onclick="OnAddNewSnowflake">Add New Snowflake</button>
+
+	<h3>
+		<br>
+	</h3>
+
+	<h3>Snowflakes converted to base currency</h3>
 	<br>
-</h3>
+	<SnowflakeTable Snowflakes="SnowflakesInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="false"/>
 
-<h3>Snowflakes converted to base currency</h3>
-<br>
-<SnowflakeTable Snowflakes="SnowflakesInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="false"/>
-
-<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
+	<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
+}
 
 
 @code {

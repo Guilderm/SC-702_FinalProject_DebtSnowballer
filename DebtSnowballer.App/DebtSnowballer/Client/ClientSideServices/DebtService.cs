@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Security.Claims;
 using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices;
@@ -65,12 +64,12 @@ public class DebtService : IDebtService
 		return result;
 	}
 
-	public async Task<IList<ExchangeRateDto>> GetUsersExchangeRates(ClaimsPrincipal userId)
+	public async Task<IList<ExchangeRateDto>> GetUsersExchangeRates()
 	{
-		_logger.LogInformation("Fetching exchange rates for user {userId}", userId);
+		_logger.LogInformation("Fetching exchange rates ");
 		IList<ExchangeRateDto> exchangeRates =
 			await _httpClient.GetFromJsonAsync<IList<ExchangeRateDto>>($"{_backendUrl}/GetUsersExchangeRates");
-		_logger.LogInformation("Fetched {count} exchange rates for user {userId}", exchangeRates.Count, userId);
+		_logger.LogInformation("Fetched {count} exchange rates", exchangeRates.Count);
 		return exchangeRates;
 	}
 }

@@ -17,9 +17,9 @@
 <h3>Create a strategy to become debt free</h3>
 
 @if (_isAllDataLoaded)
-{
+	{ 
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
-
+	
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
@@ -27,7 +27,8 @@
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<StrategyTypesManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
-}
+	}
+
 else
 {
 	<p>Loading your data...</p>
@@ -45,23 +46,17 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-	// TODO: Need to get this data from the backend with out getting any data from front end.
+		// TODO: Need to get this data from the backend with out getting any data from front end.
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		await LoadUserProfile();
-
 		_isAllDataLoaded = true;
 
 		await LoadExchangeRates();
 		await LoadDebtsInQuoteCurrency();
 		await LoadSnowflakesInQuoteCurrency();
-		
+
 		await ConvertDebtsToBaseCurrency();
 		await ConvertSnowflakesToBaseCurrency();
-	}
-
-	private async Task LoadExchangeRates()
-	{
-		_usersExchangeRates = await DebtService.GetUsersExchangeRates(_authState.User);
 	}
 
 	private async Task LoadUserProfile()
@@ -69,6 +64,11 @@ else
 		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
 	}
 
+	private async Task LoadExchangeRates()
+	{
+		_usersExchangeRates = await DebtService.GetUsersExchangeRates();
+	}
+	
 	private async Task LoadDebtsInQuoteCurrency()
 	{
 		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();

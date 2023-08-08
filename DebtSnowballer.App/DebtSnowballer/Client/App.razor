@@ -1,6 +1,10 @@
 ﻿@using System.Reflection
+@using DebtSnowballer.Client.ClientSideServices
 @using Microsoft.AspNetCore.Components.WebAssembly.Services
 @inject LazyAssemblyLoader LazyAssemblyLoader
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserProfileService UserProfileService
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@_lazyLoadedAssemblies">
@@ -27,4 +31,12 @@
 
 @code {
 	private readonly List<Assembly> _lazyLoadedAssemblies = new();
+	
+	private AuthenticationState _authState;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		await UserProfileService.CreateUpdateUserProfile(_authState.User);
+	}
 }
