@@ -26,7 +26,7 @@
 
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<StrategyTypesManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
+	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 	}
 
 else
@@ -44,6 +44,8 @@ else
 	private AuthenticationState _authState;
 	private IList<ExchangeRateDto> _usersExchangeRates;
 
+
+	// TODO: Make sure all are running concorenlly
 	protected override async Task OnInitializedAsync()
 	{
 		// TODO: Need to get this data from the backend with out getting any data from front end.
@@ -102,7 +104,7 @@ else
 			}
 			else
 			{
-	// If there's no exchange rate for the debt's currency, add the debt as is.
+				// If there's no exchange rate for the debt's currency, add the debt as is.
 				_debtsInBaseCurrency.Add(debt);
 			}
 		}
@@ -135,7 +137,7 @@ else
 			}
 			else
 			{
-	// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
+				// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
 				_snowflakesInBaseCurrency.Add(snowflake);
 			}
 		}
@@ -168,5 +170,4 @@ else
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
 	}
-
-}
+	}

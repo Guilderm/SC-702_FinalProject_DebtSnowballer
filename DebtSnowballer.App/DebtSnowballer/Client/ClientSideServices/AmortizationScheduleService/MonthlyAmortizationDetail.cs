@@ -1,6 +1,6 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
+namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class MonthlyAmortizationDetail
 {

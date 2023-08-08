@@ -1,4 +1,4 @@
-﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationService;
+﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class PaymentPlanDetail
 {
