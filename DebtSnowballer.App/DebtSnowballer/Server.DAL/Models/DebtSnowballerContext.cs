@@ -63,14 +63,14 @@ public partial class DebtSnowballerContext : DbContext
 				.HasDefaultValueSql("('USD')");
 
 			entity.HasOne(d => d.BaseCurrencyNavigation)
-				.WithMany(p => p.ExchangeRateBaseCurrencyNavigations)
+				.WithMany(p => p.ExchangeRateBaseCurrencyNavigation)
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.BaseCurrency)
 				.OnDelete(DeleteBehavior.ClientSetNull)
 				.HasConstraintName("FK__ExchangeR__BaseC__496FBC53");
 
 			entity.HasOne(d => d.QuoteCurrencyNavigation)
-				.WithMany(p => p.ExchangeRateQuoteCurrencyNavigations)
+				.WithMany(p => p.ExchangeRateQuoteCurrencyNavigation)
 				.HasPrincipalKey(p => p.AlphaCode)
 				.HasForeignKey(d => d.QuoteCurrency)
 				.OnDelete(DeleteBehavior.ClientSetNull)

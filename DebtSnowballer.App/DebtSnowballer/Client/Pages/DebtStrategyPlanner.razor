@@ -102,7 +102,7 @@ else
 					Name = debt.Name,
 					RemainingPrincipal = debt.RemainingPrincipal * debtToBaseRate.ConversionRate,
 					BankFees = debt.BankFees * debtToBaseRate.ConversionRate,
-						ContractedMonthlyPayment = debt.ContractedMonthlyPayment * debtToBaseRate.ConversionRate,
+					ContractedMonthlyPayment = debt.ContractedMonthlyPayment * debtToBaseRate.ConversionRate,
 					AnnualInterestRate = debt.AnnualInterestRate,
 					RemainingTermInMonths = debt.RemainingTermInMonths,
 					CardinalOrder = debt.CardinalOrder,
@@ -188,4 +188,5 @@ else
 		string paymentPlanDetailsJson = JsonSerializer.Serialize(paymentPlanDetails);
 		NavigationManager.NavigateTo($"/amortizationSchedule?paymentPlanDetails={Uri.EscapeDataString(paymentPlanDetailsJson)}");
 	}
-	}
+
+}
