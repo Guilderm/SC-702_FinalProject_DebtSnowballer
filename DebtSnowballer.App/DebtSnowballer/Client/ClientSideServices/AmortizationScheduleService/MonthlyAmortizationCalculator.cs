@@ -68,7 +68,6 @@ public class MonthlyAmortizationCalculator
 		return loanAtMonthEnd;
 	}
 
-
 	private decimal CalculateMinimumMonthlyPayment(LoanDetailDto loanDetail)
 	{
 		Console.WriteLine("Entered function 'CalculateMinimumMonthlyPayment'");
