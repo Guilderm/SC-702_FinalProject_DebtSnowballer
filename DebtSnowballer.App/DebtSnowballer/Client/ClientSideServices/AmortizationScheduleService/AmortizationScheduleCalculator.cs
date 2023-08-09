@@ -17,18 +17,7 @@ public class AmortizationScheduleCalculator
 		{
 			Console.WriteLine($"Calculating amortization schedule for Debt ID: {debt.Id}");
 
-			AmortizationScheduleDetails amortizationSchedule = new()
-			{
-				DebtId = debt.Id,
-				Auth0UserId = debt.Auth0UserId,
-				NickName = debt.NickName,
-				BankFees = debt.BankFees,
-				ContractedMonthlyPayment = debt.MonthlyPayment,
-				AnnualInterestRate = debt.MonthlyPayment,
-				CurrencyCode = debt.CurrencyCode,
-				CardinalOrder = debt.CardinalOrder,
-				MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateInitialMonthlyDetail(debt) }
-			};
+			AmortizationScheduleDetails amortizationSchedule = CreateAmortizationScheduleDetails(debt);
 
 			do
 			{
@@ -67,7 +56,35 @@ public class AmortizationScheduleCalculator
 		return schedules;
 	}
 
-	private static MonthlyAmortizationDetail CreateInitialMonthlyDetail(DebtDto debt)
+	private static AmortizationScheduleDetails CreateAmortizationScheduleDetails(DebtDto debt)
+	{
+		AmortizationScheduleDetails amortizationSchedule = new()
+		{
+			DebtId = debt.Id,
+			Auth0UserId = debt.Auth0UserId,
+			NickName = debt.NickName,
+			BankFees = debt.BankFees,
+			ContractedMonthlyPayment = debt.MonthlyPayment,
+			AnnualInterestRate = debt.AnnualInterestRate,
+			CurrencyCode = debt.CurrencyCode,
+			CardinalOrder = debt.CardinalOrder,
+			MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateAmortizationDetailFromDebtDTO(debt) }
+		};
+
+		Console.WriteLine("Amortization Schedule Details:");
+		Console.WriteLine($"  DebtId: {amortizationSchedule.DebtId}");
+		Console.WriteLine($"  Auth0UserId: {amortizationSchedule.Auth0UserId}");
+		Console.WriteLine($"  NickName: {amortizationSchedule.NickName}");
+		Console.WriteLine($"  BankFees: {amortizationSchedule.BankFees}");
+		Console.WriteLine($"  ContractedMonthlyPayment: {amortizationSchedule.ContractedMonthlyPayment}");
+		Console.WriteLine($"  AnnualInterestRate: {amortizationSchedule.AnnualInterestRate}");
+		Console.WriteLine($"  CurrencyCode: {amortizationSchedule.CurrencyCode}");
+		Console.WriteLine($"  CardinalOrder: {amortizationSchedule.CardinalOrder}");
+		Console.WriteLine($"  MonthlyDetails Count: {amortizationSchedule.MonthlyDetails.Count}");
+		return amortizationSchedule;
+	}
+
+	private static MonthlyAmortizationDetail CreateAmortizationDetailFromDebtDTO(DebtDto debt)
 	{
 		Console.WriteLine($"Creating initial monthly detail for Debt ID: {debt.Id}");
 		return new MonthlyAmortizationDetail

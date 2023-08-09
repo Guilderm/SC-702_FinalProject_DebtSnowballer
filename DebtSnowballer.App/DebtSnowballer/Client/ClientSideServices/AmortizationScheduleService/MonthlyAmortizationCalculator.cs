@@ -13,15 +13,18 @@ public class MonthlyAmortizationCalculator
 		decimal allocatedExtraPayment)
 	{
 		Console.WriteLine(
-			$"Entered function 'MonthlyAmortizationCalculator' constructor with extra payment: {allocatedExtraPayment}");
+			$"Entered function 'MonthlyAmortizationCalculator' constructor with extra payment: {allocatedExtraPayment} and debtAtPreviousMonthEnd: {debtAtPreviousMonthEnd} ");
 
-		_debtAtMonthStart = debtAtPreviousMonthEnd.DebtStateAtMonthEnd;
+		_debtAtMonthStart = debtAtPreviousMonthEnd?.DebtStateAtMonthEnd
+		                    ?? throw new ArgumentNullException(nameof(debtAtPreviousMonthEnd),
+			                    "debtAtPreviousMonthEnd and DebtStateAtMonthEnd cannot be null");
 		_finalAmortizationDetail = new MonthlyAmortizationDetail();
-		_debtAtMonthEnd = _finalAmortizationDetail.DebtStateAtMonthEnd;
+		_debtAtMonthEnd = new DebtDto();
 		_allocatedExtraPayment = allocatedExtraPayment >= 0
 			? allocatedExtraPayment
 			: throw new ArgumentException("Extra payment cannot be negative", nameof(allocatedExtraPayment));
 	}
+
 
 	public MonthlyAmortizationDetail CalculateMonthlyDetail()
 	{
@@ -67,6 +70,10 @@ public class MonthlyAmortizationCalculator
 		decimal principal = debt.RemainingPrincipal;
 		decimal rate = debt.AnnualInterestRate / 12;
 		int installments = debt.RemainingTermInMonths;
+
+		Console.WriteLine($"principal is: {principal}");
+		Console.WriteLine($"rate is: {rate}");
+		Console.WriteLine($"installments is: {installments}");
 
 		// Calculate monthly payment using the standard formula for monthly amortization
 		decimal minimumMonthlyPayment = principal * rate * (decimal)Math.Pow(1 + (double)rate, installments) /

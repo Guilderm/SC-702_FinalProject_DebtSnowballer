@@ -11,7 +11,7 @@ public class AmortizationScheduleService : IAmortizationScheduleService
 		Console.WriteLine(
 			$"Entered function 'CalculatePaymentPlansAsync' with debts: {JsonSerializer.Serialize(debts)}, snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
 
-		// Determine the maximum amount of time that the schedule will last
+		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
 		SnowflakesScheduleCalculator snowflakesScheduleCalculator = new();
 		var snowflakesSchedule = snowflakesScheduleCalculator.CalculateSnowflakes(snowflakes, maxTime);
@@ -19,9 +19,14 @@ public class AmortizationScheduleService : IAmortizationScheduleService
 		decimal totalMonthlyPayments = debts.Sum(d => d.MonthlyPayment);
 
 		if (debtPlanMonthlyPayment < totalMonthlyPayments)
+		{
+			Console.WriteLine(
+				$"debtPlanMonthlyPayment is lower than totalMonthlyPayments. So it will be adjusted to match totalMonthlyPayments of: {totalMonthlyPayments}");
 			debtPlanMonthlyPayment = totalMonthlyPayments;
+		}
 
 		debtPlanMonthlyPayment -= totalMonthlyPayments;
+		Console.WriteLine($"Monthly amortization amount is calculated to be: {debtPlanMonthlyPayment}");
 
 		PaymentPlanCalculator paymentPlanCalculator = new(new AmortizationScheduleCalculator());
 		var result = await paymentPlanCalculator.CalculatePaymentPlansAsync(debts);

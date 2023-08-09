@@ -159,6 +159,7 @@ else
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_userProfile.BaseCurrency = selectedCurrency;
 		await ConvertDebtsToBaseCurrency();
+		StateHasChanged();
 	}
 
 	public string GetCurrencySymbol(string currencyCode)
@@ -178,6 +179,7 @@ else
 	{
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
+		StateHasChanged();`
 	}
 
 	private async Task NavigateToAmortizationSchedule()
