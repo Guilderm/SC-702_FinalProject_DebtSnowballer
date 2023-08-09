@@ -4,7 +4,7 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class MonthlyAmortizationDetail
 {
-	public LoanDetailDto LoanDetailStateAtMonthEnd { get; set; }
+	public LoanDetailDto LoanStateAtMonthEnd { get; set; }
 
 	public int Month { get; set; }
 

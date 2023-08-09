@@ -8,10 +8,14 @@ public class AmortizationScheduleCalculator
 	{
 		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
 
+		MonthlyAmortizationCalculator calculator = new();
+
 		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
 
+		decimal allocatedPayment = 0;
 		decimal paymentReallocationAmount = 0;
-		DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
+		DateTime paymentReallocationStartDate = DateTime.Now;
+		//DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
 
 		foreach (LoanDetailDto debt in debts)
 		{
@@ -29,25 +33,23 @@ public class AmortizationScheduleCalculator
 			Console.WriteLine($"  CardinalOrder: {debt.CardinalOrder}");
 			Console.WriteLine($"  StartDate: {debt.StartDate:yyyy-MM-dd}");
 
-
 			AmortizationScheduleDetails amortizationSchedule = CreateAmortizationScheduleDetails(debt);
-
 			do
 			{
-				MonthlyAmortizationDetail previousMonthDetail = amortizationSchedule.MonthlyDetails.Last();
+				MonthlyAmortizationDetail amortizationAtMonthStart = amortizationSchedule.MonthlyDetails.Last();
 
-				decimal allocatedPayment = 0;
-				if (paymentReallocationStartDate <= previousMonthDetail.LoanDetailStateAtMonthEnd.StartDate)
+				if (paymentReallocationStartDate <= amortizationAtMonthStart.LoanStateAtMonthEnd.StartDate)
 				{
 					Console.WriteLine($"Allocating reallocation amount: {paymentReallocationAmount}");
 					allocatedPayment += paymentReallocationAmount;
 				}
 
-				MonthlyAmortizationCalculator calculator = new(previousMonthDetail, allocatedPayment);
-				MonthlyAmortizationDetail monthsDetail = calculator.CalculateMonthlyDetail();
+				MonthlyAmortizationDetail amortizationAtMonthEnd =
+					calculator.CalculateMonthlyDetail(amortizationAtMonthStart, allocatedPayment);
 
-				amortizationSchedule.MonthlyDetails.Add(monthsDetail);
-				debt.RemainingPrincipal = monthsDetail.LoanDetailStateAtMonthEnd.RemainingPrincipal;
+
+				amortizationSchedule.MonthlyDetails.Add(amortizationAtMonthEnd);
+				debt.RemainingPrincipal = amortizationAtMonthEnd.LoanStateAtMonthEnd.RemainingPrincipal;
 			} while (debt.RemainingPrincipal > 0);
 
 			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
@@ -55,7 +57,7 @@ public class AmortizationScheduleCalculator
 			// Actions done when a debt is paid off:
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
-			paymentReallocationStartDate = lastMonthDetail.LoanDetailStateAtMonthEnd.StartDate;
+			paymentReallocationStartDate = lastMonthDetail.LoanStateAtMonthEnd.StartDate;
 			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
 
 			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
@@ -115,7 +117,7 @@ public class AmortizationScheduleCalculator
 
 		return new MonthlyAmortizationDetail
 		{
-			LoanDetailStateAtMonthEnd = loanDetail
+			LoanStateAtMonthEnd = loanDetail
 		};
 	}
 }
