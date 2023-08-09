@@ -4,14 +4,14 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class SnowflakesScheduleCalculator
 {
-	public List<SnowflakesScheduleDetail> CalculateSnowflakes(List<SnowflakeDto> snowflakes, int maxTime)
+	public List<SnowflakesScheduleDetail> CalculateSnowflakes(List<PlannedSnowflakeDto> snowflakes, int maxTime)
 	{
 		Console.WriteLine(
 			$"Entered function 'CalculateSnowflakes' with snowflakes count: {snowflakes.Count} and maxTime: {maxTime}");
 
 		var snowflakesSchedule = new List<SnowflakesScheduleDetail>();
 
-		foreach (SnowflakeDto snowflake in snowflakes)
+		foreach (PlannedSnowflakeDto snowflake in snowflakes)
 		{
 			Console.WriteLine(
 				$"Processing snowflake with StartDate: {snowflake.StartingAt} and EndDate: {snowflake.EndingAt}");

@@ -20,14 +20,14 @@
 	</tr>
 	</thead>
 	<tbody>
-	@foreach (DebtDto debt in Debts)
+	@foreach (LoanDetailDto debt in Debts)
 	{
 		string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
 		<tr>
-			<td>@debt.NickName</td>
+			<td>@debt.Name</td>
 			<td>@currencySymbol @debt.RemainingPrincipal.ToString("N2")</td>
 			<td>@currencySymbol @debt.BankFees.ToString("N2")</td>
-			<td>@currencySymbol @debt.MonthlyPayment.ToString("N2")</td>
+				<td>@currencySymbol @debt.ContractedMonthlyPayment.ToString("N2")</td>
 			<td>@debt.AnnualInterestRate.ToString("P2")</td>
 			<td>@debt.RemainingTermInMonths</td>
 			<td>@debt.CardinalOrder</td>
@@ -50,7 +50,7 @@
 	public bool AreActionsShown { get; set; }
 
 	[Parameter]
-	public List<DebtDto> Debts { get; set; }
+	public List<LoanDetailDto> Debts { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }

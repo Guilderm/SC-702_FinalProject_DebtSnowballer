@@ -12,8 +12,8 @@ public class MultiPurposeService : IMultiPurposeService
 		_httpClient = httpClient;
 	}
 
-	public async Task<List<StrategyTypeDto>> GetAllStrategyTypesAsync()
+	public async Task<List<DebtPayDownMethodDto>> GetAllStrategyTypesAsync()
 	{
-		return await _httpClient.GetFromJsonAsync<List<StrategyTypeDto>>("api/MultiPurpose");
+		return await _httpClient.GetFromJsonAsync<List<DebtPayDownMethodDto>>("api/MultiPurpose");
 	}
 }

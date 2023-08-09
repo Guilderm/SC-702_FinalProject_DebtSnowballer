@@ -8,10 +8,10 @@ public class AutoMapperConfiguration : Profile
 {
 	public AutoMapperConfiguration()
 	{
-		CreateMap<Debt, DebtDto>().ReverseMap();
+		CreateMap<LoanDetail, LoanDetailDto>().ReverseMap();
 		CreateMap<UserProfile, UserProfileDto>().ReverseMap();
-		CreateMap<Snowflake, SnowflakeDto>().ReverseMap();
+		CreateMap<PlannedSnowflake, PlannedSnowflakeDto>().ReverseMap();
 		CreateMap<ExchangeRate, ExchangeRateDto>().ReverseMap();
-		CreateMap<StrategyType, StrategyTypeDto>().ReverseMap();
+		CreateMap<DebtPayDownMethod, DebtPayDownMethodDto>().ReverseMap();
 	}
 }

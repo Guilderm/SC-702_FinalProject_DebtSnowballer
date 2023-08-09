@@ -16,7 +16,7 @@ public class MultiPurposeService : IMultiPurposeService
 		_logger = logger;
 	}
 
-	public async Task<IList<StrategyTypeDto>> GetAllStrategyTypes()
+	public async Task<IList<DebtPayDownMethodDto>> GetAllStrategyTypes()
 	{
 		_logger.LogInformation("Fetching all strategy types");
 
@@ -24,7 +24,8 @@ public class MultiPurposeService : IMultiPurposeService
 
 		if (response.IsSuccessStatusCode)
 		{
-			IList<StrategyTypeDto> strategyTypes = await response.Content.ReadFromJsonAsync<IList<StrategyTypeDto>>();
+			IList<DebtPayDownMethodDto> strategyTypes =
+				await response.Content.ReadFromJsonAsync<IList<DebtPayDownMethodDto>>();
 			_logger.LogInformation("Fetched {count} strategy types", strategyTypes?.Count);
 			return strategyTypes;
 		}

@@ -18,11 +18,11 @@
 	</tr>
 	</thead>
 	<tbody>
-	@foreach (SnowflakeDto snowflake in Snowflakes)
+	@foreach (PlannedSnowflakeDto snowflake in Snowflakes)
 	{
 		string currencySymbol = GetCurrencySymbol(snowflake.CurrencyCode);
 		<tr>
-			<td>@snowflake.NickName</td>
+			<td>@snowflake.Name</td>
 			<td>@snowflake.FrequencyInMonths</td>
 			<td>@currencySymbol @snowflake.Amount.ToString("N2")</td>
 			<td>@snowflake.StartingAt</td>
@@ -46,7 +46,7 @@
 	public bool AreActionsShown { get; set; }
 
 	[Parameter]
-	public List<SnowflakeDto> Snowflakes { get; set; }
+	public List<PlannedSnowflakeDto> Snowflakes { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }

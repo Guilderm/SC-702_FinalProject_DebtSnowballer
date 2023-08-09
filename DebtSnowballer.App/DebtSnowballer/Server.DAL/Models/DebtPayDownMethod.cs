@@ -1,8 +1,8 @@
 ﻿namespace Server.DAL.Models;
 
-public class StrategyType
+public class DebtPayDownMethod
 {
-	public StrategyType()
+	public DebtPayDownMethod()
 	{
 		UserProfiles = new HashSet<UserProfile>();
 	}

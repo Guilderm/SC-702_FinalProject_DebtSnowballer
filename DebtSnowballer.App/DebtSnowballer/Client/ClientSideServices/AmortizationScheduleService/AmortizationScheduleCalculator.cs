@@ -4,7 +4,7 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class AmortizationScheduleCalculator
 {
-	public List<AmortizationScheduleDetails> CalculateAmortizationSchedule(List<DebtDto> debts)
+	public List<AmortizationScheduleDetails> CalculateAmortizationSchedule(List<LoanDetailDto> debts)
 	{
 		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
 
@@ -13,7 +13,7 @@ public class AmortizationScheduleCalculator
 		decimal paymentReallocationAmount = 0;
 		DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
 
-		foreach (DebtDto debt in debts)
+		foreach (LoanDetailDto debt in debts)
 		{
 			Console.WriteLine($"Calculating amortization schedule for Debt ID: {debt.Id}");
 
@@ -24,7 +24,7 @@ public class AmortizationScheduleCalculator
 				MonthlyAmortizationDetail previousMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
 				decimal allocatedPayment = 0;
-				if (paymentReallocationStartDate <= previousMonthDetail.DebtStateAtMonthEnd.StartDate)
+				if (paymentReallocationStartDate <= previousMonthDetail.LoanDetailStateAtMonthEnd.StartDate)
 				{
 					Console.WriteLine($"Allocating reallocation amount: {paymentReallocationAmount}");
 					allocatedPayment += paymentReallocationAmount;
@@ -34,7 +34,7 @@ public class AmortizationScheduleCalculator
 				MonthlyAmortizationDetail monthsDetail = calculator.CalculateMonthlyDetail();
 
 				amortizationSchedule.MonthlyDetails.Add(monthsDetail);
-				debt.RemainingPrincipal = monthsDetail.DebtStateAtMonthEnd.RemainingPrincipal;
+				debt.RemainingPrincipal = monthsDetail.LoanDetailStateAtMonthEnd.RemainingPrincipal;
 			} while (debt.RemainingPrincipal > 0);
 
 			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
@@ -42,7 +42,7 @@ public class AmortizationScheduleCalculator
 			// Actions done when a debt is paid off:
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
-			paymentReallocationStartDate = lastMonthDetail.DebtStateAtMonthEnd.StartDate;
+			paymentReallocationStartDate = lastMonthDetail.LoanDetailStateAtMonthEnd.StartDate;
 			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
 
 			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
@@ -56,25 +56,25 @@ public class AmortizationScheduleCalculator
 		return schedules;
 	}
 
-	private static AmortizationScheduleDetails CreateAmortizationScheduleDetails(DebtDto debt)
+	private static AmortizationScheduleDetails CreateAmortizationScheduleDetails(LoanDetailDto loanDetail)
 	{
 		AmortizationScheduleDetails amortizationSchedule = new()
 		{
-			DebtId = debt.Id,
-			Auth0UserId = debt.Auth0UserId,
-			NickName = debt.NickName,
-			BankFees = debt.BankFees,
-			ContractedMonthlyPayment = debt.MonthlyPayment,
-			AnnualInterestRate = debt.AnnualInterestRate,
-			CurrencyCode = debt.CurrencyCode,
-			CardinalOrder = debt.CardinalOrder,
-			MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateAmortizationDetailFromDebtDTO(debt) }
+			DebtId = loanDetail.Id,
+			Auth0UserId = loanDetail.Auth0UserId,
+			Name = loanDetail.Name,
+			BankFees = loanDetail.BankFees,
+			ContractedMonthlyPayment = loanDetail.ContractedMonthlyPayment,
+			AnnualInterestRate = loanDetail.AnnualInterestRate,
+			CurrencyCode = loanDetail.CurrencyCode,
+			CardinalOrder = loanDetail.CardinalOrder,
+			MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateAmortizationDetailFromDebtDto(loanDetail) }
 		};
 
 		Console.WriteLine("Amortization Schedule Details:");
 		Console.WriteLine($"  DebtId: {amortizationSchedule.DebtId}");
 		Console.WriteLine($"  Auth0UserId: {amortizationSchedule.Auth0UserId}");
-		Console.WriteLine($"  NickName: {amortizationSchedule.NickName}");
+		Console.WriteLine($"  Name: {amortizationSchedule.Name}");
 		Console.WriteLine($"  BankFees: {amortizationSchedule.BankFees}");
 		Console.WriteLine($"  ContractedMonthlyPayment: {amortizationSchedule.ContractedMonthlyPayment}");
 		Console.WriteLine($"  AnnualInterestRate: {amortizationSchedule.AnnualInterestRate}");
@@ -84,12 +84,25 @@ public class AmortizationScheduleCalculator
 		return amortizationSchedule;
 	}
 
-	private static MonthlyAmortizationDetail CreateAmortizationDetailFromDebtDTO(DebtDto debt)
+	private static MonthlyAmortizationDetail CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
 	{
-		Console.WriteLine($"Creating initial monthly detail for Debt ID: {debt.Id}");
+		Console.WriteLine("Creating initial monthly detail for Debt ID:");
+		Console.WriteLine($"  Debt ID: {loanDetail.Id}");
+		Console.WriteLine($"  Auth0UserId: {loanDetail.Auth0UserId}");
+		Console.WriteLine($"  Name: {loanDetail.Name}");
+		Console.WriteLine($"  RemainingPrincipal: {loanDetail.RemainingPrincipal}");
+		Console.WriteLine($"  BankFees: {loanDetail.BankFees}");
+		Console.WriteLine($"  MonthlyPayment: {loanDetail.ContractedMonthlyPayment}");
+		Console.WriteLine($"  AnnualInterestRate: {loanDetail.AnnualInterestRate}");
+		Console.WriteLine($"  RemainingTermInMonths: {loanDetail.RemainingTermInMonths}");
+		Console.WriteLine($"  CurrencyCode: {loanDetail.CurrencyCode}");
+		Console.WriteLine($"  CardinalOrder: {loanDetail.CardinalOrder}");
+		Console.WriteLine($"  StartDate: {loanDetail.StartDate:yyyy-MM-dd}");
+
+
 		return new MonthlyAmortizationDetail
 		{
-			DebtStateAtMonthEnd = debt
+			LoanDetailStateAtMonthEnd = loanDetail
 		};
 	}
 }

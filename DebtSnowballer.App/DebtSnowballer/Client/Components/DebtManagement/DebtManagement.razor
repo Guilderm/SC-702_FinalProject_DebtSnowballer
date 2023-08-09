@@ -28,18 +28,18 @@ else
 	<br>
 	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
 
-	<DebtForm Debt="@_selectedDebt" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+	<DebtForm Debt="@_selectedLoanDetail" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 }
 
 
 @code {
-	private DebtDto _selectedDebt;
+	private LoanDetailDto _selectedLoanDetail;
 
 	[Parameter]
-	public List<DebtDto> DebtsInQuoteCurrency { get; set; }
+	public List<LoanDetailDto> DebtsInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public List<DebtDto> DebtsInBaseCurrency { get; set; }
+	public List<LoanDetailDto> DebtsInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -52,12 +52,12 @@ else
 
 	private void OnAddNewDebt()
 	{
-		_selectedDebt = new DebtDto();
+		_selectedLoanDetail = new LoanDetailDto();
 	}
 
 	private async Task EditDebt(int id)
 	{
-		_selectedDebt = await DebtService.GetDebtById(id);
+		_selectedLoanDetail = await DebtService.GetDebtById(id);
 	}
 
 	private async Task DeleteDebt(int id)
@@ -67,25 +67,25 @@ else
 		await LoadDebtsInBaseCurrency();
 	}
 
-	private async Task SaveDebt(DebtDto debtItem)
+	private async Task SaveDebt(LoanDetailDto loanDetailItem)
 	{
-		if (debtItem.Id == 0)
+		if (loanDetailItem.Id == 0)
 		{
-			await DebtService.AddDebt(debtItem);
+			await DebtService.AddDebt(loanDetailItem);
 		}
 		else
 		{
-			await DebtService.UpdateDebt(debtItem);
+			await DebtService.UpdateDebt(loanDetailItem);
 		}
 
 		await LoadDebtsInQuoteCurrency();
 		await LoadDebtsInBaseCurrency();
-		_selectedDebt = null;
+		_selectedLoanDetail = null;
 	}
 
 	private void CancelEdit()
 	{
-		_selectedDebt = null;
+		_selectedLoanDetail = null;
 	}
 
 }

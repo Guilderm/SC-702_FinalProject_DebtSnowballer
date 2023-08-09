@@ -1,10 +1,10 @@
 ﻿namespace Server.DAL.Models;
 
-public class Snowflake
+public class PlannedSnowflake
 {
 	public int Id { get; set; }
 	public string Auth0UserId { get; set; } = null!;
-	public string NickName { get; set; } = null!;
+	public string Name { get; set; } = null!;
 	public int FrequencyInMonths { get; set; }
 	public decimal Amount { get; set; }
 	public DateTime StartingAt { get; set; }

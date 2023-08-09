@@ -28,20 +28,20 @@ else
 	<br>
 	<SnowflakeTable Snowflakes="SnowflakesInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="false"/>
 
-	<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
+	<SnowflakeForm Snowflake="SelectedPlannedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
 }
 
 
 @code {
 
-	private SnowflakeDto _newSnowflake = new();
-	private SnowflakeDto SelectedSnowflake { get; set; }
+	private PlannedSnowflakeDto _newPlannedSnowflake = new();
+	private PlannedSnowflakeDto SelectedPlannedSnowflake { get; set; }
 
 	[Parameter]
-	public List<SnowflakeDto> SnowflakesInQuoteCurrency { get; set; }
+	public List<PlannedSnowflakeDto> SnowflakesInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public List<SnowflakeDto> SnowflakesInBaseCurrency { get; set; }
+	public List<PlannedSnowflakeDto> SnowflakesInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -52,32 +52,32 @@ else
 
 	private async Task EditSnowflake(int id)
 	{
-		SelectedSnowflake = await SnowflakeService.GetSnowflakeById(id);
+		SelectedPlannedSnowflake = await SnowflakeService.GetSnowflakeById(id);
 	}
 
 	private void OnAddNewSnowflake()
 	{
-		SelectedSnowflake = new SnowflakeDto();
+		SelectedPlannedSnowflake = new PlannedSnowflakeDto();
 	}
 
-	private async Task OnSave(SnowflakeDto snowflake)
+	private async Task OnSave(PlannedSnowflakeDto plannedSnowflake)
 	{
-		if (snowflake.Id == 0)
+		if (plannedSnowflake.Id == 0)
 		{
-			await SnowflakeService.AddSnowflake(snowflake);
+			await SnowflakeService.AddSnowflake(plannedSnowflake);
 		}
 		else
 		{
-			await SnowflakeService.UpdateSnowflake(snowflake);
+			await SnowflakeService.UpdateSnowflake(plannedSnowflake);
 		}
 		await LoadSnowflakesInQuoteCurrency();
-		SelectedSnowflake = null;
+		SelectedPlannedSnowflake = null;
 		StateHasChanged();
 	}
 
 	private void OnCancel()
 	{
-		SelectedSnowflake = null;
+		SelectedPlannedSnowflake = null;
 	}
 
 	private async Task DeleteSnowflake(int id)

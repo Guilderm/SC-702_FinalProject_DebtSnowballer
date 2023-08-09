@@ -18,23 +18,25 @@ public class SnowflakeController : BaseController
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Post([FromBody] SnowflakeDto requestDto)
+	public async Task<IActionResult> Post([FromBody] PlannedSnowflakeDto requestDto)
 	{
 		string? auth0UserId = GetAuth0UserId();
 
-		SnowflakeDto createdSnowflake = await _snowflakeManagement.CreateSnowflake(requestDto, auth0UserId);
+		PlannedSnowflakeDto createdPlannedSnowflake =
+			await _snowflakeManagement.CreateSnowflake(requestDto, auth0UserId);
 
-		return CreatedAtAction(nameof(Get), new { id = createdSnowflake.Id }, createdSnowflake);
+		return CreatedAtAction(nameof(Get), new { id = createdPlannedSnowflake.Id }, createdPlannedSnowflake);
 	}
 
 	[HttpPut("{id:int}")]
-	public async Task<IActionResult> Put(int id, [FromBody] SnowflakeDto requestDto)
+	public async Task<IActionResult> Put(int id, [FromBody] PlannedSnowflakeDto requestDto)
 	{
 		string? auth0UserId = GetAuth0UserId();
 
-		SnowflakeDto updatedSnowflake = await _snowflakeManagement.UpdateSnowflake(id, requestDto, auth0UserId);
+		PlannedSnowflakeDto updatedPlannedSnowflake =
+			await _snowflakeManagement.UpdateSnowflake(id, requestDto, auth0UserId);
 
-		return Ok(updatedSnowflake);
+		return Ok(updatedPlannedSnowflake);
 	}
 
 	[HttpDelete("{id:int}")]
@@ -52,7 +54,7 @@ public class SnowflakeController : BaseController
 	{
 		string? auth0UserId = GetAuth0UserId();
 
-		IList<SnowflakeDto> snowflakes = await _snowflakeManagement.GetAllSnowflakes(auth0UserId);
+		IList<PlannedSnowflakeDto> snowflakes = await _snowflakeManagement.GetAllSnowflakes(auth0UserId);
 
 		return Ok(snowflakes);
 	}
@@ -62,8 +64,8 @@ public class SnowflakeController : BaseController
 	{
 		string? auth0UserId = GetAuth0UserId();
 
-		SnowflakeDto snowflake = await _snowflakeManagement.GetSnowflake(id, auth0UserId);
+		PlannedSnowflakeDto plannedSnowflake = await _snowflakeManagement.GetSnowflake(id, auth0UserId);
 
-		return Ok(snowflake);
+		return Ok(plannedSnowflake);
 	}
 }

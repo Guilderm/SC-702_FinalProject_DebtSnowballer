@@ -29,13 +29,13 @@ else
 
 @code {
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
-	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.MonthlyPayment);
+	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
 
 	[Parameter]
 	public decimal DebtPlanMonthlyPayment { get; set; }
 
 	[Parameter]
-	public List<DebtDto> DebtsInBaseCurrency { get; set; }
+	public List<LoanDetailDto> DebtsInBaseCurrency { get; set; }
 
 	[Parameter]
 	public string BaseCurrency { get; set; }

@@ -25,7 +25,7 @@ public class MultiPurposeController : BaseController
 
 		try
 		{
-			IList<StrategyTypeDto>? result = await _multiPurposeManagement.GetAllStrategyTypes();
+			IList<DebtPayDownMethodDto>? result = await _multiPurposeManagement.GetAllStrategyTypes();
 			_logger.LogInformation($"Retrieved {result?.Count} strategy types.");
 			return Ok(result);
 		}

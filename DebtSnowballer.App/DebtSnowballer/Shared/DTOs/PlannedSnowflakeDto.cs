@@ -2,7 +2,7 @@
 
 namespace DebtSnowballer.Shared.DTOs;
 
-public class SnowflakeDto
+public class PlannedSnowflakeDto
 {
 	public int Id { get; set; }
 
@@ -10,7 +10,7 @@ public class SnowflakeDto
 
 	[Required]
 	[StringLength(50, ErrorMessage = "Nick Name must be less than 50 characters.")]
-	public string NickName { get; set; }
+	public string Name { get; set; }
 
 	[Required]
 	[Range(1, 12, ErrorMessage = "Frequency In Months must be between 1 and 12.")]
@@ -23,7 +23,7 @@ public class SnowflakeDto
 	[Required] public DateTime? StartingAt { get; set; }
 
 	[Required]
-	[CustomValidation(typeof(SnowflakeDto), "ValidateEndingAt")]
+	[CustomValidation(typeof(PlannedSnowflakeDto), "ValidateEndingAt")]
 	public DateTime? EndingAt { get; set; }
 
 	[Required]
@@ -32,7 +32,7 @@ public class SnowflakeDto
 
 	public static ValidationResult ValidateEndingAt(DateTime? endingAt, ValidationContext context)
 	{
-		SnowflakeDto instance = context.ObjectInstance as SnowflakeDto;
+		PlannedSnowflakeDto instance = context.ObjectInstance as PlannedSnowflakeDto;
 		if (instance == null || instance.StartingAt == null)
 			return ValidationResult.Success;
 

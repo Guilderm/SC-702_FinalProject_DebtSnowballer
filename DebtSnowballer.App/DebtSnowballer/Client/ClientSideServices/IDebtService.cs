@@ -4,10 +4,10 @@ namespace DebtSnowballer.Client.ClientSideServices;
 
 public interface IDebtService
 {
-	Task<DebtDto> AddDebt(DebtDto debtDto);
+	Task<LoanDetailDto> AddDebt(LoanDetailDto loanDetailDto);
 	Task DeleteDebt(int id);
-	Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency();
-	Task<DebtDto> GetDebtById(int id);
-	Task<DebtDto> UpdateDebt(DebtDto debtDto);
+	Task<IList<LoanDetailDto>> GetAllDebtsInQuoteCurrency();
+	Task<LoanDetailDto> GetDebtById(int id);
+	Task<LoanDetailDto> UpdateDebt(LoanDetailDto loanDetailDto);
 	Task<IList<ExchangeRateDto>> GetUsersExchangeRates();
 }

@@ -25,41 +25,42 @@ public class DebtService : IDebtService
 		_logger.LogInformation("Deleted debt with id {id}", id);
 	}
 
-	public async Task<IList<DebtDto>> GetAllDebtsInQuoteCurrency()
+	public async Task<IList<LoanDetailDto>> GetAllDebtsInQuoteCurrency()
 	{
 		_logger.LogInformation("Fetching all debts in quote currency");
-		IList<DebtDto> debts =
-			await _httpClient.GetFromJsonAsync<IList<DebtDto>>($"{_backendUrl}/GetAllDebtsInQuoteCurrency");
+		IList<LoanDetailDto> debts =
+			await _httpClient.GetFromJsonAsync<IList<LoanDetailDto>>($"{_backendUrl}/GetAllDebtsInQuoteCurrency");
 		_logger.LogInformation("Fetched {count} debts in quote currency", debts.Count);
 		return debts;
 	}
 
-	public async Task<DebtDto> GetDebtById(int id)
+	public async Task<LoanDetailDto> GetDebtById(int id)
 	{
 		_logger.LogInformation("Fetching debt with id {id}", id);
-		DebtDto debt = await _httpClient.GetFromJsonAsync<DebtDto>($"{_backendUrl}/{id}");
+		LoanDetailDto loanDetail = await _httpClient.GetFromJsonAsync<LoanDetailDto>($"{_backendUrl}/{id}");
 		_logger.LogInformation("Fetched debt with id {id}", id);
-		return debt;
+		return loanDetail;
 	}
 
-	public async Task<DebtDto> AddDebt(DebtDto debtDto)
+	public async Task<LoanDetailDto> AddDebt(LoanDetailDto loanDetailDto)
 	{
 		_logger.LogInformation("Adding new debt");
-		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, debtDto);
+		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, loanDetailDto);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error posting debt: {response.ReasonPhrase}");
-		DebtDto result = await response.Content.ReadFromJsonAsync<DebtDto>();
+		LoanDetailDto result = await response.Content.ReadFromJsonAsync<LoanDetailDto>();
 		_logger.LogInformation("Added new debt with id {id}", result.Id);
 		return result;
 	}
 
-	public async Task<DebtDto> UpdateDebt(DebtDto debtDto)
+	public async Task<LoanDetailDto> UpdateDebt(LoanDetailDto loanDetailDto)
 	{
-		_logger.LogInformation("Updating debt with id {id}", debtDto.Id);
-		HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_backendUrl}/{debtDto.Id}", debtDto);
+		_logger.LogInformation("Updating debt with id {id}", loanDetailDto.Id);
+		HttpResponseMessage response =
+			await _httpClient.PutAsJsonAsync($"{_backendUrl}/{loanDetailDto.Id}", loanDetailDto);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error updating debt: {response.ReasonPhrase}");
-		DebtDto result = await response.Content.ReadFromJsonAsync<DebtDto>();
+		LoanDetailDto result = await response.Content.ReadFromJsonAsync<LoanDetailDto>();
 		_logger.LogInformation("Updated debt with id {id}", result.Id);
 		return result;
 	}

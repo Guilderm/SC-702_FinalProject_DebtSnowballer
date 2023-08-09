@@ -14,7 +14,7 @@
 else
 {
 	<select @onchange="OnStrategyChange" value="@UserStrategyType">
-		@foreach (StrategyTypeDto strategyType in _strategyTypes)
+		@foreach (DebtPayDownMethodDto strategyType in _strategyTypes)
 		{
 			<option value="@strategyType.Id">@strategyType.Name</option>
 		}
@@ -23,7 +23,7 @@ else
 
 @code {
 
-	private IList<StrategyTypeDto> _strategyTypes;
+	private IList<DebtPayDownMethodDto> _strategyTypes;
 
 	[Parameter]
 	public int UserStrategyType { get; set; }

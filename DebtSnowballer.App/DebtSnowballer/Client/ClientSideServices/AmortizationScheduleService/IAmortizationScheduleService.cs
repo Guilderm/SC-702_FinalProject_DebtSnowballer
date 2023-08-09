@@ -4,6 +4,6 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public interface IAmortizationScheduleService
 {
-	Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<DebtDto> debts, List<SnowflakeDto> snowflakes,
+	Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<LoanDetailDto> debts, List<PlannedSnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment);
 }

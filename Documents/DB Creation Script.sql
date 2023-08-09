@@ -27,12 +27,12 @@ end
 -- Create the Currencies table
 CREATE TABLE Currencies
 (
-    Id          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    Name        NVARCHAR(50)       NOT NULL,
-    AlphaCode   NVARCHAR(3)        NOT NULL UNIQUE,
-    NumericCode INT                NOT NULL,
-    Symbol      NVARCHAR(5)        NOT NULL,
-    Precision   INT                NOT NULL
+    [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Name]        NVARCHAR(50)       NOT NULL,
+    [AlphaCode]   NVARCHAR(3)        NOT NULL UNIQUE,
+    [NumericCode] INT                NOT NULL,
+    [Symbol]      NVARCHAR(5)        NOT NULL,
+    [Precision]   INT                NOT NULL
 );
 
 -- Insert the data into the Currencies table
@@ -49,27 +49,41 @@ VALUES ('United States dollar', 'USD', 840, '$', 2),
        ('Costa Rican colón', 'CRC', 188, '₡', 2);
 
 -- Currency will be defined using ISO 4217
-CREATE TABLE ExchangeRates
+CREATE TABLE [ExchangeRate]
 (
-    Id             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    BaseCurrency   NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
-    QuoteCurrency  NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
-    ConversionRate DECIMAL(19, 9)     NOT NULL,
-    NextUpdateTime DATETIME2          NOT NULL
+    [Id]             INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [BaseCurrency]   NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
+    [QuoteCurrency]  NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
+    [ConversionRate] DECIMAL(19, 9)     NOT NULL,
+    [NextUpdateTime] DATETIME2          NOT NULL
 );
 
 
 -- Create DebtStrategyType table to store different types of debt strategies
-CREATE TABLE [StrategyType]
+CREATE TABLE [DebtPayDownMethod]
 (
     [Id]   INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    Name NVARCHAR(50)       NOT NULL
+    [Name] NVARCHAR(50)       NOT NULL
 );
 
 -- Insert the three debt strategies into the DebtStrategyType table
-INSERT INTO StrategyType (Name)
-VALUES        ('Strict Debt Snowball'),
+INSERT INTO [DebtPayDownMethod] (Name)
+VALUES ('Strict Debt Snowball'),
        ('Debt Avalanche');
+
+-- Create UserType table to store different types of users
+CREATE TABLE [UserRole]
+(
+    [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Name]        NVARCHAR(20)       NOT NULL,
+    [Description] NVARCHAR(50)       NOT NULL
+);
+
+-- Insert data into UserType
+INSERT INTO [UserRole] (Name, Description)
+VALUES ('EndUser', 'The user that the application is intended for'),
+       ('HelpDesk', 'Those provided technical and customer support'),
+       ('Administrator', 'The administrators of the application');
 
 CREATE TABLE [UserProfile]
 (
@@ -82,33 +96,21 @@ CREATE TABLE [UserProfile]
     [Email]                    NVARCHAR(256)      NULL,
     [Picture]                  NVARCHAR(MAX)      NULL,
     [Locale]                   NVARCHAR(10)       NULL,
-    [UserTypeId]               INT                NOT NULL DEFAULT 1,
-    [CreatedAt]                DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [LastUpdated]              DATETIME2          NOT NULL DEFAULT GETDATE(),
+    [UserRoleId]               INT                NOT NULL DEFAULT 1 REFERENCES [UserRole] (Id),
+    [CreatedAt]                DATETIME2          NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    [LastUpdated]              DATETIME2          NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     -- consider putting these into a different table called UserSettings
     [BaseCurrency]             NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
-    [DebtPlanMonthlyPayment]  DECIMAL(18, 2)     NOT NULL     DEFAULT 0,     -- Cannot be less than AggregatedMonthlyPayment
-    [SelectedStrategy]         INT                NOT NULL     DEFAULT 1 REFERENCES [StrategyType] (Id),
+    --[DebtPlanMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (DebtPlanMonthlyPayment >= AggregatedMonthlyPayment),
+    [DebtPlanMonthlyPayment]   DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (DebtPlanMonthlyPayment >= 0),
+    [SelectedStrategy]         INT                NOT NULL DEFAULT 1 REFERENCES [DebtPayDownMethod] (Id),
 
     -- Consider deleting these
-    [TotalAmountOwed]          DECIMAL(18, 2)     NOT NULL     DEFAULT 0,
-    [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL     DEFAULT 0,
-);
+    [TotalAmountOwed]          DECIMAL(18, 2)     NOT NULL DEFAULT 0,
+    [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (AggregatedMonthlyPayment >= 0),
+    );
 
--- Create UserType table to store different types of users
-CREATE TABLE [UserType]
-(
-    [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Type]        NVARCHAR(20)       NOT NULL,
-    [Description] NVARCHAR(50)       NOT NULL
-);
-
--- Insert data into UserType
-INSERT INTO UserType (Type, Description)
-VALUES ('EndUser', 'The user that the application is intended for'),
-       ('HelpDesk', 'Those provided technical and customer support'),
-       ('Administrator', 'The administrators of the application');
 
 -- Create SessionLog table to store user session information
 CREATE TABLE [SessionLog]
@@ -123,41 +125,41 @@ CREATE TABLE [SessionLog]
 );
 
 -- Create Loan table to store information about each loan
-CREATE TABLE [Debt]
+CREATE TABLE [LoanDetail]
 (
-    [Id]                    INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId]           NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
-    [NickName]              NVARCHAR(50)       NOT NULL,
-    [RemainingPrincipal]    DECIMAL(18, 2)     NOT NULL,
-    [BankFees]              DECIMAL(18, 2)     NOT NULL,
-    ContractedMonthlyPayment        DECIMAL(18, 2)     NOT NULL,
-    AnnualInterestRate          DECIMAL(6, 4)      NOT NULL,
-    [RemainingTermInMonths] INT                NOT NULL,
-    [CurrencyCode]          NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
-    [CardinalOrder]         INT                NOT NULL,
-    StartDate             DATETIME2          NOT NULL DEFAULT GETDATE()
-)
+    [Id]                       INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Auth0UserId]              NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Name]                     NVARCHAR(50)       NOT NULL,
+    [RemainingPrincipal]       DECIMAL(18, 2)     NOT NULL CHECK (RemainingPrincipal >= 0),
+    [BankFees]                 DECIMAL(18, 2)     NOT NULL CHECK (BankFees >= 0),
+    [ContractedMonthlyPayment] DECIMAL(18, 2)     NOT NULL CHECK (ContractedMonthlyPayment >= 0),
+    [AnnualInterestRate]       DECIMAL(6, 4)      NOT NULL CHECK (AnnualInterestRate >= 0),
+    [RemainingTermInMonths]    INT                NOT NULL CHECK (RemainingTermInMonths >= 0),
+    [CurrencyCode]             NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
+    [CardinalOrder]            INT                NOT NULL,
+    [StartDate]                DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+);
 
-CREATE TABLE Snowflakes
+CREATE TABLE [PlannedSnowflakes]
 (
-    Id                INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId]     NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
-    [NickName]        NVARCHAR(50)       NOT NULL,
-    FrequencyInMonths INT                NOT NULL,
-    Amount            DECIMAL(18, 2)     NOT NULL,
-    [StartingAt]      DATETIME2          NOT NULL DEFAULT GETDATE(),
-    [EndingAt]        DATETIME2          NOT NULL DEFAULT DATEADD(YEAR, 45, GETDATE()),
-    [CurrencyCode]    NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
+    [Id]                INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
+    [Auth0UserId]       NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Name]              NVARCHAR(50)       NOT NULL,
+    [FrequencyInMonths] INT                NOT NULL CHECK (FrequencyInMonths >= 0),
+    [Amount]            DECIMAL(18, 2)     NOT NULL CHECK (Amount >= 0),
+    [StartingAt]        DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)),
+    EndingAt            DATE               NOT NULL  DEFAULT DATEADD(YEAR, 45, CURRENT_TIMESTAMP),
+    [CurrencyCode]      NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
 );
 
 -- Insert data into UserProfile
-INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserTypeId)
+INSERT INTO UserProfile (auth0UserId, GivenName, FamilyName, Email, UserRoleId)
 VALUES ('google-oauth2|116471976465148595031', 'Jim', 'Doe', 'jim.doe@example.com', 1),
        ('auth0|64cc577de4780fda44d0d662', 'Jim', 'Doe', 'jim.doe@example.com', 1);
 
 -- Insert data into Loan
-INSERT INTO Debt (Auth0UserId, NickName, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
-                  RemainingTermInMonths, CurrencyCode, CardinalOrder)
+INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
+                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
 VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125, 0, 562500, 360, 'CRC', 1),
        ('google-oauth2|116471976465148595031', '2023 Honda Accord Loan', 25000, 0.042, 0, 460, 60, 'USD', 2),
        ('google-oauth2|116471976465148595031', 'Visa Credit Card', 3125000, 0.229, 0, 625000, 60, 'CRC', 3),
@@ -172,7 +174,7 @@ VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 125000000, 0.125
 
 
 -- Insert data into Snowflakes
-INSERT INTO Snowflakes (Auth0UserId, NickName, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
+INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
 VALUES ('google-oauth2|116471976465148595031', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'USD'),
        ('google-oauth2|116471976465148595031', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),

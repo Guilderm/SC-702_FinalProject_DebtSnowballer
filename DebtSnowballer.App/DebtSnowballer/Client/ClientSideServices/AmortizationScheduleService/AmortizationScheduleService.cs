@@ -5,7 +5,8 @@ namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
 public class AmortizationScheduleService : IAmortizationScheduleService
 {
-	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<DebtDto> debts, List<SnowflakeDto> snowflakes,
+	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<LoanDetailDto> debts,
+		List<PlannedSnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
 	{
 		Console.WriteLine(
@@ -16,7 +17,7 @@ public class AmortizationScheduleService : IAmortizationScheduleService
 		SnowflakesScheduleCalculator snowflakesScheduleCalculator = new();
 		var snowflakesSchedule = snowflakesScheduleCalculator.CalculateSnowflakes(snowflakes, maxTime);
 
-		decimal totalMonthlyPayments = debts.Sum(d => d.MonthlyPayment);
+		decimal totalMonthlyPayments = debts.Sum(d => d.ContractedMonthlyPayment);
 
 		if (debtPlanMonthlyPayment < totalMonthlyPayments)
 		{

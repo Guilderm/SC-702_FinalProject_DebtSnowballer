@@ -4,9 +4,9 @@ public class UserProfile
 {
 	public UserProfile()
 	{
-		Debts = new HashSet<Debt>();
+		LoanDetails = new HashSet<LoanDetail>();
+		PlannedSnowflakes = new HashSet<PlannedSnowflake>();
 		SessionLogs = new HashSet<SessionLog>();
-		Snowflakes = new HashSet<Snowflake>();
 	}
 
 	public int Id { get; set; }
@@ -18,7 +18,7 @@ public class UserProfile
 	public string? Email { get; set; }
 	public string? Picture { get; set; }
 	public string? Locale { get; set; }
-	public int UserTypeId { get; set; }
+	public int UserRoleId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
 	public string BaseCurrency { get; set; } = null!;
@@ -27,8 +27,9 @@ public class UserProfile
 	public decimal TotalAmountOwed { get; set; }
 	public decimal AggregatedMonthlyPayment { get; set; }
 
-	public virtual StrategyType SelectedStrategyNavigation { get; set; } = null!;
-	public virtual ICollection<Debt> Debts { get; set; }
+	public virtual DebtPayDownMethod SelectedStrategyNavigation { get; set; } = null!;
+	public virtual UserRole UserRole { get; set; } = null!;
+	public virtual ICollection<LoanDetail> LoanDetails { get; set; }
+	public virtual ICollection<PlannedSnowflake> PlannedSnowflakes { get; set; }
 	public virtual ICollection<SessionLog> SessionLogs { get; set; }
-	public virtual ICollection<Snowflake> Snowflakes { get; set; }
 }
