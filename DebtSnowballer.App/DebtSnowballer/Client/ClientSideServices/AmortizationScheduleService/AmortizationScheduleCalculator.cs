@@ -16,6 +16,19 @@ public class AmortizationScheduleCalculator
 		foreach (LoanDetailDto debt in debts)
 		{
 			Console.WriteLine($"Calculating amortization schedule for Debt ID: {debt.Id}");
+			Console.WriteLine("Details for Debt ID:");
+			Console.WriteLine($"  Debt ID: {debt.Id}");
+			Console.WriteLine($"  Auth0UserId: {debt.Auth0UserId}");
+			Console.WriteLine($"  Name: {debt.Name}");
+			Console.WriteLine($"  RemainingPrincipal: {debt.RemainingPrincipal}");
+			Console.WriteLine($"  BankFees: {debt.BankFees}");
+			Console.WriteLine($"  MonthlyPayment: {debt.ContractedMonthlyPayment}");
+			Console.WriteLine($"  AnnualInterestRate: {debt.AnnualInterestRate}");
+			Console.WriteLine($"  RemainingTermInMonths: {debt.RemainingTermInMonths}");
+			Console.WriteLine($"  CurrencyCode: {debt.CurrencyCode}");
+			Console.WriteLine($"  CardinalOrder: {debt.CardinalOrder}");
+			Console.WriteLine($"  StartDate: {debt.StartDate:yyyy-MM-dd}");
+
 
 			AmortizationScheduleDetails amortizationSchedule = CreateAmortizationScheduleDetails(debt);
 

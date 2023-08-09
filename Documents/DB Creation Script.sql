@@ -109,7 +109,7 @@ CREATE TABLE [UserProfile]
     -- Consider deleting these
     [TotalAmountOwed]          DECIMAL(18, 2)     NOT NULL DEFAULT 0,
     [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (AggregatedMonthlyPayment >= 0),
-    );
+);
 
 
 -- Create SessionLog table to store user session information
@@ -137,7 +137,9 @@ CREATE TABLE [LoanDetail]
     [RemainingTermInMonths]    INT                NOT NULL CHECK (RemainingTermInMonths >= 0),
     [CurrencyCode]             NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
     [CardinalOrder]            INT                NOT NULL,
-    [StartDate]                DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+    [StartDate]                DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(CURRENT_TIMESTAMP),
+                                                                                  MONTH(CURRENT_TIMESTAMP), 1))
+
 );
 
 CREATE TABLE [PlannedSnowflakes]
@@ -148,7 +150,7 @@ CREATE TABLE [PlannedSnowflakes]
     [FrequencyInMonths] INT                NOT NULL CHECK (FrequencyInMonths >= 0),
     [Amount]            DECIMAL(18, 2)     NOT NULL CHECK (Amount >= 0),
     [StartingAt]        DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)),
-    EndingAt            DATE               NOT NULL  DEFAULT DATEADD(YEAR, 45, CURRENT_TIMESTAMP),
+    EndingAt            DATE               NOT NULL DEFAULT DATEADD(YEAR, 45, CURRENT_TIMESTAMP),
     [CurrencyCode]      NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
 );
 

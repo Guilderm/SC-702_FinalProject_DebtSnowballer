@@ -28,7 +28,7 @@ else
 	<br>
 	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
 
-	<DebtForm Debt="@_selectedLoanDetail" OnSave="SaveDebt" OnCancel="CancelEdit"/>
+	<DebtForm LoanDetail="@_selectedLoanDetail" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 }
 
 

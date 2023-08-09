@@ -8,19 +8,19 @@ namespace Server.BLL.ServerSideServices;
 public class MultiPurposeManagement
 {
 	private readonly IMapper _mapper;
-	private readonly IGenericRepository<PlannedSnowflake> _strategyTypeRepository;
+	private readonly IGenericRepository<DebtPayDownMethod> _strategyTypeRepository;
 	private readonly IUnitOfWork _unitOfWork;
 
 	public MultiPurposeManagement(IUnitOfWork unitOfWork, IMapper mapper)
 	{
 		_unitOfWork = unitOfWork;
 		_mapper = mapper;
-		_strategyTypeRepository = _unitOfWork.GetRepository<PlannedSnowflake>();
+		_strategyTypeRepository = _unitOfWork.GetRepository<DebtPayDownMethod>();
 	}
 
-	public async Task<IList<DebtPayDownMethodDto>> GetAllStrategyTypes()
+	public async Task<IList<DebtPayDownMethodDto>> GetAllDebtPayDownMethods()
 	{
-		IList<PlannedSnowflake> strategyTypes = await _strategyTypeRepository.GetAll();
-		return _mapper.Map<IList<DebtPayDownMethodDto>>(strategyTypes);
+		IList<DebtPayDownMethod> payDownMethods = await _strategyTypeRepository.GetAll();
+		return _mapper.Map<IList<DebtPayDownMethodDto>>(payDownMethods);
 	}
 }
