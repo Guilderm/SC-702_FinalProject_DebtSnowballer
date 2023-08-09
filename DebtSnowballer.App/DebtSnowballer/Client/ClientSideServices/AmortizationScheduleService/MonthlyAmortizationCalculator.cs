@@ -12,6 +12,9 @@ public class MonthlyAmortizationCalculator
 	public MonthlyAmortizationCalculator(MonthlyAmortizationDetail debtAtPreviousMonthEnd,
 		decimal allocatedExtraPayment)
 	{
+		Console.WriteLine(
+			$"Entered function 'MonthlyAmortizationCalculator' constructor with extra payment: {allocatedExtraPayment}");
+
 		_debtAtMonthStart = debtAtPreviousMonthEnd.DebtStateAtMonthEnd;
 		_finalAmortizationDetail = new MonthlyAmortizationDetail();
 		_debtAtMonthEnd = _finalAmortizationDetail.DebtStateAtMonthEnd;
@@ -22,6 +25,8 @@ public class MonthlyAmortizationCalculator
 
 	public MonthlyAmortizationDetail CalculateMonthlyDetail()
 	{
+		Console.WriteLine("Entered function 'CalculateMonthlyDetail'");
+
 		decimal paymentAmount = CalculateMinimumMonthlyPayment(_debtAtMonthStart) + _allocatedExtraPayment;
 
 		_finalAmortizationDetail.InterestPaid =
@@ -38,11 +43,15 @@ public class MonthlyAmortizationCalculator
 
 		CopyDebtDetails();
 
+		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {_finalAmortizationDetail}");
+
 		return _finalAmortizationDetail;
 	}
 
 	private void CopyDebtDetails()
 	{
+		Console.WriteLine("Entered function 'CopyDebtDetails'");
+
 		_debtAtMonthEnd.MonthlyPayment = CalculateMinimumMonthlyPayment(_debtAtMonthEnd);
 		_debtAtMonthEnd.RemainingTermInMonths = CalculateRemainingTerm(_debtAtMonthEnd);
 		_debtAtMonthEnd.StartDate = _debtAtMonthStart.StartDate.AddMonths(1);
@@ -50,6 +59,8 @@ public class MonthlyAmortizationCalculator
 
 	private decimal CalculateMinimumMonthlyPayment(DebtDto debt)
 	{
+		Console.WriteLine("Entered function 'CalculateMinimumMonthlyPayment'");
+
 		if (debt == null)
 			throw new ArgumentNullException(nameof(debt));
 
@@ -57,17 +68,21 @@ public class MonthlyAmortizationCalculator
 		decimal rate = debt.AnnualInterestRate / 12;
 		int installments = debt.RemainingTermInMonths;
 
-		// Calculate monthly payment using the standard formula
+		// Calculate monthly payment using the standard formula for monthly amortization
 		decimal minimumMonthlyPayment = principal * rate * (decimal)Math.Pow(1 + (double)rate, installments) /
 		                                ((decimal)Math.Pow(1 + (double)rate, installments) - 1);
 
 		minimumMonthlyPayment += debt.BankFees;
+
+		Console.WriteLine($"Calculated Minimum Monthly Payment: {minimumMonthlyPayment}");
 
 		return minimumMonthlyPayment;
 	}
 
 	private int CalculateRemainingTerm(DebtDto debt)
 	{
+		Console.WriteLine("Entered function 'CalculateRemainingTerm'");
+
 		if (debt == null)
 			throw new ArgumentNullException(nameof(debt));
 
@@ -80,6 +95,8 @@ public class MonthlyAmortizationCalculator
 			(int)Math.Ceiling(
 				Math.Log((double)(monthlyPayment / (monthlyPayment - monthlyInterestRate * remainingPrincipal))) /
 				Math.Log(1 + (double)monthlyInterestRate));
+
+		Console.WriteLine($"Calculated Remaining Term: {remainingTerm}");
 
 		return remainingTerm;
 	}

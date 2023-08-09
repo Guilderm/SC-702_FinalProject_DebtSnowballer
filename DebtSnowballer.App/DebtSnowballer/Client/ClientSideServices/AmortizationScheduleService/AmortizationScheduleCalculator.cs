@@ -6,6 +6,8 @@ public class AmortizationScheduleCalculator
 {
 	public List<AmortizationScheduleDetails> CalculateAmortizationSchedule(List<DebtDto> debts)
 	{
+		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
+
 		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
 
 		decimal paymentReallocationAmount = 0;
@@ -13,6 +15,8 @@ public class AmortizationScheduleCalculator
 
 		foreach (DebtDto debt in debts)
 		{
+			Console.WriteLine($"Calculating amortization schedule for Debt ID: {debt.Id}");
+
 			AmortizationScheduleDetails amortizationSchedule = new()
 			{
 				DebtId = debt.Id,
@@ -32,7 +36,10 @@ public class AmortizationScheduleCalculator
 
 				decimal allocatedPayment = 0;
 				if (paymentReallocationStartDate <= previousMonthDetail.DebtStateAtMonthEnd.StartDate)
+				{
+					Console.WriteLine($"Allocating reallocation amount: {paymentReallocationAmount}");
 					allocatedPayment += paymentReallocationAmount;
+				}
 
 				MonthlyAmortizationCalculator calculator = new(previousMonthDetail, allocatedPayment);
 				MonthlyAmortizationDetail monthsDetail = calculator.CalculateMonthlyDetail();
@@ -40,6 +47,8 @@ public class AmortizationScheduleCalculator
 				amortizationSchedule.MonthlyDetails.Add(monthsDetail);
 				debt.RemainingPrincipal = monthsDetail.DebtStateAtMonthEnd.RemainingPrincipal;
 			} while (debt.RemainingPrincipal > 0);
+
+			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
 
 			// Actions done when a debt is paid off:
 			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
@@ -54,11 +63,13 @@ public class AmortizationScheduleCalculator
 			schedules.Add(amortizationSchedule);
 		}
 
+		Console.WriteLine($"Successfully calculated amortization schedules for {debts.Count} debts");
 		return schedules;
 	}
 
 	private static MonthlyAmortizationDetail CreateInitialMonthlyDetail(DebtDto debt)
 	{
+		Console.WriteLine($"Creating initial monthly detail for Debt ID: {debt.Id}");
 		return new MonthlyAmortizationDetail
 		{
 			DebtStateAtMonthEnd = debt
