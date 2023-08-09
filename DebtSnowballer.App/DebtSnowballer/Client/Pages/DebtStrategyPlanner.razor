@@ -179,7 +179,7 @@ else
 	{
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
-		StateHasChanged();`
+		StateHasChanged();
 	}
 
 	private async Task NavigateToAmortizationSchedule()
@@ -188,5 +188,4 @@ else
 		string paymentPlanDetailsJson = JsonSerializer.Serialize(paymentPlanDetails);
 		NavigationManager.NavigateTo($"/amortizationSchedule?paymentPlanDetails={Uri.EscapeDataString(paymentPlanDetailsJson)}");
 	}
-
-}
+	}

@@ -6,7 +6,7 @@ public class SnowflakeDto
 {
 	public int Id { get; set; }
 
-	[Required] public string Auth0UserId { get; set; }
+	public string Auth0UserId { get; set; }
 
 	[Required]
 	[StringLength(50, ErrorMessage = "Nick Name must be less than 50 characters.")]
