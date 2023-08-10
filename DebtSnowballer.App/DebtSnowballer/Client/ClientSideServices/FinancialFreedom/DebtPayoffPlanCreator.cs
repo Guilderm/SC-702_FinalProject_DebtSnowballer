@@ -21,22 +21,22 @@ public class DebtPayoffPlanCreator
 		List<LoanDetailDto> unsortedDebtsForBaseline = debts;
 		Console.WriteLine("Calculating Baseline payment plan...");
 		debtPayoffPlan.PaymentPlans["Baseline"] =
-			await Task.Run(() => _scheduleCreator.CalculateAmortizationSchedule(unsortedDebtsForBaseline));
+			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(unsortedDebtsForBaseline));
 
 		List<LoanDetailDto> sortedDebtsForSnowball = debts.OrderByDescending(d => d.RemainingPrincipal).ToList();
 		Console.WriteLine("Calculating Snowball payment plan...");
 		debtPayoffPlan.PaymentPlans["Snowball"] =
-			await Task.Run(() => _scheduleCreator.CalculateAmortizationSchedule(sortedDebtsForSnowball));
+			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForSnowball));
 
 		List<LoanDetailDto> sortedDebtsForAvalanche = debts.OrderByDescending(d => d.AnnualInterestRate).ToList();
 		Console.WriteLine("Calculating Avalanche payment plan...");
 		debtPayoffPlan.PaymentPlans["Avalanche"] =
-			await Task.Run(() => _scheduleCreator.CalculateAmortizationSchedule(sortedDebtsForAvalanche));
+			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForAvalanche));
 
 		List<LoanDetailDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
 		Console.WriteLine("Calculating Custom payment plan...");
 		debtPayoffPlan.PaymentPlans["Custom"] =
-			await Task.Run(() => _scheduleCreator.CalculateAmortizationSchedule(sortedDebtsForCustom));
+			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForCustom));
 
 		Console.WriteLine("Successfully calculated all payment plans");
 		return debtPayoffPlan;

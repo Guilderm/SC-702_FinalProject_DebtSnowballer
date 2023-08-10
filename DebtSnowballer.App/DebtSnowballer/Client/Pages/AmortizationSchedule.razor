@@ -21,10 +21,10 @@
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.MonthlyDetails))
+		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
 		{
 			<tr>
-				<td>@detail.Month</td>
+				<td>@detail.PaymentMonth</td>
 				<td>@detail.InterestPaid</td>
 				<td>@detail.BankFeesPaid</td>
 				<td>@detail.PrincipalPaid</td>

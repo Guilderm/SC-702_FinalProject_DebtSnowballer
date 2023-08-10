@@ -2,7 +2,7 @@
 
 public class AmortizationSchedule
 {
-	public List<PaymentInstallment> MonthlyDetails { get; set; }
+	public List<PaymentInstallment> PaymentInstallments { get; set; }
 
 	public int DebtId { get; set; }
 	public string Auth0UserId { get; set; }

@@ -4,72 +4,76 @@ namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
 public class PaymentInstallmentCreator
 {
-	public PaymentInstallment CalculateMonthlyDetail(PaymentInstallment loanAtMonthStart,
+	public PaymentInstallment CalculateMonthlyDetail(PaymentInstallment inicialLoanDetail,
 		decimal allocatedExtraPayment)
 	{
 		Console.WriteLine(
-			$"Entered function 'CalculateMonthlyDetail' for month {loanAtMonthStart.Month}" +
-			$" of date: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate}");
+			$"Entered function 'CalculateMonthlyDetail' for month {inicialLoanDetail.PaymentMonth}" +
+			$" of date: {inicialLoanDetail.EndOfMonthLoanState.StartDate}");
 
-		PaymentInstallment loanAtMonthEnd = CreateAmortizationDetail(loanAtMonthStart);
+		PaymentInstallment resultingLoanDetail = CreateLoanDetailFromAmortization(inicialLoanDetail);
 
 		Console.WriteLine(" loanAtMonthStart info is:");
-		Console.WriteLine($"  Debt ID: {loanAtMonthStart.LoanStateAtMonthEnd.Id}");
-		Console.WriteLine($"  Auth0UserId: {loanAtMonthStart.LoanStateAtMonthEnd.Auth0UserId}");
-		Console.WriteLine($"  Name: {loanAtMonthStart.LoanStateAtMonthEnd.Name}");
-		Console.WriteLine($"  RemainingPrincipal: {loanAtMonthStart.LoanStateAtMonthEnd.RemainingPrincipal}");
-		Console.WriteLine($"  BankFees: {loanAtMonthStart.LoanStateAtMonthEnd.BankFees}");
-		Console.WriteLine($"  MonthlyPayment: {loanAtMonthStart.LoanStateAtMonthEnd.ContractedMonthlyPayment}");
-		Console.WriteLine($"  AnnualInterestRate: {loanAtMonthStart.LoanStateAtMonthEnd.AnnualInterestRate}");
-		Console.WriteLine($"  RemainingTermInMonths: {loanAtMonthStart.LoanStateAtMonthEnd.RemainingTermInMonths}");
-		Console.WriteLine($"  CurrencyCode: {loanAtMonthStart.LoanStateAtMonthEnd.CurrencyCode}");
-		Console.WriteLine($"  CardinalOrder: {loanAtMonthStart.LoanStateAtMonthEnd.CardinalOrder}");
-		Console.WriteLine($"  StartDate: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate:yyyy-MM-dd}");
+		Console.WriteLine($"  Debt ID: {inicialLoanDetail.EndOfMonthLoanState.Id}");
+		Console.WriteLine($"  Auth0UserId: {inicialLoanDetail.EndOfMonthLoanState.Auth0UserId}");
+		Console.WriteLine($"  Name: {inicialLoanDetail.EndOfMonthLoanState.Name}");
+		Console.WriteLine($"  RemainingPrincipal: {inicialLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
+		Console.WriteLine($"  BankFees: {inicialLoanDetail.EndOfMonthLoanState.BankFees}");
+		Console.WriteLine($"  MonthlyPayment: {inicialLoanDetail.EndOfMonthLoanState.ContractedMonthlyPayment}");
+		Console.WriteLine($"  AnnualInterestRate: {inicialLoanDetail.EndOfMonthLoanState.AnnualInterestRate}");
+		Console.WriteLine($"  RemainingTermInMonths: {inicialLoanDetail.EndOfMonthLoanState.RemainingTermInMonths}");
+		Console.WriteLine($"  CurrencyCode: {inicialLoanDetail.EndOfMonthLoanState.CurrencyCode}");
+		Console.WriteLine($"  CardinalOrder: {inicialLoanDetail.EndOfMonthLoanState.CardinalOrder}");
+		Console.WriteLine($"  StartDate: {inicialLoanDetail.EndOfMonthLoanState.StartDate:yyyy-MM-dd}");
 
-		decimal paymentAmount = CalculateMinimumMonthlyPayment(loanAtMonthStart.LoanStateAtMonthEnd) +
+		decimal paymentAmount = CalculateMinimumMonthlyPayment(inicialLoanDetail.EndOfMonthLoanState) +
 		                        allocatedExtraPayment;
-		loanAtMonthEnd.InterestPaid =
-			loanAtMonthStart.LoanStateAtMonthEnd.RemainingPrincipal *
-			(loanAtMonthStart.LoanStateAtMonthEnd.AnnualInterestRate / 12);
-		loanAtMonthEnd.BankFeesPaid = loanAtMonthStart.LoanStateAtMonthEnd.BankFees;
-		loanAtMonthEnd.PrincipalPaid =
-			loanAtMonthStart.LoanStateAtMonthEnd.RemainingPrincipal - (paymentAmount - (loanAtMonthEnd.InterestPaid +
-				loanAtMonthEnd.LoanStateAtMonthEnd.BankFees));
+		resultingLoanDetail.InterestPaid =
+			inicialLoanDetail.EndOfMonthLoanState.RemainingPrincipal *
+			(inicialLoanDetail.EndOfMonthLoanState.AnnualInterestRate / 12);
+		resultingLoanDetail.BankFeesPaid = inicialLoanDetail.EndOfMonthLoanState.BankFees;
+		resultingLoanDetail.PrincipalPaid =
+			inicialLoanDetail.EndOfMonthLoanState.RemainingPrincipal - (paymentAmount -
+			                                                            (resultingLoanDetail.InterestPaid +
+			                                                             resultingLoanDetail.EndOfMonthLoanState
+				                                                             .BankFees));
 
-		loanAtMonthEnd.LoanStateAtMonthEnd.RemainingPrincipal =
-			loanAtMonthStart.LoanStateAtMonthEnd.RemainingPrincipal - loanAtMonthEnd.PrincipalPaid;
-		loanAtMonthEnd.LoanStateAtMonthEnd.StartDate = loanAtMonthStart.LoanStateAtMonthEnd.StartDate;
-		loanAtMonthEnd.LoanStateAtMonthEnd.RemainingTermInMonths =
-			CalculateRemainingTerm(loanAtMonthEnd.LoanStateAtMonthEnd);
+		resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal =
+			inicialLoanDetail.EndOfMonthLoanState.RemainingPrincipal - resultingLoanDetail.PrincipalPaid;
+		resultingLoanDetail.EndOfMonthLoanState.StartDate = inicialLoanDetail.EndOfMonthLoanState.StartDate;
+		resultingLoanDetail.EndOfMonthLoanState.RemainingTermInMonths =
+			CalculateRemainingTerm(resultingLoanDetail.EndOfMonthLoanState);
 
-		loanAtMonthEnd.AccumulatedInterestPaid = loanAtMonthStart.AccumulatedInterestPaid + loanAtMonthEnd.InterestPaid;
-		loanAtMonthEnd.AccumulatedBankFeesPaid = loanAtMonthStart.AccumulatedBankFeesPaid + loanAtMonthEnd.BankFeesPaid;
-		loanAtMonthEnd.AccumulatedPrincipalPaid =
-			loanAtMonthStart.AccumulatedPrincipalPaid + loanAtMonthEnd.PrincipalPaid;
+		resultingLoanDetail.AccumulatedInterestPaid =
+			inicialLoanDetail.AccumulatedInterestPaid + resultingLoanDetail.InterestPaid;
+		resultingLoanDetail.AccumulatedBankFeesPaid =
+			inicialLoanDetail.AccumulatedBankFeesPaid + resultingLoanDetail.BankFeesPaid;
+		resultingLoanDetail.AccumulatedPrincipalPaid =
+			inicialLoanDetail.AccumulatedPrincipalPaid + resultingLoanDetail.PrincipalPaid;
 
-		loanAtMonthEnd.Month = ++loanAtMonthStart.Month;
+		resultingLoanDetail.PaymentMonth = ++inicialLoanDetail.PaymentMonth;
 
-		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {loanAtMonthEnd}");
-		return loanAtMonthEnd;
+		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {resultingLoanDetail}");
+		return resultingLoanDetail;
 	}
 
-	private PaymentInstallment CreateAmortizationDetail(PaymentInstallment loanDetail)
+	private PaymentInstallment CreateLoanDetailFromAmortization(PaymentInstallment loanDetail)
 	{
 		return new PaymentInstallment
 		{
-			LoanStateAtMonthEnd = new LoanDetailDto
+			EndOfMonthLoanState = new LoanDetailDto
 			{
-				Id = loanDetail.LoanStateAtMonthEnd.Id,
-				Auth0UserId = loanDetail.LoanStateAtMonthEnd.Auth0UserId,
-				Name = loanDetail.LoanStateAtMonthEnd.Name,
-				RemainingPrincipal = loanDetail.LoanStateAtMonthEnd.RemainingPrincipal,
-				BankFees = loanDetail.LoanStateAtMonthEnd.BankFees,
-				ContractedMonthlyPayment = loanDetail.LoanStateAtMonthEnd.ContractedMonthlyPayment,
-				AnnualInterestRate = loanDetail.LoanStateAtMonthEnd.AnnualInterestRate,
-				RemainingTermInMonths = loanDetail.LoanStateAtMonthEnd.RemainingTermInMonths,
-				CurrencyCode = loanDetail.LoanStateAtMonthEnd.CurrencyCode,
-				CardinalOrder = loanDetail.LoanStateAtMonthEnd.CardinalOrder,
-				StartDate = loanDetail.LoanStateAtMonthEnd.StartDate
+				Id = loanDetail.EndOfMonthLoanState.Id,
+				Auth0UserId = loanDetail.EndOfMonthLoanState.Auth0UserId,
+				Name = loanDetail.EndOfMonthLoanState.Name,
+				RemainingPrincipal = loanDetail.EndOfMonthLoanState.RemainingPrincipal,
+				BankFees = loanDetail.EndOfMonthLoanState.BankFees,
+				ContractedMonthlyPayment = loanDetail.EndOfMonthLoanState.ContractedMonthlyPayment,
+				AnnualInterestRate = loanDetail.EndOfMonthLoanState.AnnualInterestRate,
+				RemainingTermInMonths = loanDetail.EndOfMonthLoanState.RemainingTermInMonths,
+				CurrencyCode = loanDetail.EndOfMonthLoanState.CurrencyCode,
+				CardinalOrder = loanDetail.EndOfMonthLoanState.CardinalOrder,
+				StartDate = loanDetail.EndOfMonthLoanState.StartDate
 			}
 		};
 	}

@@ -4,9 +4,9 @@ namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
 public class PaymentInstallment
 {
-	public LoanDetailDto LoanStateAtMonthEnd { get; set; }
+	public LoanDetailDto EndOfMonthLoanState { get; set; }
 
-	public int Month { get; set; }
+	public int PaymentMonth { get; set; }
 
 	public decimal InterestPaid { get; set; }
 	public decimal BankFeesPaid { get; set; }
