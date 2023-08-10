@@ -70,7 +70,7 @@ public class MonthlyAmortizationCalculator
 
 	private decimal CalculateMinimumMonthlyPayment(LoanDetailDto loanDetail)
 	{
-		Console.WriteLine("Entered function 'CalculateMinimumMonthlyPayment'");
+		Console.WriteLine("--- Entered function 'CalculateMinimumMonthlyPayment'");
 
 		if (loanDetail == null)
 			throw new ArgumentNullException(nameof(loanDetail));
@@ -78,6 +78,9 @@ public class MonthlyAmortizationCalculator
 		decimal principal = loanDetail.RemainingPrincipal;
 		decimal rate = loanDetail.AnnualInterestRate / 12;
 		int installments = loanDetail.RemainingTermInMonths;
+
+		if (principal <= (decimal)0.01 || installments <= 0)
+			return 0;
 
 		Console.WriteLine($"principal is: {principal}");
 		Console.WriteLine($"rate is: {rate}");
@@ -96,13 +99,22 @@ public class MonthlyAmortizationCalculator
 
 	private int CalculateRemainingTerm(LoanDetailDto loanDetail)
 	{
-		Console.WriteLine("Entered function 'CalculateRemainingTerm'");
+		Console.WriteLine("--- Entered function 'CalculateRemainingTerm'");
 
 		if (loanDetail == null)
 			throw new ArgumentNullException(nameof(loanDetail));
+
+		if (loanDetail.RemainingPrincipal <= (decimal)0.01) return 0;
+
 		decimal monthlyPayment = CalculateMinimumMonthlyPayment(loanDetail);
 		decimal remainingPrincipal = loanDetail.RemainingPrincipal;
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
+
+		if (monthlyPayment <= (decimal)0.01) return 0;
+
+		Console.WriteLine($"monthlyPayment is: {monthlyPayment}");
+		Console.WriteLine($"remainingPrincipal is:  {remainingPrincipal}");
+		Console.WriteLine($"monthlyInterestRate is:  {monthlyInterestRate}");
 
 		// Calculate the remaining term using the formula for the number of periods in an ordinary annuity
 		int remainingTerm =

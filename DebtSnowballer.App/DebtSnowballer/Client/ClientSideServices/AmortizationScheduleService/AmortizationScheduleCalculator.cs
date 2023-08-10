@@ -19,20 +19,6 @@ public class AmortizationScheduleCalculator
 
 		foreach (LoanDetailDto debt in debts)
 		{
-			Console.WriteLine($"Calculating amortization schedule for Debt ID: {debt.Id}");
-			Console.WriteLine("Details for Debt ID:");
-			Console.WriteLine($"  Debt ID: {debt.Id}");
-			Console.WriteLine($"  Auth0UserId: {debt.Auth0UserId}");
-			Console.WriteLine($"  Name: {debt.Name}");
-			Console.WriteLine($"  RemainingPrincipal: {debt.RemainingPrincipal}");
-			Console.WriteLine($"  BankFees: {debt.BankFees}");
-			Console.WriteLine($"  MonthlyPayment: {debt.ContractedMonthlyPayment}");
-			Console.WriteLine($"  AnnualInterestRate: {debt.AnnualInterestRate}");
-			Console.WriteLine($"  RemainingTermInMonths: {debt.RemainingTermInMonths}");
-			Console.WriteLine($"  CurrencyCode: {debt.CurrencyCode}");
-			Console.WriteLine($"  CardinalOrder: {debt.CardinalOrder}");
-			Console.WriteLine($"  StartDate: {debt.StartDate:yyyy-MM-dd}");
-
 			AmortizationScheduleDetails amortizationSchedule = CreateAmortizationScheduleDetails(debt);
 			do
 			{
@@ -86,35 +72,11 @@ public class AmortizationScheduleCalculator
 			MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateAmortizationDetailFromDebtDto(loanDetail) }
 		};
 
-		Console.WriteLine("Amortization Schedule Details:");
-		Console.WriteLine($"  DebtId: {amortizationSchedule.DebtId}");
-		Console.WriteLine($"  Auth0UserId: {amortizationSchedule.Auth0UserId}");
-		Console.WriteLine($"  Name: {amortizationSchedule.Name}");
-		Console.WriteLine($"  BankFees: {amortizationSchedule.BankFees}");
-		Console.WriteLine($"  ContractedMonthlyPayment: {amortizationSchedule.ContractedMonthlyPayment}");
-		Console.WriteLine($"  AnnualInterestRate: {amortizationSchedule.AnnualInterestRate}");
-		Console.WriteLine($"  CurrencyCode: {amortizationSchedule.CurrencyCode}");
-		Console.WriteLine($"  CardinalOrder: {amortizationSchedule.CardinalOrder}");
-		Console.WriteLine($"  MonthlyDetails Count: {amortizationSchedule.MonthlyDetails.Count}");
 		return amortizationSchedule;
 	}
 
 	private static MonthlyAmortizationDetail CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
 	{
-		Console.WriteLine("Creating initial monthly detail for Debt ID:");
-		Console.WriteLine($"  Debt ID: {loanDetail.Id}");
-		Console.WriteLine($"  Auth0UserId: {loanDetail.Auth0UserId}");
-		Console.WriteLine($"  Name: {loanDetail.Name}");
-		Console.WriteLine($"  RemainingPrincipal: {loanDetail.RemainingPrincipal}");
-		Console.WriteLine($"  BankFees: {loanDetail.BankFees}");
-		Console.WriteLine($"  MonthlyPayment: {loanDetail.ContractedMonthlyPayment}");
-		Console.WriteLine($"  AnnualInterestRate: {loanDetail.AnnualInterestRate}");
-		Console.WriteLine($"  RemainingTermInMonths: {loanDetail.RemainingTermInMonths}");
-		Console.WriteLine($"  CurrencyCode: {loanDetail.CurrencyCode}");
-		Console.WriteLine($"  CardinalOrder: {loanDetail.CardinalOrder}");
-		Console.WriteLine($"  StartDate: {loanDetail.StartDate:yyyy-MM-dd}");
-
-
 		return new MonthlyAmortizationDetail
 		{
 			LoanStateAtMonthEnd = loanDetail
