@@ -166,7 +166,13 @@ public class PaymentInstallmentCreator
 			return 0;
 		}
 
-		if (monthlyPayment < loanDetail.ContractedMonthlyPayment) monthlyPayment = loanDetail.ContractedMonthlyPayment;
+		if (monthlyPayment < loanDetail.ContractedMonthlyPayment)
+		{
+			Console.WriteLine(
+				$"Monthly payment of {monthlyPayment} is less than the contracted monthly payment of {loanDetail.ContractedMonthlyPayment}. Adjusting monthly payment to match the contracted amount.");
+			monthlyPayment = loanDetail.ContractedMonthlyPayment;
+		}
+
 
 		Console.WriteLine("--The data to calculate CalculateRemainingTerm is:");
 		Console.WriteLine($"monthlyPayment is: {monthlyPayment}");
