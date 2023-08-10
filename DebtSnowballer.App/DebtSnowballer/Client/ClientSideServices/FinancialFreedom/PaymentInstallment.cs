@@ -1,8 +1,8 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class MonthlyAmortizationDetail
+public class PaymentInstallment
 {
 	public LoanDetailDto LoanStateAtMonthEnd { get; set; }
 

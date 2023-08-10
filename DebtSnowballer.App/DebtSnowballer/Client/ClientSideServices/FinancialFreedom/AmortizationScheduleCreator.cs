@@ -1,16 +1,16 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class AmortizationScheduleCalculator
+public class AmortizationScheduleCreator
 {
-	public List<AmortizationScheduleDetails> CalculateAmortizationSchedule(List<LoanDetailDto> debts)
+	public List<AmortizationSchedule> CalculateAmortizationSchedule(List<LoanDetailDto> debts)
 	{
 		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
 
-		MonthlyAmortizationCalculator calculator = new();
+		PaymentInstallmentCreator calculator = new();
 
-		List<AmortizationScheduleDetails> schedules = new List<AmortizationScheduleDetails>();
+		List<AmortizationSchedule> schedules = new List<AmortizationSchedule>();
 
 		decimal allocatedPayment = 0;
 		decimal paymentReallocationAmount = 0;
@@ -19,7 +19,7 @@ public class AmortizationScheduleCalculator
 
 		foreach (LoanDetailDto debt in debts)
 		{
-			AmortizationScheduleDetails amortizationSchedule = ConvertLoanDetailToAmortizationDetail(debt);
+			AmortizationSchedule amortizationSchedule = ConvertLoanDetailToAmortizationDetail(debt);
 			do
 			{
 				/*
@@ -27,7 +27,7 @@ public class AmortizationScheduleCalculator
 				But given that per business rules, the size of the list cannot be more than 540 (as each loan cannot be more than 45 years).
 				The size of the list would not be sufficiently large to notice a real performance difference.
 				So we chose sorting as it is a more concise and readable option.*/
-				MonthlyAmortizationDetail amortizationAtMonthStart =
+				PaymentInstallment amortizationAtMonthStart =
 					amortizationSchedule.MonthlyDetails.OrderByDescending(detail => detail.Month).First();
 
 
@@ -39,7 +39,7 @@ public class AmortizationScheduleCalculator
 
 				allocatedPayment = 0;
 
-				MonthlyAmortizationDetail amortizationAtMonthEnd =
+				PaymentInstallment amortizationAtMonthEnd =
 					calculator.CalculateMonthlyDetail(amortizationAtMonthStart, allocatedPayment);
 
 
@@ -68,7 +68,7 @@ public class AmortizationScheduleCalculator
 			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
 
 			// Actions done when a debt is paid off:
-			MonthlyAmortizationDetail lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
+			PaymentInstallment lastMonthDetail = amortizationSchedule.MonthlyDetails.Last();
 
 			paymentReallocationStartDate = lastMonthDetail.LoanStateAtMonthEnd.StartDate;
 			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
@@ -84,9 +84,9 @@ public class AmortizationScheduleCalculator
 		return schedules;
 	}
 
-	private static AmortizationScheduleDetails ConvertLoanDetailToAmortizationDetail(LoanDetailDto loanDetail)
+	private static AmortizationSchedule ConvertLoanDetailToAmortizationDetail(LoanDetailDto loanDetail)
 	{
-		AmortizationScheduleDetails amortizationSchedule = new()
+		AmortizationSchedule amortizationSchedule = new()
 		{
 			DebtId = loanDetail.Id,
 			Auth0UserId = loanDetail.Auth0UserId,
@@ -96,15 +96,15 @@ public class AmortizationScheduleCalculator
 			AnnualInterestRate = loanDetail.AnnualInterestRate,
 			CurrencyCode = loanDetail.CurrencyCode,
 			CardinalOrder = loanDetail.CardinalOrder,
-			MonthlyDetails = new List<MonthlyAmortizationDetail> { CreateAmortizationDetailFromDebtDto(loanDetail) }
+			MonthlyDetails = new List<PaymentInstallment> { CreateAmortizationDetailFromDebtDto(loanDetail) }
 		};
 
 		return amortizationSchedule;
 	}
 
-	private static MonthlyAmortizationDetail CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
+	private static PaymentInstallment CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
 	{
-		return new MonthlyAmortizationDetail
+		return new PaymentInstallment
 		{
 			LoanStateAtMonthEnd = new LoanDetailDto
 			{

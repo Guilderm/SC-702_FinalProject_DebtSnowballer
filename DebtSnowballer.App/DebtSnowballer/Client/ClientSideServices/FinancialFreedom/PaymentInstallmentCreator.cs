@@ -1,17 +1,17 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class MonthlyAmortizationCalculator
+public class PaymentInstallmentCreator
 {
-	public MonthlyAmortizationDetail CalculateMonthlyDetail(MonthlyAmortizationDetail loanAtMonthStart,
+	public PaymentInstallment CalculateMonthlyDetail(PaymentInstallment loanAtMonthStart,
 		decimal allocatedExtraPayment)
 	{
 		Console.WriteLine(
 			$"Entered function 'CalculateMonthlyDetail' for month {loanAtMonthStart.Month}" +
 			$" of date: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate}");
 
-		MonthlyAmortizationDetail loanAtMonthEnd = CreateAmortizationDetail(loanAtMonthStart);
+		PaymentInstallment loanAtMonthEnd = CreateAmortizationDetail(loanAtMonthStart);
 
 		Console.WriteLine(" loanAtMonthStart info is:");
 		Console.WriteLine($"  Debt ID: {loanAtMonthStart.LoanStateAtMonthEnd.Id}");
@@ -53,9 +53,9 @@ public class MonthlyAmortizationCalculator
 		return loanAtMonthEnd;
 	}
 
-	private MonthlyAmortizationDetail CreateAmortizationDetail(MonthlyAmortizationDetail loanDetail)
+	private PaymentInstallment CreateAmortizationDetail(PaymentInstallment loanDetail)
 	{
-		return new MonthlyAmortizationDetail
+		return new PaymentInstallment
 		{
 			LoanStateAtMonthEnd = new LoanDetailDto
 			{

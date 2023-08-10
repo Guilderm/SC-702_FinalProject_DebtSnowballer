@@ -1,8 +1,8 @@
-﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+﻿namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class AmortizationScheduleDetails
+public class AmortizationSchedule
 {
-	public List<MonthlyAmortizationDetail> MonthlyDetails { get; set; }
+	public List<PaymentInstallment> MonthlyDetails { get; set; }
 
 	public int DebtId { get; set; }
 	public string Auth0UserId { get; set; }

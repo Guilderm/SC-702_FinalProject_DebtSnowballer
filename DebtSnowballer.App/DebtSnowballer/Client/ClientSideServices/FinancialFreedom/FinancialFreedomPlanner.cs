@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class FinancialFreedomPlanner : IAmortizationScheduleService
+public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 {
-	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<LoanDetailDto> debts,
+	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDetailDto> debts,
 		List<PlannedSnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
 	{
@@ -14,8 +14,8 @@ public class FinancialFreedomPlanner : IAmortizationScheduleService
 
 		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
-		SnowflakesScheduleCalculator snowflakesScheduleCalculator = new();
-		var snowflakesSchedule = snowflakesScheduleCalculator.CalculateSnowflakes(snowflakes, maxTime);
+		SnowflakesScheduleCreator snowflakesScheduleCreator = new();
+		var snowflakesSchedule = snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
 
 		decimal totalMonthlyPayments = debts.Sum(d => d.ContractedMonthlyPayment);
 
@@ -29,8 +29,8 @@ public class FinancialFreedomPlanner : IAmortizationScheduleService
 		debtPlanMonthlyPayment -= totalMonthlyPayments;
 		Console.WriteLine($"Monthly amortization amount is calculated to be: {debtPlanMonthlyPayment}");
 
-		PaymentPlanCalculator paymentPlanCalculator = new(new AmortizationScheduleCalculator());
-		var result = await paymentPlanCalculator.CalculatePaymentPlansAsync(debts);
+		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
+		var result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
 
 		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
 

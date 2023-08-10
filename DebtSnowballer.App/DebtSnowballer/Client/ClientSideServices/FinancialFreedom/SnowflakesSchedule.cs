@@ -1,6 +1,6 @@
-﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+﻿namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class SnowflakesScheduleDetail
+public class SnowflakesSchedule
 {
 	public DateTime Date { get; set; }
 	public decimal Amount { get; set; }

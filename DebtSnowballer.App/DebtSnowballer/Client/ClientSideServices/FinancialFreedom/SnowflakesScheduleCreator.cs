@@ -1,15 +1,15 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class SnowflakesScheduleCalculator
+public class SnowflakesScheduleCreator
 {
-	public List<SnowflakesScheduleDetail> CalculateSnowflakes(List<PlannedSnowflakeDto> snowflakes, int maxTime)
+	public List<SnowflakesSchedule> CalculateSnowflakes(List<PlannedSnowflakeDto> snowflakes, int maxTime)
 	{
 		Console.WriteLine(
 			$"Entered function 'CalculateSnowflakes' with snowflakes count: {snowflakes.Count} and maxTime: {maxTime}");
 
-		var snowflakesSchedule = new List<SnowflakesScheduleDetail>();
+		var snowflakesSchedule = new List<SnowflakesSchedule>();
 
 		foreach (PlannedSnowflakeDto snowflake in snowflakes)
 		{
@@ -23,12 +23,12 @@ public class SnowflakesScheduleCalculator
 			DateTime date = startDate;
 			do
 			{
-				SnowflakesScheduleDetail snowflakeEntry = snowflakesSchedule.FirstOrDefault(c => c.Date == date);
+				SnowflakesSchedule snowflakeEntry = snowflakesSchedule.FirstOrDefault(c => c.Date == date);
 
 				if (snowflakeEntry == null)
 				{
 					// If no calculation exists for this date, create a new one
-					snowflakesSchedule.Add(new SnowflakesScheduleDetail { Date = date, Amount = snowflake.Amount });
+					snowflakesSchedule.Add(new SnowflakesSchedule { Date = date, Amount = snowflake.Amount });
 					Console.WriteLine($"Added new snowflake entry for date: {date}");
 				}
 				else

@@ -1,9 +1,9 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public interface IAmortizationScheduleService
+public interface IFinancialFreedomPlanner
 {
-	Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<LoanDetailDto> debts, List<PlannedSnowflakeDto> snowflakes,
+	Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDetailDto> debts, List<PlannedSnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment);
 }

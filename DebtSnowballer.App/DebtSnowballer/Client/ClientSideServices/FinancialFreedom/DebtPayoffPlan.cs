@@ -1,11 +1,11 @@
-﻿namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+﻿namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
-public class PaymentPlanDetail
+public class DebtPayoffPlan
 {
-	public PaymentPlanDetail()
+	public DebtPayoffPlan()
 	{
-		PaymentPlans = new Dictionary<string, List<AmortizationScheduleDetails>>();
+		PaymentPlans = new Dictionary<string, List<AmortizationSchedule>>();
 	}
 
-	public Dictionary<string, List<AmortizationScheduleDetails>> PaymentPlans { get; set; }
+	public Dictionary<string, List<AmortizationSchedule>> PaymentPlans { get; set; }
 }

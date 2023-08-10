@@ -1,7 +1,7 @@
 using Blazor.Extensions.Logging;
 using DebtSnowballer.Client;
 using DebtSnowballer.Client.ClientSideServices;
-using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
+using DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -30,7 +30,7 @@ builder.Services
 		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddScoped<IAmortizationScheduleService, FinancialFreedomPlanner>();
+builder.Services.AddScoped<IFinancialFreedomPlanner, FinancialFreedomPlanner>();
 
 
 builder.Services.AddOidcAuthentication(options =>
