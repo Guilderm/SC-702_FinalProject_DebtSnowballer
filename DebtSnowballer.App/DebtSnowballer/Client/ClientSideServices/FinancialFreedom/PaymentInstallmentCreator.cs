@@ -33,16 +33,23 @@ public class PaymentInstallmentCreator
 			(initialLoanDetail.EndOfMonthLoanState.AnnualInterestRate / 12);
 		resultingLoanDetail.BankFeesPaid = initialLoanDetail.EndOfMonthLoanState.BankFees;
 		resultingLoanDetail.PrincipalPaid =
-			initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal - (paymentAmount -
-			                                                            (resultingLoanDetail.InterestPaid +
-			                                                             resultingLoanDetail.EndOfMonthLoanState
-				                                                             .BankFees));
+			paymentAmount - (resultingLoanDetail.InterestPaid + resultingLoanDetail.BankFeesPaid);
+
 
 		resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal =
 			initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal - resultingLoanDetail.PrincipalPaid;
 		resultingLoanDetail.EndOfMonthLoanState.StartDate = initialLoanDetail.EndOfMonthLoanState.StartDate;
 		resultingLoanDetail.EndOfMonthLoanState.RemainingTermInMonths =
 			CalculateRemainingTerm(resultingLoanDetail.EndOfMonthLoanState);
+
+		Console.WriteLine("+++ Logging and Debugging:");
+		Console.WriteLine($"    Principal Paid: {resultingLoanDetail.PrincipalPaid}");
+		Console.WriteLine(
+			$"    Initial Remaining Principal: {initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
+		Console.WriteLine(
+			$"    Resulting Remaining Principal: {resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
+		Console.WriteLine(
+			$"    Resulting Remaining Principal: {resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
 
 		resultingLoanDetail.AccumulatedInterestPaid =
 			initialLoanDetail.AccumulatedInterestPaid + resultingLoanDetail.InterestPaid;
@@ -51,7 +58,12 @@ public class PaymentInstallmentCreator
 		resultingLoanDetail.AccumulatedPrincipalPaid =
 			initialLoanDetail.AccumulatedPrincipalPaid + resultingLoanDetail.PrincipalPaid;
 
-		resultingLoanDetail.PaymentMonth = ++initialLoanDetail.PaymentMonth;
+		resultingLoanDetail.PaymentMonth = initialLoanDetail.PaymentMonth + 1;
+		Console.WriteLine("+-+ Logging and Debugging:");
+		Console.WriteLine(
+			$"    Resulting PaymentMonth: {resultingLoanDetail.PaymentMonth}");
+		Console.WriteLine(
+			$"    Initial PaymentMonth: {initialLoanDetail.PaymentMonth}");
 
 		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {resultingLoanDetail}");
 		return resultingLoanDetail;
@@ -89,7 +101,7 @@ public class PaymentInstallmentCreator
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 		int installments = loanDetail.RemainingTermInMonths;
 
-		//Given the precision that can be expected for a program like this there is no need to calculate any further if amount is smaller than 0.001, especially given that very small numbers where generating what are essentially Divide by zero. Presumly because they some times gets rounded down to 0 
+		//Given the precision that can be expected for a program like this there is no need to calculate any further if amount is smaller than 0.001, especially given that very small numbers where generating what are essentially Divide by zero. Presumably because they some times gets rounded down to 0 
 		if (principal <= (decimal)0.001 || installments <= 0)
 			return 0;
 

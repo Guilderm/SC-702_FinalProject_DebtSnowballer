@@ -27,11 +27,15 @@ public class AmortizationScheduleCreator
 				But given that per business rules, the size of the list cannot be more than 540 (as each loan cannot be more than 45 years).
 				The size of the list would not be sufficiently large to notice a real performance difference.
 				So we chose sorting as it is a more concise and readable option.*/
-				PaymentInstallment InicialPaymentInstallment =
+				PaymentInstallment initialPaymentInstallment =
 					amortizationSchedule.PaymentInstallments.OrderByDescending(detail => detail.PaymentMonth).First();
 
 
-				if (paymentReallocationStartDate <= InicialPaymentInstallment.EndOfMonthLoanState.StartDate)
+				if (paymentReallocationStartDate.Year < initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year ||
+				    (paymentReallocationStartDate.Year ==
+				     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year &&
+				     paymentReallocationStartDate.Month <=
+				     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Month))
 				{
 					Console.WriteLine($"Allocating reallocation amount: {paymentReallocationAmount}");
 					allocatedPayment += paymentReallocationAmount;
@@ -40,7 +44,7 @@ public class AmortizationScheduleCreator
 				allocatedPayment = 0;
 
 				PaymentInstallment resultingPaymentInstallment =
-					paymentInstallmentCreator.CalculateMonthlyDetail(InicialPaymentInstallment, allocatedPayment);
+					paymentInstallmentCreator.CalculateMonthlyDetail(initialPaymentInstallment, allocatedPayment);
 
 				amortizationSchedule.PaymentInstallments.Add(resultingPaymentInstallment);
 				Console.WriteLine(
@@ -48,9 +52,8 @@ public class AmortizationScheduleCreator
 				debt.RemainingPrincipal = resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal;
 
 				Console.WriteLine(
-					$"Amortization Schedules for loan {resultingPaymentInstallment.EndOfMonthLoanState.Name} is:");
+					$"resulting Payment Installment Schedules for loan {resultingPaymentInstallment.EndOfMonthLoanState.Name} is:");
 				Console.WriteLine($"  Debt ID: {resultingPaymentInstallment.EndOfMonthLoanState.Id}");
-				Console.WriteLine($"  Auth0UserId: {resultingPaymentInstallment.EndOfMonthLoanState.Auth0UserId}");
 				Console.WriteLine($"  Name: {resultingPaymentInstallment.EndOfMonthLoanState.Name}");
 				Console.WriteLine(
 					$"  RemainingPrincipal: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal}");
@@ -58,14 +61,7 @@ public class AmortizationScheduleCreator
 				Console.WriteLine(
 					$"  MonthlyPayment: {resultingPaymentInstallment.EndOfMonthLoanState.ContractedMonthlyPayment}");
 				Console.WriteLine(
-					$"  AnnualInterestRate: {resultingPaymentInstallment.EndOfMonthLoanState.AnnualInterestRate}");
-				Console.WriteLine(
 					$"  RemainingTermInMonths: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingTermInMonths}");
-				Console.WriteLine($"  CurrencyCode: {resultingPaymentInstallment.EndOfMonthLoanState.CurrencyCode}");
-				Console.WriteLine($"  CardinalOrder: {resultingPaymentInstallment.EndOfMonthLoanState.CardinalOrder}");
-				Console.WriteLine(
-					$"  StartDate: {resultingPaymentInstallment.EndOfMonthLoanState.StartDate:yyyy-MM-dd}");
-				Console.WriteLine($"  StartDate: {resultingPaymentInstallment.EndOfMonthLoanState.StartDate}");
 			} while (debt.RemainingPrincipal > 0);
 
 			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
