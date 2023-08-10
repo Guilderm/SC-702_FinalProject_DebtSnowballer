@@ -35,21 +35,11 @@ public class PaymentInstallmentCreator
 		resultingLoanDetail.PrincipalPaid =
 			paymentAmount - (resultingLoanDetail.InterestPaid + resultingLoanDetail.BankFeesPaid);
 
-
 		resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal =
 			initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal - resultingLoanDetail.PrincipalPaid;
 		resultingLoanDetail.EndOfMonthLoanState.StartDate = initialLoanDetail.EndOfMonthLoanState.StartDate;
 		resultingLoanDetail.EndOfMonthLoanState.RemainingTermInMonths =
 			CalculateRemainingTerm(resultingLoanDetail.EndOfMonthLoanState);
-
-		Console.WriteLine("+++ Logging and Debugging:");
-		Console.WriteLine($"    Principal Paid: {resultingLoanDetail.PrincipalPaid}");
-		Console.WriteLine(
-			$"    Initial Remaining Principal: {initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
-		Console.WriteLine(
-			$"    Resulting Remaining Principal: {resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
-		Console.WriteLine(
-			$"    Resulting Remaining Principal: {resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
 
 		resultingLoanDetail.AccumulatedInterestPaid =
 			initialLoanDetail.AccumulatedInterestPaid + resultingLoanDetail.InterestPaid;
@@ -59,11 +49,6 @@ public class PaymentInstallmentCreator
 			initialLoanDetail.AccumulatedPrincipalPaid + resultingLoanDetail.PrincipalPaid;
 
 		resultingLoanDetail.PaymentMonth = initialLoanDetail.PaymentMonth + 1;
-		Console.WriteLine("+-+ Logging and Debugging:");
-		Console.WriteLine(
-			$"    Resulting PaymentMonth: {resultingLoanDetail.PaymentMonth}");
-		Console.WriteLine(
-			$"    Initial PaymentMonth: {initialLoanDetail.PaymentMonth}");
 
 		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {resultingLoanDetail}");
 		return resultingLoanDetail;
@@ -123,14 +108,27 @@ public class PaymentInstallmentCreator
 		if (loanDetail == null)
 			throw new ArgumentNullException(nameof(loanDetail));
 
-		if (loanDetail.RemainingPrincipal <= (decimal)0.001) return 0;
+		if (loanDetail.RemainingPrincipal <= (decimal)0.001)
+		{
+			Console.WriteLine(
+				$"--- Remaning principal is: {loanDetail.RemainingPrincipal},  Wich is bellow 0.001. That is too low to make a meaningful calculation. Will deem the remaining term to be 0");
+			return 0;
+		}
 
 		decimal monthlyPayment = CalculateMinimumMonthlyPayment(loanDetail);
 		decimal remainingPrincipal = loanDetail.RemainingPrincipal;
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 
-		if (monthlyPayment <= (decimal)0.01) return 0;
+		if (monthlyPayment <= (decimal) 0.001)
+		{
+			Console.WriteLine(
+				$"--- monthly Payment is: {monthlyPayment},  Wich is bellow 0.001. That is too low to make a meaningful calculation. Will deem the remaining term to be 0");
+			return 0;
+		}
+		CalculateRemainingTerm
 
+
+		Console.WriteLine($"--The data to calculate CalculateRemainingTerm is:");
 		Console.WriteLine($"monthlyPayment is: {monthlyPayment}");
 		Console.WriteLine($"remainingPrincipal is:  {remainingPrincipal}");
 		Console.WriteLine($"monthlyInterestRate is:  {monthlyInterestRate}");
@@ -141,7 +139,7 @@ public class PaymentInstallmentCreator
 				Math.Log((double)(monthlyPayment / (monthlyPayment - monthlyInterestRate * remainingPrincipal))) /
 				Math.Log(1 + (double)monthlyInterestRate));
 
-		Console.WriteLine($"Calculated Remaining Term: {remainingTerm}");
+		Console.WriteLine($"Calculated Remaining Term to be: {remainingTerm}");
 
 		return remainingTerm;
 	}
