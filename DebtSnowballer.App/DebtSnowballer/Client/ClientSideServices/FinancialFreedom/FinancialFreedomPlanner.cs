@@ -3,7 +3,7 @@ using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService;
 
-public class AmortizationScheduleService : IAmortizationScheduleService
+public class FinancialFreedomPlanner : IAmortizationScheduleService
 {
 	public async Task<PaymentPlanDetail> CalculatePaymentPlansAsync(List<LoanDetailDto> debts,
 		List<PlannedSnowflakeDto> snowflakes,

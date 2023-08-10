@@ -1,13 +1,13 @@
 ﻿@page "/amortizationschedule"
-@using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
 @using System.Text.Json
+@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 
-@inject IAmortizationScheduleService AmortizationScheduleService
+@inject IFinancialFreedomPlanner FinancialFreedomPlanner
 @inject NavigationManager NavigationManager
 
 <h1>Amortization Schedule</h1>
 
-@foreach (var plan in PaymentPlanDetails.PaymentPlans)
+@foreach (var plan in DebtPayoffPlan.PaymentPlans)
 {
 	<h3>@plan.Key</h3>
 	<!-- Strategy Name -->
@@ -21,7 +21,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		@foreach (MonthlyAmortizationDetail detail in plan.Value.SelectMany(a => a.MonthlyDetails))
+		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.MonthlyDetails))
 		{
 			<tr>
 				<td>@detail.Month</td>
@@ -36,12 +36,12 @@
 
 
 @code {
-	private PaymentPlanDetail PaymentPlanDetails { get; set; }
+	private DebtPayoffPlan DebtPayoffPlan { get; set; }
 
 	protected override Task OnInitializedAsync()
 	{
 		string paymentPlanDetailsJson = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split(new[] { '?' })[1].Split(new[] { '=' })[1];
-		PaymentPlanDetails = JsonSerializer.Deserialize<PaymentPlanDetail>(Uri.UnescapeDataString(paymentPlanDetailsJson));
+		DebtPayoffPlan = JsonSerializer.Deserialize<DebtPayoffPlan>(Uri.UnescapeDataString(paymentPlanDetailsJson));
 		return Task.CompletedTask;
 	}
 

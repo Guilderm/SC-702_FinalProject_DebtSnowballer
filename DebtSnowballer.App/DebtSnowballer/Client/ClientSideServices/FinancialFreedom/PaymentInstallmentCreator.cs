@@ -11,23 +11,7 @@ public class MonthlyAmortizationCalculator
 			$"Entered function 'CalculateMonthlyDetail' for month {loanAtMonthStart.Month}" +
 			$" of date: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate}");
 
-		MonthlyAmortizationDetail loanAtMonthEnd = new()
-		{
-			LoanStateAtMonthEnd = new LoanDetailDto
-			{
-				Id = loanAtMonthStart.LoanStateAtMonthEnd.Id,
-				Auth0UserId = loanAtMonthStart.LoanStateAtMonthEnd.Auth0UserId,
-				Name = loanAtMonthStart.LoanStateAtMonthEnd.Name,
-				RemainingPrincipal = loanAtMonthStart.LoanStateAtMonthEnd.RemainingPrincipal,
-				BankFees = loanAtMonthStart.LoanStateAtMonthEnd.BankFees,
-				ContractedMonthlyPayment = loanAtMonthStart.LoanStateAtMonthEnd.ContractedMonthlyPayment,
-				AnnualInterestRate = loanAtMonthStart.LoanStateAtMonthEnd.AnnualInterestRate,
-				RemainingTermInMonths = loanAtMonthStart.LoanStateAtMonthEnd.RemainingTermInMonths,
-				CurrencyCode = loanAtMonthStart.LoanStateAtMonthEnd.CurrencyCode,
-				CardinalOrder = loanAtMonthStart.LoanStateAtMonthEnd.CardinalOrder,
-				StartDate = loanAtMonthStart.LoanStateAtMonthEnd.StartDate
-			}
-		};
+		MonthlyAmortizationDetail loanAtMonthEnd = CreateAmortizationDetail(loanAtMonthStart);
 
 		Console.WriteLine(" loanAtMonthStart info is:");
 		Console.WriteLine($"  Debt ID: {loanAtMonthStart.LoanStateAtMonthEnd.Id}");
@@ -69,6 +53,27 @@ public class MonthlyAmortizationCalculator
 		return loanAtMonthEnd;
 	}
 
+	private MonthlyAmortizationDetail CreateAmortizationDetail(MonthlyAmortizationDetail loanDetail)
+	{
+		return new MonthlyAmortizationDetail
+		{
+			LoanStateAtMonthEnd = new LoanDetailDto
+			{
+				Id = loanDetail.LoanStateAtMonthEnd.Id,
+				Auth0UserId = loanDetail.LoanStateAtMonthEnd.Auth0UserId,
+				Name = loanDetail.LoanStateAtMonthEnd.Name,
+				RemainingPrincipal = loanDetail.LoanStateAtMonthEnd.RemainingPrincipal,
+				BankFees = loanDetail.LoanStateAtMonthEnd.BankFees,
+				ContractedMonthlyPayment = loanDetail.LoanStateAtMonthEnd.ContractedMonthlyPayment,
+				AnnualInterestRate = loanDetail.LoanStateAtMonthEnd.AnnualInterestRate,
+				RemainingTermInMonths = loanDetail.LoanStateAtMonthEnd.RemainingTermInMonths,
+				CurrencyCode = loanDetail.LoanStateAtMonthEnd.CurrencyCode,
+				CardinalOrder = loanDetail.LoanStateAtMonthEnd.CardinalOrder,
+				StartDate = loanDetail.LoanStateAtMonthEnd.StartDate
+			}
+		};
+	}
+
 	private decimal CalculateMinimumMonthlyPayment(LoanDetailDto loanDetail)
 	{
 		Console.WriteLine("--- Entered function 'CalculateMinimumMonthlyPayment'");
@@ -80,19 +85,17 @@ public class MonthlyAmortizationCalculator
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 		int installments = loanDetail.RemainingTermInMonths;
 
-		// Check for edge cases
-		if (principal <= (decimal)0.01 || installments <= 0)
+		//Given the precision that can be expected for a program like this there is no need to calculate any further if amount is smaller than 0.001, especially given that very small numbers where generating what are essentially Divide by zero. Presumly because they some times gets rounded down to 0 
+		if (principal <= (decimal)0.001 || installments <= 0)
 			return 0;
 
-		// Precompute reusable value
-		decimal rateFactor = (decimal)Math.Pow(1 + (double)monthlyInterestRate, installments);
-
 		// Calculate monthly payment using the standard formula for monthly amortization
+		decimal rateFactor = (decimal)Math.Pow(1 + (double)monthlyInterestRate, installments);
 		decimal minimumMonthlyPayment = principal * monthlyInterestRate * rateFactor / (rateFactor - 1);
 
 		minimumMonthlyPayment += loanDetail.BankFees;
 
-		Console.WriteLine($"Calculated Minimum Monthly Payment: {minimumMonthlyPayment}");
+		Console.WriteLine($"Minimum Monthly Payment is calculated to be: {minimumMonthlyPayment}");
 
 		return minimumMonthlyPayment;
 	}
@@ -104,7 +107,7 @@ public class MonthlyAmortizationCalculator
 		if (loanDetail == null)
 			throw new ArgumentNullException(nameof(loanDetail));
 
-		if (loanDetail.RemainingPrincipal <= (decimal)0.01) return 0;
+		if (loanDetail.RemainingPrincipal <= (decimal)0.001) return 0;
 
 		decimal monthlyPayment = CalculateMinimumMonthlyPayment(loanDetail);
 		decimal remainingPrincipal = loanDetail.RemainingPrincipal;

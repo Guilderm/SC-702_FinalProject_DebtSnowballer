@@ -2,9 +2,9 @@
 @page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
-@using DebtSnowballer.Client.ClientSideServices.AmortizationScheduleService
 @using DebtSnowballer.Shared.Currency
 @using System.Text.Json
+@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Client.Components.DebtManagement
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -13,7 +13,7 @@
 @inject IDebtService DebtService
 @inject IUserProfileService UserProfileService
 @inject ISnowflakeService SnowflakeService
-@inject IAmortizationScheduleService AmortizationScheduleService
+@inject IFinancialFreedomPlanner FinancialFreedomPlanner
 
 
 @attribute [Authorize]
@@ -184,8 +184,8 @@ else
 
 	private async Task NavigateToAmortizationSchedule()
 	{
-		PaymentPlanDetail paymentPlanDetails = await AmortizationScheduleService.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
-		string paymentPlanDetailsJson = JsonSerializer.Serialize(paymentPlanDetails);
+		DebtPayoffPlan debtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
+		string paymentPlanDetailsJson = JsonSerializer.Serialize(debtPayoffPlan);
 		NavigationManager.NavigateTo($"/amortizationSchedule?paymentPlanDetails={Uri.EscapeDataString(paymentPlanDetailsJson)}");
 	}
 
