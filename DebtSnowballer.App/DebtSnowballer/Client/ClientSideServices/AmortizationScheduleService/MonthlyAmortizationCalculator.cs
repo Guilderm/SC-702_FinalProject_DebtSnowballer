@@ -8,7 +8,8 @@ public class MonthlyAmortizationCalculator
 		decimal allocatedExtraPayment)
 	{
 		Console.WriteLine(
-			$"Entered function 'CalculateMonthlyDetail' for month {loanAtMonthStart.Month} of date: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate}");
+			$"Entered function 'CalculateMonthlyDetail' for month {loanAtMonthStart.Month}" +
+			$" of date: {loanAtMonthStart.LoanStateAtMonthEnd.StartDate}");
 
 		MonthlyAmortizationDetail loanAtMonthEnd = new()
 		{
@@ -76,19 +77,18 @@ public class MonthlyAmortizationCalculator
 			throw new ArgumentNullException(nameof(loanDetail));
 
 		decimal principal = loanDetail.RemainingPrincipal;
-		decimal rate = loanDetail.AnnualInterestRate / 12;
+		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 		int installments = loanDetail.RemainingTermInMonths;
 
+		// Check for edge cases
 		if (principal <= (decimal)0.01 || installments <= 0)
 			return 0;
 
-		Console.WriteLine($"principal is: {principal}");
-		Console.WriteLine($"rate is: {rate}");
-		Console.WriteLine($"installments is: {installments}");
+		// Precompute reusable value
+		decimal rateFactor = (decimal)Math.Pow(1 + (double)monthlyInterestRate, installments);
 
 		// Calculate monthly payment using the standard formula for monthly amortization
-		decimal minimumMonthlyPayment = principal * rate * (decimal)Math.Pow(1 + (double)rate, installments) /
-		                                ((decimal)Math.Pow(1 + (double)rate, installments) - 1);
+		decimal minimumMonthlyPayment = principal * monthlyInterestRate * rateFactor / (rateFactor - 1);
 
 		minimumMonthlyPayment += loanDetail.BankFees;
 
