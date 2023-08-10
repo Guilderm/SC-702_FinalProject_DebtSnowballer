@@ -120,12 +120,11 @@ public class PaymentInstallmentCreator
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 		int installments = loanDetail.RemainingTermInMonths;
 
-		//Given the precision that can be expected for a program like this there is no need to calculate any further if amount is smaller than 0.001, especially given that very small numbers where generating what are essentially Divide by zero. Presumably because they some times gets rounded down to 0 
-		if (principal <= (decimal)0.001 || installments <= 0)
+		// Given the precision that can be expected for a program like this, there is no need to calculate any further if the amount is smaller than 0.001, especially given that very small numbers were generating what are essentially Divide by zero. Presumably because they sometimes get rounded down to 0 
+		if (principal <= 0.001M || installments <= 0)
 			return 0;
 
-
-		Console.WriteLine("--The data to calculate CalculateRemainingTerm is:");
+		Console.WriteLine("--The data to calculate CalculateMinimumMonthlyPayment is:");
 		Console.WriteLine($"principal is: {principal}");
 		Console.WriteLine($"monthlyInterestRate is:  {monthlyInterestRate}");
 		Console.WriteLine($"installments is:  {installments}");
@@ -134,12 +133,14 @@ public class PaymentInstallmentCreator
 		decimal rateFactor = (decimal)Math.Pow(1 + (double)monthlyInterestRate, installments);
 		decimal minimumMonthlyPayment = principal * monthlyInterestRate * rateFactor / (rateFactor - 1);
 
+		// Add bank fees to the calculated monthly payment
 		minimumMonthlyPayment += loanDetail.BankFees;
 
 		Console.WriteLine($"Minimum Monthly Payment is calculated to be: {minimumMonthlyPayment}");
 
 		return minimumMonthlyPayment;
 	}
+
 
 	private int CalculateRemainingTerm(LoanDetailDto loanDetail)
 	{
