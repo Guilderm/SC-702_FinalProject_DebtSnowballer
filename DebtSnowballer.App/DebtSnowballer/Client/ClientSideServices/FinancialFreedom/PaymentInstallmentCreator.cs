@@ -1,4 +1,5 @@
 ﻿using DebtSnowballer.Shared.DTOs;
+using Microsoft.VisualBasic;
 
 namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
@@ -13,18 +14,28 @@ public class PaymentInstallmentCreator
 
 		PaymentInstallment resultingLoanDetail = CreateLoanDetailFromAmortization(initialLoanDetail);
 
-		Console.WriteLine(" loanAtMonthStart info is:");
+		Console.WriteLine(" initialLoanDetail info is:");
 		Console.WriteLine($"  Debt ID: {initialLoanDetail.EndOfMonthLoanState.Id}");
 		Console.WriteLine($"  Auth0UserId: {initialLoanDetail.EndOfMonthLoanState.Auth0UserId}");
 		Console.WriteLine($"  Name: {initialLoanDetail.EndOfMonthLoanState.Name}");
 		Console.WriteLine($"  RemainingPrincipal: {initialLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
 		Console.WriteLine($"  BankFees: {initialLoanDetail.EndOfMonthLoanState.BankFees}");
-		Console.WriteLine($"  MonthlyPayment: {initialLoanDetail.EndOfMonthLoanState.ContractedMonthlyPayment}");
+		Console.WriteLine(
+			$"  ContractedMonthlyPayment: {initialLoanDetail.EndOfMonthLoanState.ContractedMonthlyPayment}");
 		Console.WriteLine($"  AnnualInterestRate: {initialLoanDetail.EndOfMonthLoanState.AnnualInterestRate}");
 		Console.WriteLine($"  RemainingTermInMonths: {initialLoanDetail.EndOfMonthLoanState.RemainingTermInMonths}");
 		Console.WriteLine($"  CurrencyCode: {initialLoanDetail.EndOfMonthLoanState.CurrencyCode}");
 		Console.WriteLine($"  CardinalOrder: {initialLoanDetail.EndOfMonthLoanState.CardinalOrder}");
 		Console.WriteLine($"  StartDate: {initialLoanDetail.EndOfMonthLoanState.StartDate:yyyy-MM-dd}");
+		Console.WriteLine("-------------------------}");
+		Console.WriteLine($"  BankFeesPaid: {initialLoanDetail.BankFeesPaid}");
+		Console.WriteLine($"  InterestPaid: {initialLoanDetail.InterestPaid}");
+		Console.WriteLine($"  PrincipalPaid: {initialLoanDetail.PrincipalPaid}");
+		Console.WriteLine("-------------------------}");
+		Console.WriteLine($"  AccumulatedBankFeesPaid: {initialLoanDetail.AccumulatedBankFeesPaid}");
+		Console.WriteLine($"  AccumulatedInterestPaid: {initialLoanDetail.AccumulatedInterestPaid}");
+		Console.WriteLine($"  AccumulatedPrincipalPaid: {initialLoanDetail.AccumulatedPrincipalPaid}");
+
 
 		decimal paymentAmount = CalculateMinimumMonthlyPayment(initialLoanDetail.EndOfMonthLoanState) +
 		                        allocatedExtraPayment;
@@ -51,6 +62,29 @@ public class PaymentInstallmentCreator
 		resultingLoanDetail.PaymentMonth = initialLoanDetail.PaymentMonth + 1;
 
 		Console.WriteLine($"Calculated MonthlyAmortizationDetail: {resultingLoanDetail}");
+
+		Console.WriteLine(" resultingLoanDetail info is:");
+		Console.WriteLine($"  Debt ID: {resultingLoanDetail.EndOfMonthLoanState.Id}");
+		Console.WriteLine($"  Auth0UserId: {resultingLoanDetail.EndOfMonthLoanState.Auth0UserId}");
+		Console.WriteLine($"  Name: {resultingLoanDetail.EndOfMonthLoanState.Name}");
+		Console.WriteLine($"  RemainingPrincipal: {resultingLoanDetail.EndOfMonthLoanState.RemainingPrincipal}");
+		Console.WriteLine($"  BankFees: {resultingLoanDetail.EndOfMonthLoanState.BankFees}");
+		Console.WriteLine(
+			$"  ContractedMonthlyPayment: {resultingLoanDetail.EndOfMonthLoanState.ContractedMonthlyPayment}");
+		Console.WriteLine($"  AnnualInterestRate: {resultingLoanDetail.EndOfMonthLoanState.AnnualInterestRate}");
+		Console.WriteLine($"  RemainingTermInMonths: {resultingLoanDetail.EndOfMonthLoanState.RemainingTermInMonths}");
+		Console.WriteLine($"  CurrencyCode: {resultingLoanDetail.EndOfMonthLoanState.CurrencyCode}");
+		Console.WriteLine($"  CardinalOrder: {resultingLoanDetail.EndOfMonthLoanState.CardinalOrder}");
+		Console.WriteLine($"  StartDate: {resultingLoanDetail.EndOfMonthLoanState.StartDate:yyyy-MM-dd}");
+
+		Console.WriteLine($"  BankFeesPaid: {resultingLoanDetail.BankFeesPaid}");
+		Console.WriteLine($"  InterestPaid: {resultingLoanDetail.InterestPaid}");
+		Console.WriteLine($"  PrincipalPaid: {resultingLoanDetail.PrincipalPaid}");
+
+		Console.WriteLine($"  AccumulatedBankFeesPaid: {resultingLoanDetail.AccumulatedBankFeesPaid}");
+		Console.WriteLine($"  AccumulatedInterestPaid: {resultingLoanDetail.AccumulatedInterestPaid}");
+		Console.WriteLine($"  AccumulatedPrincipalPaid: {resultingLoanDetail.AccumulatedPrincipalPaid}");
+
 		return resultingLoanDetail;
 	}
 
@@ -90,6 +124,12 @@ public class PaymentInstallmentCreator
 		if (principal <= (decimal)0.001 || installments <= 0)
 			return 0;
 
+
+		Console.WriteLine("--The data to calculate CalculateRemainingTerm is:");
+		Console.WriteLine($"principal is: {principal}");
+		Console.WriteLine($"monthlyInterestRate is:  {monthlyInterestRate}");
+		Console.WriteLine($"installments is:  {installments}");
+
 		// Calculate monthly payment using the standard formula for monthly amortization
 		decimal rateFactor = (decimal)Math.Pow(1 + (double)monthlyInterestRate, installments);
 		decimal minimumMonthlyPayment = principal * monthlyInterestRate * rateFactor / (rateFactor - 1);
@@ -111,7 +151,7 @@ public class PaymentInstallmentCreator
 		if (loanDetail.RemainingPrincipal <= (decimal)0.001)
 		{
 			Console.WriteLine(
-				$"--- Remaning principal is: {loanDetail.RemainingPrincipal},  Wich is bellow 0.001. That is too low to make a meaningful calculation. Will deem the remaining term to be 0");
+				$"--- Remaining principal is: {loanDetail.RemainingPrincipal},  Wich is bellow 0.001. That is too low to make a meaningful calculation. Will deem the remaining term to be 0");
 			return 0;
 		}
 
@@ -119,25 +159,26 @@ public class PaymentInstallmentCreator
 		decimal remainingPrincipal = loanDetail.RemainingPrincipal;
 		decimal monthlyInterestRate = loanDetail.AnnualInterestRate / 12;
 
-		if (monthlyPayment <= (decimal) 0.001)
+		if (monthlyPayment <= (decimal)0.001)
 		{
 			Console.WriteLine(
 				$"--- monthly Payment is: {monthlyPayment},  Wich is bellow 0.001. That is too low to make a meaningful calculation. Will deem the remaining term to be 0");
 			return 0;
 		}
-		CalculateRemainingTerm
 
+		if (monthlyPayment < loanDetail.ContractedMonthlyPayment) monthlyPayment = loanDetail.ContractedMonthlyPayment;
 
-		Console.WriteLine($"--The data to calculate CalculateRemainingTerm is:");
+		Console.WriteLine("--The data to calculate CalculateRemainingTerm is:");
 		Console.WriteLine($"monthlyPayment is: {monthlyPayment}");
 		Console.WriteLine($"remainingPrincipal is:  {remainingPrincipal}");
 		Console.WriteLine($"monthlyInterestRate is:  {monthlyInterestRate}");
 
-		// Calculate the remaining term using the formula for the number of periods in an ordinary annuity
-		int remainingTerm =
-			(int)Math.Ceiling(
-				Math.Log((double)(monthlyPayment / (monthlyPayment - monthlyInterestRate * remainingPrincipal))) /
-				Math.Log(1 + (double)monthlyInterestRate));
+		// Calculate the remaining term using the Financial.NPer function
+		double remainingTermDouble = Financial.NPer((double)monthlyInterestRate, -(double)monthlyPayment,
+			(double)remainingPrincipal);
+
+		// Round up and convert to integer
+		int remainingTerm = (int)Math.Ceiling(remainingTermDouble);
 
 		Console.WriteLine($"Calculated Remaining Term to be: {remainingTerm}");
 

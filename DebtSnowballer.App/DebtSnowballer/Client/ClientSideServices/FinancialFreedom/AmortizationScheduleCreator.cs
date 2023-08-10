@@ -30,6 +30,9 @@ public class AmortizationScheduleCreator
 				PaymentInstallment initialPaymentInstallment =
 					amortizationSchedule.PaymentInstallments.OrderByDescending(detail => detail.PaymentMonth).First();
 
+				Console.WriteLine(
+					$"Retrieve PaymentInstallment, month {initialPaymentInstallment.PaymentMonth} for {initialPaymentInstallment.EndOfMonthLoanState.Name}");
+
 
 				if (paymentReallocationStartDate.Year < initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year ||
 				    (paymentReallocationStartDate.Year ==
@@ -62,7 +65,8 @@ public class AmortizationScheduleCreator
 					$"  MonthlyPayment: {resultingPaymentInstallment.EndOfMonthLoanState.ContractedMonthlyPayment}");
 				Console.WriteLine(
 					$"  RemainingTermInMonths: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingTermInMonths}");
-			} while (debt.RemainingPrincipal > 0);
+				// A amount that is below 0.01 is too low to give a meaning full result, so we will act as if the Remaining Principal is 0
+			} while (debt.RemainingPrincipal > (decimal)0.01);
 
 			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
 
