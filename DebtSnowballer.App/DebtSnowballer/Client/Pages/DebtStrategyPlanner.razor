@@ -22,15 +22,15 @@
 
 <h3>Create a strategy to become debt free</h3>
 
-@if (_isAllDataLoaded)
+@if (_isAllEsencialDataLoaded)
 	{
 	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" />
 
 	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" />
 
 	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy" />
 
@@ -43,7 +43,7 @@ else
 
 
 @code {
-	private bool _isAllDataLoaded;
+	private bool _isAllEsencialDataLoaded;
 	private List<LoanDetailDto> _debtsInQuoteCurrency;
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
@@ -70,16 +70,18 @@ else
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
 		await Task.WhenAll(loadUserProfileTask, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
+		_isAllEsencialDataLoaded = true;
 		Console.WriteLine("Concurrent tasks completed.");
 
 	// Start tasks that depend on the completion of previous tasks
 		Console.WriteLine("Starting dependent tasks: converting debts and snowflakes to base currency...");
 		Task convertDebtsToBaseCurrencyTask = ConvertDebtsToBaseCurrency();
-		Task convertSnowflakesToBaseCurrencyTask = ConvertSnowflakesToBaseCurrency();
+		Task convertSnowflakesToBaseCurrencyTask = ConvertSnowflakesToQuoteCurrency();
 		await Task.WhenAll(convertDebtsToBaseCurrencyTask, convertSnowflakesToBaseCurrencyTask);
 		Console.WriteLine("Dependent tasks completed.");
 
-		_isAllDataLoaded = true;
+		await CreateDebtPayoffPlan();
+		Console.WriteLine("Dept pay off plans completed.");
 		Console.WriteLine("Component initialization complete.");
 	}
 
@@ -104,17 +106,9 @@ else
 		Console.WriteLine("Starting to load debts in quote currency...");
 		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();
 		Console.WriteLine($"Loaded {_debtsInQuoteCurrency?.Count ?? 0} debts in quote currency.");
-
-		Console.WriteLine("Converting debts to base currency...");
-		await ConvertDebtsToBaseCurrency();
-		Console.WriteLine("Conversion to base currency completed.");
 		
 		StateHasChanged();
-		Console.WriteLine("Component state updated with the new base currency.");
-
-		Console.WriteLine("Creating debt payoff plan...");
-		await CreateDebtPayoffPlan();
-		Console.WriteLine("Debt payoff plan created.");
+		Console.WriteLine("Component state updated with DebtsInQuoteCurrency.");
 	}
 
 
@@ -161,7 +155,7 @@ else
 	}
 
 
-	private Task ConvertSnowflakesToBaseCurrency()
+	private Task ConvertSnowflakesToQuoteCurrency()
 	{
 		_snowflakesInBaseCurrency = new List<PlannedSnowflakeDto>();
 	
@@ -223,15 +217,8 @@ else
 		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
 		Console.WriteLine($"Loaded {_snowflakesInQuoteCurrency?.Count ?? 0} snowflakes in quote currency.");
 
-		Console.WriteLine("Converting snowflakes to base currency...");
-		await ConvertSnowflakesToBaseCurrency();
-
 		StateHasChanged();
-		Console.WriteLine("State has changed after loading and converting snowflakes.");
-
-		Console.WriteLine("Creating debt payoff plan...");
-		await CreateDebtPayoffPlan();
-		Console.WriteLine("Debt payoff plan created successfully.");
+		Console.WriteLine("State has changed after loading snowflakes in Quote Currency.");
 	}
 
 
@@ -259,4 +246,10 @@ else
 		}
 	}
 
+	private async Task CalculateData()
+		{
+		await ConvertDebtsToBaseCurrency();
+		await ConvertSnowflakesToQuoteCurrency();
+		await CreateDebtPayoffPlan();
+		}
 }

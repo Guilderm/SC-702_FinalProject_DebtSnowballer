@@ -48,7 +48,8 @@ else
 	public Func<Task> LoadDebtsInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public Func<Task> LoadDebtsInBaseCurrency { get; set; }
+	public Func<Task> CalculateData { get; set; }
+	
 
 	private void OnAddNewDebt()
 	{
@@ -58,14 +59,20 @@ else
 	private async Task EditDebt(int id)
 	{
 		_selectedLoanDetail = await DebtService.GetDebtById(id);
+
+		await LoadDebtsInQuoteCurrency();
+		StateHasChanged();
+		await CalculateData();
 	}
 
 	private async Task DeleteDebt(int id)
 	{
 		await DebtService.DeleteDebt(id);
+
 		await LoadDebtsInQuoteCurrency();
-		await LoadDebtsInBaseCurrency();
-	}
+		StateHasChanged();
+		await CalculateData();
+		}
 
 	private async Task SaveDebt(LoanDetailDto loanDetailItem)
 	{
@@ -78,10 +85,12 @@ else
 			await DebtService.UpdateDebt(loanDetailItem);
 		}
 
-		await LoadDebtsInQuoteCurrency();
-		await LoadDebtsInBaseCurrency();
 		_selectedLoanDetail = null;
-	}
+
+		await LoadDebtsInQuoteCurrency();
+		StateHasChanged();
+		await CalculateData();
+		}
 
 	private void CancelEdit()
 	{
