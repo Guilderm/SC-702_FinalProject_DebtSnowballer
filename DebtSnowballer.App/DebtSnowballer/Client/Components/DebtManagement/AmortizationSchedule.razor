@@ -1,6 +1,4 @@
-﻿@page "/amortizationschedule"
-@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
-@using System.Text.Json
+﻿@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 
 @inject IFinancialFreedomPlanner FinancialFreedomPlanner
 @inject NavigationManager NavigationManager
@@ -12,7 +10,7 @@
 	<h3>Strategy Name: @plan.Key</h3>
 	<h4>Loan Details</h4>
 
-	@foreach (var schedule in plan.Value)
+	@foreach (ClientSideServices.FinancialFreedom.AmortizationSchedule schedule in plan.Value)
 	{
 		string currencySymbol = GetCurrencySymbol();
 
@@ -73,20 +71,11 @@
 }
 
 @code {
-	private DebtPayoffPlan DebtPayoffPlan { get; set; }
+    [Parameter]
+    public DebtPayoffPlan DebtPayoffPlan { get; set; }
 
-
-	protected override Task OnInitializedAsync()
-	{
-		string paymentPlanDetailsJson = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split(new[] { '?' })[1].Split(new[] { '=' })[1];
-		DebtPayoffPlan = JsonSerializer.Deserialize<DebtPayoffPlan>(Uri.UnescapeDataString(paymentPlanDetailsJson));
-		return Task.CompletedTask;
-	}
-
-
-	private string GetCurrencySymbol()
-	{
-		return "₡";
-	}
-
+    private string GetCurrencySymbol()
+    {
+        return "₡"; // You can replace this with the appropriate logic if needed
+    }
 }

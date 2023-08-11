@@ -32,7 +32,7 @@ public class AmortizationScheduleCreator
 
 		Console.WriteLine("Entered function 'CalculatePaymentPlansAsync'");
 		Console.WriteLine("Debts:");
-		foreach (var debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
+		foreach (string debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
 
 
 		foreach (LoanDetailDto debt in debts)

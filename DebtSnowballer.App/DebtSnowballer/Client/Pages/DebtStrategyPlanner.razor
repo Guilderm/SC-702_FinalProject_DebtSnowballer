@@ -23,24 +23,23 @@
 <h3>Create a strategy to become debt free</h3>
 
 @if (_isAllDataLoaded)
-{
-	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+	{
+	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency" />
 
-	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" LoadDebtsInBaseCurrency="ConvertDebtsToBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
-	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
+	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment" />
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" />
 
-	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
-}
+	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy" />
 
+	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" />
+	}
 else
-{
+	{
 	<p>Loading your data...</p>
-}
-
-<button @onclick="NavigateToAmortizationSchedule">View Amortization Schedule</button>
+	}
 
 
 @code {
@@ -52,136 +51,142 @@ else
 	private UserProfileDto _userProfile;
 	private AuthenticationState _authState;
 	private IList<ExchangeRateDto> _usersExchangeRates;
+	private DebtPayoffPlan DebtPayoffPlan { get; set; }
 
 
-	// TODO: Make sure all are running concorenlly
+	// TODO: Make sure all are running concurrently
 	protected override async Task OnInitializedAsync()
-	{
-	// TODO: Need to get this data from the backend with out getting any data from front end.
+		{
+		// TODO: Need to get this data from the backend without getting any data from the front end.
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		await LoadUserProfile();
+
+		// Start tasks that can run concurrently
+		Task loadUserProfileTask = LoadUserProfile();
+		Task loadExchangeRatesTask = LoadExchangeRates();
+		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
+		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
+
+		// Wait for tasks that have dependencies to complete
+		await Task.WhenAll(loadUserProfileTask, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isAllDataLoaded = true;
 
-		await LoadExchangeRates();
-		await LoadDebtsInQuoteCurrency();
-		await LoadSnowflakesInQuoteCurrency();
+		// Start tasks that depend on the completion of previous tasks
+		Task convertDebtsToBaseCurrencyTask = ConvertDebtsToBaseCurrency();
+		Task convertSnowflakesToBaseCurrencyTask = ConvertSnowflakesToBaseCurrency();
 
-		await ConvertDebtsToBaseCurrency();
-		await ConvertSnowflakesToBaseCurrency();
-	}
+		// Wait for all tasks to complete
+		await Task.WhenAll(convertDebtsToBaseCurrencyTask, convertSnowflakesToBaseCurrencyTask);
+		}
+
 
 	private async Task LoadUserProfile()
-	{
+		{
 		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-	}
+		}
 
 	private async Task LoadExchangeRates()
-	{
+		{
 		_usersExchangeRates = await DebtService.GetUsersExchangeRates();
-	}
+		}
 
 	private async Task LoadDebtsInQuoteCurrency()
-	{
+		{
 		_debtsInQuoteCurrency = (await DebtService.GetAllDebtsInQuoteCurrency()).ToList();
 		await ConvertDebtsToBaseCurrency();
-	}
+		StateHasChanged();
+		await CreateDebtPayoffPlan();
+		}
 
 	private Task ConvertDebtsToBaseCurrency()
-	{
+		{
 		_debtsInBaseCurrency = new List<LoanDetailDto>();
 
 		foreach (LoanDetailDto debt in _debtsInQuoteCurrency)
-		{
+			{
 			ExchangeRateDto debtToBaseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == debt.CurrencyCode);
 
 			if (debtToBaseRate != null)
-			{
-				LoanDetailDto convertedLoanDetail = new()
 				{
-					Id = debt.Id,
-					Name = debt.Name,
-					RemainingPrincipal = debt.RemainingPrincipal * debtToBaseRate.ConversionRate,
-					BankFees = debt.BankFees * debtToBaseRate.ConversionRate,
-					ContractedMonthlyPayment = debt.ContractedMonthlyPayment * debtToBaseRate.ConversionRate,
-					AnnualInterestRate = debt.AnnualInterestRate,
-					RemainingTermInMonths = debt.RemainingTermInMonths,
-					CardinalOrder = debt.CardinalOrder,
-					CurrencyCode = _userProfile.BaseCurrency,
-					StartDate = debt.StartDate
-				};
+				LoanDetailDto convertedLoanDetail = new()
+						{
+						Id = debt.Id,
+						Name = debt.Name,
+						RemainingPrincipal = debt.RemainingPrincipal * debtToBaseRate.ConversionRate,
+						BankFees = debt.BankFees * debtToBaseRate.ConversionRate,
+						ContractedMonthlyPayment = debt.ContractedMonthlyPayment * debtToBaseRate.ConversionRate,
+						AnnualInterestRate = debt.AnnualInterestRate,
+						RemainingTermInMonths = debt.RemainingTermInMonths,
+						CardinalOrder = debt.CardinalOrder,
+						CurrencyCode = _userProfile.BaseCurrency,
+						StartDate = debt.StartDate
+						};
 
 				_debtsInBaseCurrency.Add(convertedLoanDetail);
+				}
 			}
-			else
-			{
-	// If there's no exchange rate for the debt's currency, add the debt as is.
-				_debtsInBaseCurrency.Add(debt);
-			}
-		}
 
 		return Task.CompletedTask;
-	}
+		}
 
 	private Task ConvertSnowflakesToBaseCurrency()
-	{
+		{
 		_snowflakesInBaseCurrency = new List<PlannedSnowflakeDto>();
 
 		foreach (PlannedSnowflakeDto snowflake in _snowflakesInQuoteCurrency)
-		{
+			{
 			ExchangeRateDto debtToBaseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == snowflake.CurrencyCode);
 
 			if (debtToBaseRate != null)
-			{
-				PlannedSnowflakeDto convertedPlannedSnowflake = new()
 				{
-					Id = snowflake.Id,
-					Name = snowflake.Name,
-					Amount = snowflake.Amount * debtToBaseRate.ConversionRate,
-					FrequencyInMonths = snowflake.FrequencyInMonths,
-					StartingAt = snowflake.StartingAt,
-					EndingAt = snowflake.EndingAt,
-					CurrencyCode = _userProfile.BaseCurrency
-				};
+				PlannedSnowflakeDto convertedPlannedSnowflake = new()
+						{
+						Id = snowflake.Id,
+						Name = snowflake.Name,
+						Amount = snowflake.Amount * debtToBaseRate.ConversionRate,
+						FrequencyInMonths = snowflake.FrequencyInMonths,
+						StartingAt = snowflake.StartingAt,
+						EndingAt = snowflake.EndingAt,
+						CurrencyCode = _userProfile.BaseCurrency
+						};
 
 				_snowflakesInBaseCurrency.Add(convertedPlannedSnowflake);
+				}
 			}
-		}
 		return Task.CompletedTask;
-	}
+		}
 
 	private async Task UpdateBaseCurrency(string selectedCurrency)
-	{
+		{
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
 		_userProfile.BaseCurrency = selectedCurrency;
 		await ConvertDebtsToBaseCurrency();
 		StateHasChanged();
-	}
+		}
 
 	public string GetCurrencySymbol(string currencyCode)
-	{
+		{
 		CurrencyInfo currencyInfo = Currencies.SupportedCurrencies.FirstOrDefault(c => c.AlphaCode == currencyCode);
 		return currencyInfo != null ? currencyInfo.Symbol : "$";
-	}
+		}
 
 	private async Task LoadSnowflakesInQuoteCurrency()
-	{
+		{
 		_snowflakesInQuoteCurrency = (await SnowflakeService.GetAllSnowflakes()).ToList();
 		await ConvertSnowflakesToBaseCurrency();
 		StateHasChanged();
-	}
+		await CreateDebtPayoffPlan();
+		}
 
 	private async Task UpdateSelectedStrategy(int selectedCurrency)
-	{
+		{
 		_userProfile.SelectedStrategy = selectedCurrency;
 		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
 		StateHasChanged();
-	}
+		}
 
-	private async Task NavigateToAmortizationSchedule()
-	{
-		DebtPayoffPlan debtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
-		string paymentPlanDetailsJson = JsonSerializer.Serialize(debtPayoffPlan);
-		NavigationManager.NavigateTo($"/amortizationSchedule?paymentPlanDetails={Uri.EscapeDataString(paymentPlanDetailsJson)}");
-	}
-
+	private async Task CreateDebtPayoffPlan()
+		{
+		DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
+		StateHasChanged();
+		}
 }

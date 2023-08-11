@@ -27,7 +27,7 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 
 		Console.WriteLine("Entered function 'CalculatePaymentPlansAsync'");
 		Console.WriteLine("Debts:");
-		foreach (var debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
+		foreach (string debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
 
 		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
@@ -37,7 +37,7 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 		CalcualteExtraPayment(debts, debtPlanMonthlyPayment);
 
 		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
-		var result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
+		DebtPayoffPlan result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
 
 		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
 
