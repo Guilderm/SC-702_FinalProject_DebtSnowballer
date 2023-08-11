@@ -4,125 +4,121 @@ namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
 public class AmortizationScheduleCreator
 {
-	public List<AmortizationSchedule> CreateAmortizationSchedules(List<LoanDetailDto> debts)
-	{
-		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
+    public List<AmortizationSchedule> CreateAmortizationSchedules(List<LoanDetailDto> debts)
+    {
+        Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
 
-		PaymentInstallmentCreator paymentInstallmentCreator = new();
+        PaymentInstallmentCreator paymentInstallmentCreator = new();
 
-		List<AmortizationSchedule> amortizationSchedules = new List<AmortizationSchedule>();
+        List<AmortizationSchedule> amortizationSchedules = new List<AmortizationSchedule>();
 
-		decimal allocatedPayment = 0;
-		decimal paymentReallocationAmount = 0;
-		DateTime paymentReallocationStartDate = DateTime.Now;
-		//DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
+        decimal allocatedPayment = 0;
+        decimal paymentReallocationAmount = 0;
+        DateTime paymentReallocationStartDate = DateTime.Now;
+        //DateTime paymentReallocationStartDate = DateTime.Now.AddYears(45);
 
-		foreach (LoanDetailDto debt in debts)
-		{
-			AmortizationSchedule amortizationSchedule = ConvertLoanDetailToAmortizationDetail(debt);
-			do
-			{
-				/*
-				Sorting is an O(n log n) operation, whereas finding the max value and then finding the first item with that value are both O(n) operations.
-				But given that per business rules, the size of the list cannot be more than 540 (as each loan cannot be more than 45 years).
-				The size of the list would not be sufficiently large to notice a real performance difference.
-				So we chose sorting as it is a more concise and readable option.*/
-				PaymentInstallment initialPaymentInstallment =
-					amortizationSchedule.PaymentInstallments.OrderByDescending(detail => detail.PaymentMonth).First();
+        var debtsSummary = debts.Select(d =>
+            $"Id: {d.Id}, " +
+            $"Name: {d.Name}, " +
+            $"Principal: ${d.RemainingPrincipal:0.00}, " +
+            $"Bank Fees: ${d.BankFees:0.00}, " +
+            $"Monthly Payment: ${d.ContractedMonthlyPayment:0.00}, " +
+            $"Interest Rate: {d.AnnualInterestRate:P2}, " +
+            $"Term: {d.RemainingTermInMonths} months, " +
+            $"Currency: {d.CurrencyCode}, " +
+            $"Order: {d.CardinalOrder}, " +
+            $"Start Date: {d.StartDate:yyyy-MM-dd}"
+        ).ToList();
 
-				Console.WriteLine(
-					$"Retrieve PaymentInstallment, month {initialPaymentInstallment.PaymentMonth} for {initialPaymentInstallment.EndOfMonthLoanState.Name}");
+        Console.WriteLine("Entered function 'CalculatePaymentPlansAsync'");
+        Console.WriteLine("Debts:");
+        foreach (var debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
 
 
-				if (paymentReallocationStartDate.Year < initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year ||
-				    (paymentReallocationStartDate.Year ==
-				     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year &&
-				     paymentReallocationStartDate.Month <=
-				     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Month))
-				{
-					Console.WriteLine($"Allocating reallocation amount: {paymentReallocationAmount}");
-					allocatedPayment += paymentReallocationAmount;
-				}
+        foreach (LoanDetailDto debt in debts)
+        {
+            Console.WriteLine($"the date for loan {debt.Name} in 'AmortizationScheduleCreator' is: {debt.StartDate}");
+            AmortizationSchedule amortizationSchedule = ConvertLoanDetailToAmortizationDetail(debt);
+            do
+            {
+                PaymentInstallment initialPaymentInstallment = amortizationSchedule.PaymentInstallments.Last();
+                Console.WriteLine(
+                    $"Retrieve PaymentInstallment, month {initialPaymentInstallment.PaymentMonth} for {initialPaymentInstallment.EndOfMonthLoanState.Name} whit date of {initialPaymentInstallment.EndOfMonthLoanState.StartDate}");
 
-				allocatedPayment = 0;
+                if (paymentReallocationStartDate.Year < initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year ||
+                    (paymentReallocationStartDate.Year ==
+                     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Year &&
+                     paymentReallocationStartDate.Month <=
+                     initialPaymentInstallment.EndOfMonthLoanState.StartDate.Month))
+                {
+                    allocatedPayment += paymentReallocationAmount;
+                    Console.WriteLine(
+                        $"Allocating reallocation for the amount of: {paymentReallocationAmount}, allocatedPayment is now {allocatedPayment}");
+                }
 
-				PaymentInstallment resultingPaymentInstallment =
-					paymentInstallmentCreator.CalculateMonthlyDetail(initialPaymentInstallment, allocatedPayment);
+                PaymentInstallment resultingPaymentInstallment =
+                    paymentInstallmentCreator.CreatePaymentInstallment(initialPaymentInstallment, allocatedPayment);
 
-				amortizationSchedule.PaymentInstallments.Add(resultingPaymentInstallment);
-				Console.WriteLine(
-					$"+++ RemainingPrincipal for loan {debt.Name} is: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal} as per resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal, and {debt.RemainingPrincipal} as per debt.RemainingPrincipal ");
-				debt.RemainingPrincipal = resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal;
+                amortizationSchedule.PaymentInstallments.Add(resultingPaymentInstallment);
+                debt.RemainingPrincipal = resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal;
 
-				Console.WriteLine(
-					$"resulting Payment Installment Schedules for loan {resultingPaymentInstallment.EndOfMonthLoanState.Name} is:");
-				Console.WriteLine($"  Debt ID: {resultingPaymentInstallment.EndOfMonthLoanState.Id}");
-				Console.WriteLine($"  Name: {resultingPaymentInstallment.EndOfMonthLoanState.Name}");
-				Console.WriteLine(
-					$"  RemainingPrincipal: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingPrincipal}");
-				Console.WriteLine($"  BankFees: {resultingPaymentInstallment.EndOfMonthLoanState.BankFees}");
-				Console.WriteLine(
-					$"  MonthlyPayment: {resultingPaymentInstallment.EndOfMonthLoanState.ContractedMonthlyPayment}");
-				Console.WriteLine(
-					$"  RemainingTermInMonths: {resultingPaymentInstallment.EndOfMonthLoanState.RemainingTermInMonths}");
-				// A amount that is below 0.01 is too low to give a meaning full result, so we will act as if the Remaining Principal is 0
-			} while (debt.RemainingPrincipal > (decimal)0.01);
+                // A amount that is below 0.01 is too low to give a meaning full result, so we will act as if the Remaining Principal is 0
+            } while (debt.RemainingPrincipal > (decimal)0.001);
 
-			Console.WriteLine($"Debt ID: {debt.Id} is paid off");
+            Console.WriteLine($"Debt ID: {debt.Id} Name: {debt.Name} is paid off");
 
-			// Actions done when a debt is paid off:
-			PaymentInstallment lastMonthDetail = amortizationSchedule.PaymentInstallments.Last();
+            PaymentInstallment lastMonthDetail = amortizationSchedule.PaymentInstallments.Last();
 
-			paymentReallocationStartDate = lastMonthDetail.EndOfMonthLoanState.StartDate;
-			paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
+            paymentReallocationStartDate = lastMonthDetail.EndOfMonthLoanState.StartDate;
+            paymentReallocationAmount += amortizationSchedule.ContractedMonthlyPayment;
 
-			amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
-			amortizationSchedule.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;
-			amortizationSchedule.TotalPrincipalPaid = lastMonthDetail.AccumulatedPrincipalPaid;
+            amortizationSchedule.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
+            amortizationSchedule.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;
+            amortizationSchedule.TotalPrincipalPaid = lastMonthDetail.AccumulatedPrincipalPaid;
 
-			amortizationSchedules.Add(amortizationSchedule);
-		}
+            amortizationSchedules.Add(amortizationSchedule);
+        }
 
-		Console.WriteLine($"Successfully calculated amortization schedules for {debts.Count} debts");
-		return amortizationSchedules;
-	}
+        Console.WriteLine($"Successfully calculated amortization schedules for {debts.Count} debts");
+        return amortizationSchedules;
+    }
 
-	private static AmortizationSchedule ConvertLoanDetailToAmortizationDetail(LoanDetailDto loanDetail)
-	{
-		AmortizationSchedule amortizationSchedule = new()
-		{
-			DebtId = loanDetail.Id,
-			Auth0UserId = loanDetail.Auth0UserId,
-			Name = loanDetail.Name,
-			BankFees = loanDetail.BankFees,
-			ContractedMonthlyPayment = loanDetail.ContractedMonthlyPayment,
-			AnnualInterestRate = loanDetail.AnnualInterestRate,
-			CurrencyCode = loanDetail.CurrencyCode,
-			CardinalOrder = loanDetail.CardinalOrder,
-			PaymentInstallments = new List<PaymentInstallment> { CreateAmortizationDetailFromDebtDto(loanDetail) }
-		};
+    private static AmortizationSchedule ConvertLoanDetailToAmortizationDetail(LoanDetailDto loanDetail)
+    {
+        AmortizationSchedule amortizationSchedule = new()
+        {
+            DebtId = loanDetail.Id,
+            Auth0UserId = loanDetail.Auth0UserId,
+            Name = loanDetail.Name,
+            BankFees = loanDetail.BankFees,
+            ContractedMonthlyPayment = loanDetail.ContractedMonthlyPayment,
+            AnnualInterestRate = loanDetail.AnnualInterestRate,
+            CurrencyCode = loanDetail.CurrencyCode,
+            CardinalOrder = loanDetail.CardinalOrder,
+            PaymentInstallments = new List<PaymentInstallment> { CreateAmortizationDetailFromDebtDto(loanDetail) }
+        };
 
-		return amortizationSchedule;
-	}
+        return amortizationSchedule;
+    }
 
-	private static PaymentInstallment CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
-	{
-		return new PaymentInstallment
-		{
-			EndOfMonthLoanState = new LoanDetailDto
-			{
-				Id = loanDetail.Id,
-				Auth0UserId = loanDetail.Auth0UserId,
-				Name = loanDetail.Name,
-				RemainingPrincipal = loanDetail.RemainingPrincipal,
-				BankFees = loanDetail.BankFees,
-				ContractedMonthlyPayment = loanDetail.ContractedMonthlyPayment,
-				AnnualInterestRate = loanDetail.AnnualInterestRate,
-				RemainingTermInMonths = loanDetail.RemainingTermInMonths,
-				CurrencyCode = loanDetail.CurrencyCode,
-				CardinalOrder = loanDetail.CardinalOrder,
-				StartDate = loanDetail.StartDate
-			}
-		};
-	}
+    private static PaymentInstallment CreateAmortizationDetailFromDebtDto(LoanDetailDto loanDetail)
+    {
+        return new PaymentInstallment
+        {
+            EndOfMonthLoanState = new LoanDetailDto
+            {
+                Id = loanDetail.Id,
+                Auth0UserId = loanDetail.Auth0UserId,
+                Name = loanDetail.Name,
+                RemainingPrincipal = loanDetail.RemainingPrincipal,
+                BankFees = loanDetail.BankFees,
+                ContractedMonthlyPayment = loanDetail.ContractedMonthlyPayment,
+                AnnualInterestRate = loanDetail.AnnualInterestRate,
+                RemainingTermInMonths = loanDetail.RemainingTermInMonths,
+                CurrencyCode = loanDetail.CurrencyCode,
+                CardinalOrder = loanDetail.CardinalOrder,
+                StartDate = loanDetail.StartDate
+            }
+        };
+    }
 }

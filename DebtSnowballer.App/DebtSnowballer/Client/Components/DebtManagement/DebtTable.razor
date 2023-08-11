@@ -12,7 +12,8 @@
 		<th>Interest Rate</th>
 		<th>Remaining Term</th>
 		<th>Cardinal Order</th>
-		<th>Currency</th>
+			<th>Currency</th>
+			<th>Start Date</th>
 		@if (AreActionsShown)
 		{
 			<th>Actions</th>
@@ -32,6 +33,7 @@
 			<td>@debt.RemainingTermInMonths</td>
 			<td>@debt.CardinalOrder</td>
 			<td>@debt.CurrencyCode</td>
+				<td>@debt.StartDate</td>
 			@if (AreActionsShown)
 			{
 				<td>

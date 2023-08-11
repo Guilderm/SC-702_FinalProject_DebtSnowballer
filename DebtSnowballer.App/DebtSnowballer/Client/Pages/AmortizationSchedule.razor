@@ -27,7 +27,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Month</th>
+	            <th>Month</th>
+	            <th>Date</th>
                 <th>Interest Paid</th>
                 <th>Bank Fees Paid</th>
                 <th>Principal Paid</th>
@@ -40,7 +41,8 @@
             @foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
                 {
                 <tr>
-                    <td>@detail.PaymentMonth</td>
+	                <td>@detail.PaymentMonth</td>
+	                <td>@detail.EndOfMonthLoanState.StartDate</td>
                     <td>@detail.InterestPaid</td>
                     <td>@detail.BankFeesPaid</td>
                     <td>@detail.PrincipalPaid</td>

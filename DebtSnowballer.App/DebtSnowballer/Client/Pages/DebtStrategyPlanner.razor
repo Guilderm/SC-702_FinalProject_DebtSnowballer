@@ -106,8 +106,9 @@ else
 					AnnualInterestRate = debt.AnnualInterestRate,
 					RemainingTermInMonths = debt.RemainingTermInMonths,
 					CardinalOrder = debt.CardinalOrder,
-					CurrencyCode = _userProfile.BaseCurrency
-				};
+					CurrencyCode = _userProfile.BaseCurrency,
+						StartDate = debt.StartDate
+							};
 
 				_debtsInBaseCurrency.Add(convertedLoanDetail);
 			}
@@ -144,13 +145,7 @@ else
 
 				_snowflakesInBaseCurrency.Add(convertedPlannedSnowflake);
 			}
-			else
-			{
-	// If there's no exchange rate for the snowflake's currency, add the snowflake as is.
-				_snowflakesInBaseCurrency.Add(snowflake);
-			}
 		}
-
 		return Task.CompletedTask;
 	}
 
