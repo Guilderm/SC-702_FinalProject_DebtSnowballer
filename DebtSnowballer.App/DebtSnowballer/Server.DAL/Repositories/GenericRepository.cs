@@ -66,8 +66,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 	public async Task Delete(int id)
 	{
 		Logger.LogInformation($"Deleting an entity of type {typeof(TEntity).Name} with id {id} from the database.");
-		TEntity? entity = await DbSet.FindAsync(id);
-		if (entity != null)
+		if (await DbSet.FindAsync(id) is { } entity)
 		{
 			DbSet.Remove(entity);
 			Logger.LogInformation($"Entity deleted: {entity}");

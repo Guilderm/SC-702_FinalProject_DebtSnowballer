@@ -9,32 +9,38 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 		List<PlannedSnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
 	{
+		if (debts == null || debts.Count < 1)
+		{
+			Console.WriteLine(
+				"Debts parameter is null or has a count of zero. Exiting function 'CalculatePaymentPlansAsync'.");
+			throw new ArgumentNullException(nameof(debts), "Debts cannot be null, or has a count of zero.");
+		}
+
+		if (snowflakes == null)
+		{
+			Console.WriteLine("Snowflakes parameter is null. Exiting function 'CalculatePaymentPlansAsync'.");
+			throw new ArgumentNullException(nameof(snowflakes), "Snowflakes cannot be null.");
+		}
+
+		if (debtPlanMonthlyPayment < (decimal)0.001)
+		{
+			Console.WriteLine(
+				$"Warning debtPlanMonthlyPayment parameter is {debtPlanMonthlyPayment}. will set it to 0.");
+			debtPlanMonthlyPayment = 0;
+		}
+
 		Console.WriteLine(
-			$"Entered function 'CalculatePaymentPlansAsync' with debts: {JsonSerializer.Serialize(debts)}, snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
+			$"Entered function 'CalculatePaymentPlansAsync' with debts: {JsonSerializer.Serialize(debts)}," +
+			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
 
-		var debtsSummary = debts.Select(d =>
-			$"Id: {d.Id}, " +
-			$"Name: {d.Name}, " +
-			$"Principal: ${d.RemainingPrincipal:0.00}, " +
-			$"Bank Fees: ${d.BankFees:0.00}, " +
-			$"Monthly Payment: ${d.ContractedMonthlyPayment:0.00}, " +
-			$"Interest Rate: {d.AnnualInterestRate:P2}, " +
-			$"Term: {d.RemainingTermInMonths} months, " +
-			$"Currency: {d.CurrencyCode}, " +
-			$"Order: {d.CardinalOrder}, " +
-			$"Start Date: {d.StartDate:yyyy-MM-dd}"
-		).ToList();
-
-		Console.WriteLine("Entered function 'CalculatePaymentPlansAsync'");
-		Console.WriteLine("Debts:");
-		foreach (string debtSummary in debtsSummary) Console.WriteLine($"- {debtSummary}");
 
 		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
 		SnowflakesScheduleCreator snowflakesScheduleCreator = new();
 		var snowflakesSchedule = snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
 
-		CalcualteExtraPayment(debts, debtPlanMonthlyPayment);
+		CalculateExtraPayment(debts, debtPlanMonthlyPayment);
+
 
 		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
 		DebtPayoffPlan result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
@@ -44,7 +50,7 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 		return result;
 	}
 
-	private static void CalcualteExtraPayment(List<LoanDetailDto> debts, decimal debtPlanMonthlyPayment)
+	private static void CalculateExtraPayment(List<LoanDetailDto> debts, decimal debtPlanMonthlyPayment)
 	{
 		decimal totalMonthlyPayments = debts.Sum(d => d.ContractedMonthlyPayment);
 

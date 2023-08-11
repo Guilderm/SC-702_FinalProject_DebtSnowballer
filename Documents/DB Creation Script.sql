@@ -75,7 +75,7 @@ VALUES ('Strict Debt Snowball'),
 CREATE TABLE [UserRole]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Name]        NVARCHAR(20)       NOT NULL,
+                [Name]        NVARCHAR(20)       NOT NULL,
     [Description] NVARCHAR(50)       NOT NULL
 );
 
@@ -103,12 +103,12 @@ CREATE TABLE [UserProfile]
     -- consider putting these into a different table called UserSettings
     [BaseCurrency]             NVARCHAR(3)        NOT NULL DEFAULT 'USD', -- Currency will be defined using ISO 4217
     --[DebtPlanMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (DebtPlanMonthlyPayment >= AggregatedMonthlyPayment),
-    [DebtPlanMonthlyPayment]   DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (DebtPlanMonthlyPayment >= 0.01),
+    [DebtPlanMonthlyPayment]   DECIMAL(18, 2)     NOT NULL DEFAULT 0.01 CHECK (DebtPlanMonthlyPayment >= 0.01),
     [SelectedStrategy]         INT                NOT NULL DEFAULT 1 REFERENCES [DebtPayDownMethod] (Id),
 
     -- Consider deleting these
     [TotalAmountOwed]          DECIMAL(18, 2)     NOT NULL DEFAULT 0,
-    [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0 CHECK (AggregatedMonthlyPayment >= 0.01),
+    [AggregatedMonthlyPayment] DECIMAL(18, 2)     NOT NULL DEFAULT 0.01 CHECK (AggregatedMonthlyPayment >= 0.01),
 );
 
 
@@ -131,7 +131,7 @@ CREATE TABLE [LoanDetail]
     [Auth0UserId]              NVARCHAR(75)      NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [Name]                     NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]       DECIMAL(18, 2)     NOT NULL CHECK (RemainingPrincipal >= 0.01),
-    [BankFees]                 DECIMAL(18, 2)     NOT NULL CHECK (BankFees >= 0.01),
+    [BankFees]                 DECIMAL(18, 2)     NOT NULL CHECK (BankFees >= 0),
     [ContractedMonthlyPayment] DECIMAL(18, 2)     NOT NULL CHECK (ContractedMonthlyPayment >= 0.01),
     [AnnualInterestRate]       DECIMAL(6, 4)      NOT NULL CHECK (AnnualInterestRate >= 0.01),
     [MonthlyInterestRate]      DECIMAL(6, 4),    CHECK (MonthlyInterestRate >= 0.01),
