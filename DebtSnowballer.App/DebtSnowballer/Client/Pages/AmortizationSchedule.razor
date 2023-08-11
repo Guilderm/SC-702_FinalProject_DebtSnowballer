@@ -16,7 +16,9 @@
 	{
 		string currencySymbol = GetCurrencySymbol();
 
-		<h5><br>@schedule.Name</h5>
+		<h5>
+			<br>@schedule.Name
+		</h5>
 		<p>Loans Currency: @schedule.CurrencyCode</p>
 		<p>Annual Interest Rate: @schedule.AnnualInterestRate.ToString("P2")</p>
 		<p>Bank Fees: @currencySymbol @schedule.BankFees.ToString("N2")</p>
