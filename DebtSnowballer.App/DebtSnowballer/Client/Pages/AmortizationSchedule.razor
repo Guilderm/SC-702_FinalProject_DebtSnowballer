@@ -16,11 +16,11 @@
 	{
 		string currencySymbol = GetCurrencySymbol();
 
-		<h5><br>Name: @schedule.Name</h5>
+		<h5><br>@schedule.Name</h5>
 		<p>Loans Currency: @schedule.CurrencyCode</p>
 		<p>Annual Interest Rate: @schedule.AnnualInterestRate.ToString("P2")</p>
 		<p>Bank Fees: @currencySymbol @schedule.BankFees.ToString("N2")</p>
-		<p>Contracted Monthly Payment: @currencySymbol @schedule.ContractedMonthlyPayment.ToString("N2")<br></p>
+		<p>Contracted Monthly Payment: @currencySymbol @schedule.ContractedMonthlyPayment.ToString("N2")</p>
 		<br>
 		<p>Total Interest Paid: @currencySymbol @schedule.TotalInterestPaid.ToString("N2")</p>
 		<p>Total Bank Fees Paid: @currencySymbol @schedule.TotalBankFeesPaid.ToString("N2")</p>

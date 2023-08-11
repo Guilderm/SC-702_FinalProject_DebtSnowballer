@@ -8,41 +8,58 @@ public class DebtPayoffPlanCreator
 
 	public DebtPayoffPlanCreator(AmortizationScheduleCreator amortizationScheduleCreator)
 	{
-		_scheduleCreator = amortizationScheduleCreator;
-		Console.WriteLine("PaymentPlanCalculator initialized with AmortizationScheduleCalculator");
+		_scheduleCreator = amortizationScheduleCreator ??
+		                   throw new ArgumentNullException(nameof(amortizationScheduleCreator));
+		Console.WriteLine("DebtPayoffPlanCreator initialized with AmortizationScheduleCreator");
 	}
 
 	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDetailDto> debts)
 	{
+		if (debts == null)
+			throw new ArgumentNullException(nameof(debts));
+
 		Console.WriteLine($"Entered function 'CalculatePaymentPlansAsync' with debts count: {debts.Count}");
 
 		DebtPayoffPlan debtPayoffPlan = new();
 
-		List<LoanDetailDto> unsortedDebtsForBaseline = debts;
-		Console.WriteLine("Calculating Baseline payment plan...");
-		var debt = debts.Last();
-		Console.WriteLine($"the date for loan {debt.Name} in 'DebtPayoffPlanCreator' is: {debt.StartDate}");
+		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Baseline", debts, d => d.Id);
 
-		debtPayoffPlan.PaymentPlans["Baseline"] =
-			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(unsortedDebtsForBaseline));
+		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Snowball", debts, d => d.RemainingPrincipal);
 
-		List<LoanDetailDto> sortedDebtsForSnowball = debts.OrderByDescending(d => d.RemainingPrincipal).ToList();
-		Console.WriteLine("Calculating Snowball payment plan...");
+		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Avalanche", debts, d => d.AnnualInterestRate);
 
-		debtPayoffPlan.PaymentPlans["Snowball"] =
-			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForSnowball));
-
-		List<LoanDetailDto> sortedDebtsForAvalanche = debts.OrderByDescending(d => d.AnnualInterestRate).ToList();
-		Console.WriteLine("Calculating Avalanche payment plan...");
-		debtPayoffPlan.PaymentPlans["Avalanche"] =
-			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForAvalanche));
-
-		List<LoanDetailDto> sortedDebtsForCustom = debts.OrderByDescending(d => d.CardinalOrder).ToList();
-		Console.WriteLine("Calculating Custom payment plan...");
-		debtPayoffPlan.PaymentPlans["Custom"] =
-			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebtsForCustom));
+		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Custom", debts, d => d.CardinalOrder);
 
 		Console.WriteLine("Successfully calculated all payment plans");
 		return debtPayoffPlan;
+	}
+
+	private async Task CalculateAndAddPaymentPlan(DebtPayoffPlan debtPayoffPlan, string planName,
+		List<LoanDetailDto> debts, Func<LoanDetailDto, object> orderBy)
+	{
+		Console.WriteLine($"Calculating {planName} payment plan...");
+		var sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
+
+		debtPayoffPlan.PaymentPlans[planName] =
+			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebts));
+		Console.WriteLine($"payment plan {planName}  was calculated");
+	}
+
+	private List<LoanDetailDto> DeepCopy(List<LoanDetailDto> original)
+	{
+		return original.Select(item => new LoanDetailDto
+		{
+			Id = item.Id,
+			Auth0UserId = item.Auth0UserId,
+			Name = item.Name,
+			RemainingPrincipal = item.RemainingPrincipal,
+			BankFees = item.BankFees,
+			ContractedMonthlyPayment = item.ContractedMonthlyPayment,
+			AnnualInterestRate = item.AnnualInterestRate,
+			RemainingTermInMonths = item.RemainingTermInMonths,
+			CurrencyCode = item.CurrencyCode,
+			CardinalOrder = item.CardinalOrder,
+			StartDate = item.StartDate
+		}).ToList();
 	}
 }

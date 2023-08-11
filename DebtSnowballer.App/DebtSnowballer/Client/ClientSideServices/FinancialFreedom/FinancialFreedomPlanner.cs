@@ -34,6 +34,18 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 		SnowflakesScheduleCreator snowflakesScheduleCreator = new();
 		var snowflakesSchedule = snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
 
+		CalcualteExtraPayment(debts, debtPlanMonthlyPayment);
+
+		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
+		var result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
+
+		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
+
+		return result;
+	}
+
+	private static void CalcualteExtraPayment(List<LoanDetailDto> debts, decimal debtPlanMonthlyPayment)
+	{
 		decimal totalMonthlyPayments = debts.Sum(d => d.ContractedMonthlyPayment);
 
 		if (debtPlanMonthlyPayment < totalMonthlyPayments)
@@ -45,12 +57,5 @@ public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 
 		debtPlanMonthlyPayment -= totalMonthlyPayments;
 		Console.WriteLine($"Monthly amortization amount is calculated to be: {debtPlanMonthlyPayment}");
-
-		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
-		var result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
-
-		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
-
-		return result;
 	}
 }
