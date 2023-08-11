@@ -17,4 +17,5 @@ public class AmortizationSchedule
 	public decimal TotalInterestPaid { get; set; }
 	public decimal TotalBankFeesPaid { get; set; }
 	public decimal TotalPrincipalPaid { get; set; }
+	public decimal TotalExtraPayment { get; set; }
 }

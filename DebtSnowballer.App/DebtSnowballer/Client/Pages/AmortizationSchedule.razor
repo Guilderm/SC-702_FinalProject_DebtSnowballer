@@ -8,60 +8,83 @@
 <h1>Amortization Schedule</h1>
 
 @foreach (var plan in DebtPayoffPlan.PaymentPlans)
-    {
-    <h3>@plan.Key</h3>
-    <!-- Strategy Name -->
-    <h4>Loan Details</h4>
-    @foreach (var schedule in plan.Value)
-        {
-        <p>Name: @schedule.Name</p>
-        <p>Bank Fees: @schedule.BankFees</p>
-        <p>Annual Interest Rate: @schedule.AnnualInterestRate%</p>
-        <p>Currency: @schedule.CurrencyCode</p>
-        <p>Contracted Monthly Payment: @schedule.ContractedMonthlyPayment</p>
-        <p>Total Interest Paid: @schedule.TotalInterestPaid</p>
-        <p>Total Bank Fees Paid: @schedule.TotalBankFeesPaid</p>
-        <p>Total Principal Paid: @schedule.TotalPrincipalPaid</p>
-        }
+{
+	<h3>Strategy Name: @plan.Key</h3>
+	<h4>Loan Details</h4>
 
-    <table class="table">
-        <thead>
-            <tr>
-	            <th>Month</th>
-	            <th>Date</th>
-                <th>Interest Paid</th>
-                <th>Bank Fees Paid</th>
-                <th>Principal Paid</th>
-                <th>Accumulated Interest Paid</th>
-                <th>Accumulated Bank Fees Paid</th>
-                <th>Accumulated Principal Paid</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
-                {
-                <tr>
-	                <td>@detail.PaymentMonth</td>
-	                <td>@detail.EndOfMonthLoanState.StartDate</td>
-                    <td>@detail.InterestPaid</td>
-                    <td>@detail.BankFeesPaid</td>
-                    <td>@detail.PrincipalPaid</td>
-                    <td>@detail.AccumulatedInterestPaid</td>
-                    <td>@detail.AccumulatedBankFeesPaid</td>
-                    <td>@detail.AccumulatedPrincipalPaid</td>
-                </tr>
-                }
-        </tbody>
-    </table>
-    }
+	@foreach (var schedule in plan.Value)
+	{
+		string currencySymbol = GetCurrencySymbol();
+
+		<h5><br>Name: @schedule.Name</h5>
+		<p>Loans Currency: @schedule.CurrencyCode</p>
+		<p>Annual Interest Rate: @schedule.AnnualInterestRate.ToString("P2")</p>
+		<p>Bank Fees: @currencySymbol @schedule.BankFees.ToString("N2")</p>
+		<p>Contracted Monthly Payment: @currencySymbol @schedule.ContractedMonthlyPayment.ToString("N2")<br></p>
+		<br>
+		<p>Total Interest Paid: @currencySymbol @schedule.TotalInterestPaid.ToString("N2")</p>
+		<p>Total Bank Fees Paid: @currencySymbol @schedule.TotalBankFeesPaid.ToString("N2")</p>
+		<p>Total Principal Paid: @currencySymbol @schedule.TotalPrincipalPaid.ToString("N2")</p>
+		<p>Total ExtraPayment Paid: @currencySymbol @schedule.TotalExtraPayment.ToString("N2")</p>
+		<br>
+	}
+
+
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Loan</th>
+			<th>Month</th>
+			<th>Date</th>
+			<th>Interest Paid</th>
+			<th>Bank Fees Paid</th>
+			<th>Principal Paid</th>
+			<th>Accumulated Interest Paid</th>
+			<th>Accumulated Bank Fees Paid</th>
+			<th>Accumulated Principal Paid</th>
+			<th>Accumulated Extra Payment</th>
+			<th>Unallocated Payment</th>
+			<th>Extra Payment</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
+		{
+			string currencySymbol = GetCurrencySymbol();
+			<tr>
+				<td>@detail.EndOfMonthLoanState.Name</td>
+				<td>@detail.PaymentMonth</td>
+				<td>@detail.EndOfMonthLoanState.StartDate.ToString("yyyy-MM")</td>
+				<td>@currencySymbol @detail.InterestPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.BankFeesPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.PrincipalPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.AccumulatedInterestPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.AccumulatedBankFeesPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.AccumulatedPrincipalPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.AccumulatedExtraPayment.ToString("N2")</td>
+				<td>@currencySymbol @detail.UnallocatedPayment.ToString("N2")</td>
+				<td>@currencySymbol @detail.ExtraPayment.ToString("N2")</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}
 
 @code {
-    private DebtPayoffPlan DebtPayoffPlan { get; set; }
+	private DebtPayoffPlan DebtPayoffPlan { get; set; }
 
-    protected override Task OnInitializedAsync()
-        {
-        string paymentPlanDetailsJson = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split(new[] { '?' })[1].Split(new[] { '=' })[1];
-        DebtPayoffPlan = JsonSerializer.Deserialize<DebtPayoffPlan>(Uri.UnescapeDataString(paymentPlanDetailsJson));
-        return Task.CompletedTask;
-        }
+
+	protected override Task OnInitializedAsync()
+	{
+		string paymentPlanDetailsJson = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split(new[] { '?' })[1].Split(new[] { '=' })[1];
+		DebtPayoffPlan = JsonSerializer.Deserialize<DebtPayoffPlan>(Uri.UnescapeDataString(paymentPlanDetailsJson));
+		return Task.CompletedTask;
+	}
+
+
+	private string GetCurrencySymbol()
+	{
+		return "₡";
+	}
+
 }
