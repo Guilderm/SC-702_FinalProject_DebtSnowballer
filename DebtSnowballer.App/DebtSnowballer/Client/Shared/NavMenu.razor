@@ -1,14 +1,17 @@
-﻿@using MudBlazor
-
-
-<MudDrawerHeader>
+﻿<MudDrawerHeader>
 	<MudNavLink Href="" Match="NavLinkMatch.All">
 		<MudIcon Icon="@Icons.Material.Filled.Home"/> Home
 	</MudNavLink>
 </MudDrawerHeader>
 
 <MudNavMenu>
+	<MudNavLink Href="UserGuide">
+		<MudIcon Icon="@Icons.Material.Filled.LibraryBooks"/> User Guide
+	</MudNavLink>
 	<AuthorizeView>
+		<NotAuthorized>
+
+		</NotAuthorized>
 		<Authorized>
 			<MudNavLink Href="DebtStrategyPlanner">
 				<MudIcon Icon="@Icons.Material.Filled.AttachMoney"/> Debt Strategy Planner

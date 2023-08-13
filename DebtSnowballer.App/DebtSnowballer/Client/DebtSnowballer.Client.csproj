@@ -14,7 +14,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Components\AuthenticationStatus.razor" />
 		<None Include="Components\DebtManagement\DebtForm.razor" />
 		<None Include="Components\DebtManagement\DebtManagement.razor" />
 		<None Include="Pages\Authentication.razor" />

@@ -1,62 +1,62 @@
 ﻿@inject NavigationManager NavigationManager
 @inject SignOutSessionStateManager SignOutManager
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using MudBlazor
 @inherits LayoutComponentBase
 
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <CascadingAuthenticationState>
-	<MudLayout>
-		<MudAppBar Elevation="1">
-			<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggle())"/>
-			<NavLink href="/">
-				<MudText Typo="Typo.h5" Class="ml-3">Debt Snowballer </MudText>
-			</NavLink>
-			<MudSpacer/>
-			<AuthenticationStatus/>
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(e => DrawerToggle())" />
+            <NavLink href="/">
+                <MudText Typo="Typo.h5" Class="ml-3">Debt Snowballer </MudText>
+            </NavLink>
+            <MudSpacer />
 
-			<MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit">
-				<MudMenuItem OnClick="NavigateToProfile">Profile</MudMenuItem>
-				<MudMenuItem OnClick="BeginSignOut">Log out</MudMenuItem>
-			</MudMenu>
-
-		</MudAppBar>
-		<MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-			<NavMenu/>
-		</MudDrawer>
-		<MudMainContent>
-			@Body
-		</MudMainContent>
-	</MudLayout>
+            <AuthorizeView>
+                <Authorized Context="authContext">
+                    <img src="@authContext.User.FindFirst(c => c.Type == "picture")?.Value" alt="User Profile Image" class="rounded-circle" width="30" height="30">
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit">
+                        <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" OnClick="NavigateToProfile">Profile</MudMenuItem>
+                        <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="BeginSignOut">Log out</MudMenuItem>
+                    </MudMenu>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink href="authentication/login">
+                        <MudIcon Icon="@Icons.Material.Filled.Login" />
+                        Log innnnnnnnnnnnnnnnnnnnnnnnnnn
+                    </NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudAppBar>
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </MudLayout>
 </CascadingAuthenticationState>
 
 @code {
+    bool _drawerOpen = true;
 
-	bool _drawerOpen = true;
-	bool _profileMenuOpen;
+    void DrawerToggle()
+        {
+        _drawerOpen = !_drawerOpen;
+        }
 
-	void DrawerToggle()
-	{
-		_drawerOpen = !_drawerOpen;
-	}
+    void NavigateToProfile()
+        {
+        NavigationManager.NavigateTo("/Profile");
+        }
 
-	void ToggleProfileMenu()
-	{
-		_profileMenuOpen = !_profileMenuOpen;
-	}
-
-	void NavigateToProfile()
-	{
-		NavigationManager.NavigateTo("/Profile");
-	}
-
-	async Task BeginSignOut()
-	{
-		await SignOutManager.SetSignOutState();
-		NavigationManager.NavigateTo("authentication/logout");
-	}
-
+    async Task BeginSignOut()
+        {
+        await SignOutManager.SetSignOutState();
+        NavigationManager.NavigateTo("authentication/logout");
+        }
 }

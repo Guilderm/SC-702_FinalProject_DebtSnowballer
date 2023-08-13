@@ -80,7 +80,7 @@
 
 	private int _index = -1;
 	public List<ChartSeries> Series { get; set; } = new();
-	public string[] XAxisLabels { get; set; } = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	private string[] XAxisLabels { get; set; } = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 	[Parameter]
 	public DebtPayoffPlan DebtPayoffPlan { get; set; }

@@ -1,9 +1,0 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
-
-<AuthorizeView>
-	<Authorized Context="authContext">
-		<img src="@authContext.User.FindFirst(c => c.Type == "picture")?.Value" alt="User Profile Image" class="rounded-circle" width="30" height="30">
-	</Authorized>
-</AuthorizeView>
