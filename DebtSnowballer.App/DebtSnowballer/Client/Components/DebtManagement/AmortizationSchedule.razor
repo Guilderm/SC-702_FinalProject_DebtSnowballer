@@ -4,6 +4,13 @@
 
 <h1>Amortization Schedule</h1>
 
+
+<div>
+	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="_index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+	<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
+</div>
+
+
 @foreach (var plan in DebtPayoffPlan.PaymentPlans)
 {
 	<h3>Strategy Name: @plan.Key</h3>
@@ -71,9 +78,46 @@
 
 @code {
 
+	private int _index = -1;
+	public List<ChartSeries> Series { get; set; } = new();
+	public string[] XAxisLabels { get; set; } = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
 	[Parameter]
 	public DebtPayoffPlan DebtPayoffPlan { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
+
+
+	protected override void OnParametersSet()
+	{
+		PopulateChartData();
+	}
+
+	private void PopulateChartData()
+	{
+	// Clear existing data
+		Series.Clear();
+
+	// Create a list to store interest paid data for each strategy
+		var interestPaidData = new Dictionary<string, List<double>>();
+
+	// Iterate through payment plans and extract interest paid
+		foreach (var plan in DebtPayoffPlan.PaymentPlans)
+		{
+			string strategyName = plan.Key;
+			interestPaidData[strategyName] = new List<double>();
+
+			foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
+			{
+				interestPaidData[strategyName].Add((double)detail.InterestPaid);
+			}
+		}
+
+		foreach (var item in interestPaidData)
+		{
+			Series.Add(new ChartSeries { Name = item.Key, Data = item.Value.ToArray() });
+		}
+	}
+
 }
