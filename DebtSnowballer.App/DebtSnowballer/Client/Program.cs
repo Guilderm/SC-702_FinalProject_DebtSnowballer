@@ -5,6 +5,7 @@ using DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -41,6 +42,8 @@ builder.Services.AddOidcAuthentication(options =>
 });
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+builder.Services.AddMudServices();
 
 // Configure logging
 builder.Logging.SetMinimumLevel(LogLevel.Information);

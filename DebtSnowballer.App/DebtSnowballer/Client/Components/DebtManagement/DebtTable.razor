@@ -1,6 +1,13 @@
-﻿@using DebtSnowballer.Shared.DTOs
+﻿@using MudBlazor
+
+@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
 @inject IDebtService DebtService
+
+
+
+<MudLineChart T="decimal" ChartOptions="_chartOptions" Data="_chartData" />
+
 
 <table class="table">
 	<thead>
@@ -62,6 +69,21 @@
 
 	[Parameter]
 	public EventCallback<int> OnDeleteDebt { get; set; }
+
+	/*
+	private LineChartOptions _chartOptions = new LineChartOptions
+			{
+			XAxisTitle = "Loan",
+			YAxisTitle = "Remaining Principal",
+			};
+*/
+	private List<decimal> _chartData;
+
+	protected override void OnParametersSet()
+		{
+		_chartData = Debts.Select(debt => debt.RemainingPrincipal).ToList();
+		}
+
 
 	private async Task EditDebt(int id)
 	{
