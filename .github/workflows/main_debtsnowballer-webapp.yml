@@ -14,30 +14,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
 
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
-      - name: Build Client with dotnet
-        run: dotnet build ./DebtSnowballer.App/DebtSnowballer/Client --configuration Release
-
-      - name: Build Server with dotnet
-        run: dotnet build ./DebtSnowballer.App/DebtSnowballer/Server --configuration Release
-
-      - name: dotnet publish Client
-        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Client -c Release -o ${{env.DOTNET_ROOT}}\myapp
-
-      - name: dotnet publish Server
-        run: dotnet publish ./DebtSnowballer.App/DebtSnowballer/Server -c Release -o ${{env.DOTNET_ROOT}}\myapp
-
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
@@ -46,12 +38,12 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'production'
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: .net-app
 
@@ -60,6 +52,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'DebtSnowballer-WebApp'
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_1938cb4f434d4a739b687b71e390e72f }}
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A2CCE828DA8E4200968E4AE34A0FF91D }}
           package: .
