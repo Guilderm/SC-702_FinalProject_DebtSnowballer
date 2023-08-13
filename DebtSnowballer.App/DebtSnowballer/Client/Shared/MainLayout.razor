@@ -1,4 +1,8 @@
 ﻿@using MudBlazor
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager NavigationManager
+@inject SignOutSessionStateManager SignOutManager
+
 @inherits LayoutComponentBase
 
 <MudThemeProvider/>
@@ -9,14 +13,15 @@
 	<MudLayout>
 		<MudAppBar Elevation="1">
 			<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-			<MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+			<MudText Typo="Typo.h5" Class="ml-3">Debt Snowballer</MudText>
 			<MudSpacer />
 			<AuthenticationStatus />
-			<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" OnClick="ToggleProfileMenu" />
-			<MudMenu Open="@_profileMenuOpen">
+
+			<MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit">
 				<MudMenuItem OnClick="NavigateToProfile">Profile</MudMenuItem>
 				<MudMenuItem OnClick="BeginSignOut">Log out</MudMenuItem>
 			</MudMenu>
+			
 		</MudAppBar>
 		<MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
 			<NavMenu/>
@@ -28,6 +33,7 @@
 </CascadingAuthenticationState>
 
 @code {
+
 	bool _drawerOpen = true;
 	bool _profileMenuOpen = false;
 
@@ -43,11 +49,12 @@
 
 	void NavigateToProfile()
 	{
-	// Navigate to the profile page
+		NavigationManager.NavigateTo("/Profile");
 	}
 
 	async Task BeginSignOut()
 	{
-	// Sign out logic
+		await SignOutManager.SetSignOutState();
+		NavigationManager.NavigateTo("authentication/logout");
 	}
 }
