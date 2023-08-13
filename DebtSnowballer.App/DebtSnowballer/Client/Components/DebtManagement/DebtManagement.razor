@@ -49,7 +49,7 @@ else
 
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
-	
+
 
 	private void OnAddNewDebt()
 	{
@@ -72,7 +72,7 @@ else
 		await LoadDebtsInQuoteCurrency();
 		StateHasChanged();
 		await CalculateData();
-		}
+	}
 
 	private async Task SaveDebt(LoanDetailDto loanDetailItem)
 	{
@@ -90,7 +90,7 @@ else
 		await LoadDebtsInQuoteCurrency();
 		StateHasChanged();
 		await CalculateData();
-		}
+	}
 
 	private void CancelEdit()
 	{

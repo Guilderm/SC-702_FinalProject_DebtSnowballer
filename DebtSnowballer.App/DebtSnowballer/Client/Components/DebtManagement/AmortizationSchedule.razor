@@ -1,5 +1,4 @@
 ﻿@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
-
 @inject IFinancialFreedomPlanner FinancialFreedomPlanner
 @inject NavigationManager NavigationManager
 
@@ -71,11 +70,13 @@
 }
 
 @code {
-    [Parameter]
-    public DebtPayoffPlan DebtPayoffPlan { get; set; }
 
-    private string GetCurrencySymbol()
-    {
-        return "₡"; // You can replace this with the appropriate logic if needed
-    }
+	[Parameter]
+	public DebtPayoffPlan DebtPayoffPlan { get; set; }
+
+	private string GetCurrencySymbol()
+	{
+		return "₡"; // You can replace this with the appropriate logic if needed
+	}
+
 }

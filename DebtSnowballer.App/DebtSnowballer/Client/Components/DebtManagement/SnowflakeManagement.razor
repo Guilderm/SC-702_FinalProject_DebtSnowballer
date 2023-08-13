@@ -48,7 +48,7 @@ else
 
 	[Parameter]
 	public Func<Task> LoadSnowflakesInQuoteCurrency { get; set; }
-	
+
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
 
@@ -60,16 +60,16 @@ else
 		await LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
 		await CalculateData();
-		}
+	}
 
 	private void OnAddNewSnowflake()
 	{
 		SelectedPlannedSnowflake = new PlannedSnowflakeDto();
 
-		 LoadSnowflakesInQuoteCurrency();
+		LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
-		 CalculateData();
-		}
+		CalculateData();
+	}
 
 	private async Task OnSave(PlannedSnowflakeDto plannedSnowflake)
 	{
@@ -87,7 +87,7 @@ else
 		await LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
 		await CalculateData();
-		}
+	}
 
 	private void OnCancel()
 	{
@@ -102,4 +102,5 @@ else
 		StateHasChanged();
 		await CalculateData();
 	}
+
 }
