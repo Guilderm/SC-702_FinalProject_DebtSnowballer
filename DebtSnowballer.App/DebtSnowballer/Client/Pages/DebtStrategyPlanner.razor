@@ -1,5 +1,6 @@
 ﻿@page "/DebtStrategyPlanner"
 @page "/DebtPlanManagement"
+
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Client.ClientSideServices
@@ -34,7 +35,7 @@
 
 	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 
-	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan"/>
+	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol" />
 }
 else
 {
@@ -43,7 +44,7 @@ else
 
 
 @code {
-	private bool _isEssentialDataLoaded;
+	private bool _isEssentialDataLoaded = false;
 	private List<LoanDetailDto> _debtsInQuoteCurrency;
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
@@ -63,14 +64,13 @@ else
 		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 		Console.WriteLine("Authentication state retrieved.");
 
-	// Start tasks that do not have dependency
 		Console.WriteLine("Starting concurrent tasks: loading user profile, exchange rates, debts in quote currency, and snowflakes in quote currency...");
 		Task loadUserProfileTask = LoadUserProfile();
 		Task loadExchangeRatesTask = LoadExchangeRates();
-		_isEssentialDataLoaded = true;
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
 		await Task.WhenAll(loadUserProfileTask, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
+		_isEssentialDataLoaded = true;
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
@@ -118,7 +118,7 @@ else
 
 		foreach (LoanDetailDto debt in _debtsInQuoteCurrency)
 		{
-			var baseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == debt.CurrencyCode);
+			ExchangeRateDto baseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == debt.CurrencyCode);
 			if (baseRate != null)
 			{
 				Console.WriteLine($"Converting debt with ID {debt.Id} using base rate for currency {baseRate.QuoteCurrency}: {baseRate.ConversionRate}");
@@ -247,5 +247,4 @@ else
 		await ConvertSnowflakesToQuoteCurrency();
 		await CreateDebtPayoffPlan();
 	}
-
 }
