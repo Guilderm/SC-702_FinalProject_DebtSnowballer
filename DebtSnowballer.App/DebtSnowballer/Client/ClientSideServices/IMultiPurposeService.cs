@@ -4,5 +4,5 @@ namespace DebtSnowballer.Client.ClientSideServices;
 
 public interface IMultiPurposeService
 {
-	Task<IList<DebtPayDownMethodDto>> GetAllStrategyTypes();
+    Task<IList<DebtPayDownMethodDto>> GetAllStrategyTypes();
 }

@@ -4,6 +4,6 @@ namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
 
 public interface IFinancialFreedomPlanner
 {
-	Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDetailDto> debts, List<PlannedSnowflakeDto> snowflakes,
-		decimal debtPlanMonthlyPayment);
+    Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDetailDto> debts, List<PlannedSnowflakeDto> snowflakes,
+        decimal debtPlanMonthlyPayment);
 }

@@ -1,6 +1,5 @@
 ﻿@page "/DebtStrategyPlanner"
 @page "/DebtPlanManagement"
-
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Client.ClientSideServices
@@ -35,7 +34,7 @@
 
 	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 
-	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol" />
+	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 }
 else
 {
@@ -44,7 +43,7 @@ else
 
 
 @code {
-	private bool _isEssentialDataLoaded = false;
+	private bool _isEssentialDataLoaded;
 	private List<LoanDetailDto> _debtsInQuoteCurrency;
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
@@ -247,4 +246,5 @@ else
 		await ConvertSnowflakesToQuoteCurrency();
 		await CreateDebtPayoffPlan();
 	}
+
 }
