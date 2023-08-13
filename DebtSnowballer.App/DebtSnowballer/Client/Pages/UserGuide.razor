@@ -1,7 +1,43 @@
-﻿@page "/UserGuide"
+﻿@page "/userguide"
 
-<h3>User Guide</h3>
+<MudContainer>
+    <MudPaper Elevation="3">
+        <MudText Typo="Typo.h4">User Guide for Debt Snowballer</MudText>
+        <MudText Typo="Typo.body1">Welcome to Debt Snowballer, a tool designed to help you develop a personalized plan to become debt-free. This guide will walk you through the features and provide definitions to help you understand various debt payoff strategies.</MudText>
 
-@code {
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Text="Definitions and Strategies">
+                <MudText><strong>Debt Snowball:</strong> A method to pay off debts by listing them and ordering by smallest balance first (Strict Debt Snowball) or largest interest rate first (Debt Avalanche). Pay the minimum on all loans except the top one, putting any extra towards it.</MudText>
+                <MudText><strong>Debt Avalanche:</strong> Focuses on paying off the loan with the largest interest rate first, minimizing the total interest paid.</MudText>
+                <MudText><strong>Debt Snowflake:</strong> Making extra payments on your debts whenever you have extra money, such as bonuses.</MudText>
+                <MudText><strong>Custom Snowball:</strong> Allows adjustments to the order of debts after applying a strict debt snowball or avalanche.</MudText>
+            </MudExpansionPanel>
 
-}
+            <MudExpansionPanel Text="Getting Started">
+                <MudText>Supported Browsers: The web app works on Firefox-Based and Chromium-Base browsers released within the last year.</MudText>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel Text="Creating Your Account">
+                <MudText>User Creation: Create an account by providing your email, name, and password.</MudText>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel Text="Managing Your Loans">
+                <MudText>Loan Creation: Provide details to create a loan, including remaining balance, interest rate, fees, remaining term, and monthly payment.</MudText>
+                <MudText>Loan Management: Modify existing loans as needed.</MudText>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel Text="Comparing Debt Repayment Strategies">
+                <MudText>Explore different strategies such as Debt Snowball, Debt Avalanche, and Debt Snowflake. Compare and choose the one that suits you best.</MudText>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel Text="Using Estimators and Calculators">
+                <MudText>Debt Payoff Estimator: Determine when specific debts will be paid off and when you will be debt-free.</MudText>
+                <MudText>Extra Payment Calculator: Calculate the impact of one-time or fixed extra monthly payments.</MudText>
+            </MudExpansionPanel>
+
+            <MudExpansionPanel Text="Contact and Support">
+                <MudText>For additional support or inquiries, please <MudLink Href="#">contact us</MudLink> (Please provide the correct contact link).</MudText>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudPaper>
+</MudContainer>
