@@ -1,14 +1,53 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor
+@inherits LayoutComponentBase
 
 <MudThemeProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
 <CascadingAuthenticationState>
-	<div class="page">
-		<NavMenu/>
-		<main role="main" class="pb-3">
+	<MudLayout>
+		<MudAppBar Elevation="1">
+			<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+			<MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+			<MudSpacer />
+			<AuthenticationStatus />
+			<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" OnClick="ToggleProfileMenu" />
+			<MudMenu Open="@_profileMenuOpen">
+				<MudMenuItem OnClick="NavigateToProfile">Profile</MudMenuItem>
+				<MudMenuItem OnClick="BeginSignOut">Log out</MudMenuItem>
+			</MudMenu>
+		</MudAppBar>
+		<MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+			<NavMenu/>
+		</MudDrawer>
+		<MudMainContent>
 			@Body
-		</main>
-	</div>
+		</MudMainContent>
+	</MudLayout>
 </CascadingAuthenticationState>
+
+@code {
+	bool _drawerOpen = true;
+	bool _profileMenuOpen = false;
+
+	void DrawerToggle()
+	{
+		_drawerOpen = !_drawerOpen;
+	}
+
+	void ToggleProfileMenu()
+	{
+		_profileMenuOpen = !_profileMenuOpen;
+	}
+
+	void NavigateToProfile()
+	{
+	// Navigate to the profile page
+	}
+
+	async Task BeginSignOut()
+	{
+	// Sign out logic
+	}
+}

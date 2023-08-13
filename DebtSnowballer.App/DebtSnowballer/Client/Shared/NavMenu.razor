@@ -1,27 +1,23 @@
-﻿<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	<div class="container-fluid">
-		<a class="navbar-brand" href="">DebtStrategyPlannerSnowballer</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNav">
-			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				<li class="nav-item">
-					<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-						<span class="oi oi-home" aria-hidden="true"></span> Home
-					</NavLink>
-				</li>
-				<li class="nav-item">
-					<AuthorizeView>
-						<Authorized>
-							<NavLink class="nav-link" href="DebtStrategyPlanner">
-								<span class="oi oi-dollar" aria-hidden="true"></span> Debt Strategy Planner
-							</NavLink>
-						</Authorized>
-					</AuthorizeView>
-				</li>
-			</ul>
-			<AuthenticationStatus/>
-		</div>
-	</div>
-</nav>
+﻿@using MudBlazor
+
+
+<MudDrawerHeader>
+	<MudNavLink Href="" Match="NavLinkMatch.All">
+		<MudIcon Icon="@Icons.Material.Filled.Home" /> Home
+	</MudNavLink>
+</MudDrawerHeader>
+
+
+<MudNavMenu>
+	<AuthorizeView>
+		<Authorized>
+			<MudNavLink Href="DebtStrategyPlanner">
+				<MudIcon Icon="@Icons.Material.Filled.AttachMoney" /> Debt Strategy Planner
+			</MudNavLink>
+		</Authorized>
+	</AuthorizeView>
+</MudNavMenu>
+
+<MudDrawerFooter>
+
+</MudDrawerFooter>
