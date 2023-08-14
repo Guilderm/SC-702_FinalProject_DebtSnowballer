@@ -1,6 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
-@using DebtSnowballer.Shared.Currency
 @inject IDebtService DebtService
 
 @inject ISnackbar Snackbar
@@ -8,45 +7,60 @@
 
 <MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" CanCancelEditing="true" EditTrigger="TableEditTrigger.EditButton">
 	<HeaderContent>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.Name)">Loan NickName</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.RemainingPrincipal)">Remaining Principal</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.AnnualInterestRate)">Interest Rate</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.BankFees)">BankFees</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.ContractedMonthlyPayment)">Monthly Payment</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.RemainingTermInMonths)">Remaining Term</MudTableSortLabel></MudTh>
-		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.CurrencyCode)">Currency</MudTableSortLabel></MudTh><MudTh></MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.Name)">Loan NickName</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.RemainingPrincipal)">Remaining Principal</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.AnnualInterestRate)">Interest Rate</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.BankFees)">BankFees</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.ContractedMonthlyPayment)">Monthly Payment</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.RemainingTermInMonths)">Remaining Term</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
+		</MudTh>
+		<MudTh></MudTh>
 	</HeaderContent>
 	<RowTemplate>
 		@if (_loanInEditMode == context)
-			{
+		{
 			<MudTd DataLabel="Loan NickName">
-				<MudTextField @bind-Value="@context.Name" Required />
-		</MudTd>
-			<MudTd DataLabel="Remaining Principal">
-				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required />
-		</MudTd>
-			<MudTd DataLabel="Interest Rate">
-				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required />
-		</MudTd>
-			<MudTd DataLabel="BankFees">
-				<MudNumericField @bind-Value="@context.BankFees" Required />
-		</MudTd>
-			<MudTd DataLabel="Monthly Payment">
-				<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required />
-		</MudTd>
-			<MudTd DataLabel="Remaining Term">
-				<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required />
-		</MudTd>
-			<MudTd DataLabel="Currency">
-				<MudTextField @bind-Value="@context.CurrencyCode" Required />
-		</MudTd>
-			<MudTd>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => EditDebt(context.Id))">Save</MudButton>
-				<MudButton Variant="Variant.Filled" Color="Color.Default">Cancel</MudButton>
+				<MudTextField @bind-Value="@context.Name" Required/>
 			</MudTd>
-			}
+			<MudTd DataLabel="Remaining Principal">
+				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required/>
+			</MudTd>
+			<MudTd DataLabel="Interest Rate">
+				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required/>
+			</MudTd>
+			<MudTd DataLabel="BankFees">
+				<MudNumericField @bind-Value="@context.BankFees" Required/>
+			</MudTd>
+			<MudTd DataLabel="Monthly Payment">
+				<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required/>
+			</MudTd>
+			<MudTd DataLabel="Remaining Term">
+				<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required/>
+			</MudTd>
+			<MudTd DataLabel="Currency">
+				<MudTextField @bind-Value="@context.CurrencyCode" Required/>
+			</MudTd>
+			<MudTd>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => SaveEdit(context.Id)"/>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Cancel" Class="pa-0" OnClick="CancelEdit"/>
+			</MudTd>
+		}
 		else
-			{
+		{
 			<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
 			<MudTd DataLabel="Remaining Principal">@GetCurrencySymbol(context.CurrencyCode) @context.RemainingPrincipal.ToString("N2")</MudTd>
 			<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
@@ -56,23 +70,22 @@
 			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
 			<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
 			<MudTd>
-				<MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="(() => DeleteDebt(context.Id))"></MudIconButton>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
 			</MudTd>
-			}
+		}
 	</RowTemplate>
 
 	<EditButtonContent Context="button">
 		<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction"/>
 	</EditButtonContent>
 	<FooterContent>
-		<MudButton OnClick="AddNewLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
+		<MudButton OnClick="AddLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
 	</FooterContent>
 </MudTable>
 
 
-
-
 @code {
+	private LoanDetailDto _loanInEditMode;
 
 	[Parameter]
 	public bool AreActionsShown { get; set; }
@@ -89,21 +102,37 @@
 	[Parameter]
 	public EventCallback<int> OnDeleteDebt { get; set; }
 
-	private async Task EditDebt(int id)
+	private async Task SaveEdit(int id)
 	{
 		await OnEditDebt.InvokeAsync(id);
 	}
 
-	private async Task DeleteDebt(int id)
+	private async Task DeleteLoan(int id)
 	{
 		await OnDeleteDebt.InvokeAsync(id);
 	}
 
-	private LoanDetailDto _loanInEditMode;
-
-	private void AddNewLoan()
+	private void CancelEdit()
 	{
-		LoanDetailDto newLoan = new LoanDetailDto(); // Set the initial properties as needed
+		_loanInEditMode = null;
+	}
+
+	private void EditLoan(int loanId)
+	{
+		LoanDetailDto loanToEdit = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
+		if (loanToEdit == null)
+		{
+			CancelEdit();
+		}
+		if (loanToEdit != null)
+		{
+			EnterEditMode(loanToEdit);
+		}
+	}
+
+	private void AddLoan()
+	{
+		LoanDetailDto newLoan = new(); // Set the initial properties as needed
 		LoanDetails.Add(newLoan);
 		EnterEditMode(newLoan);
 	}
@@ -113,4 +142,5 @@
 		_loanInEditMode = loan;
 		StateHasChanged();
 	}
+
 }
