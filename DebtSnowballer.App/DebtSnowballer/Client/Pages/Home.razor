@@ -18,21 +18,29 @@
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
 	<div class="container text-center text-md-left" data-aos="fade-up">
-			<h1>Welcome to <span>DebtSnowballer</span></h1>
-			<h2>A tool to Roll with Purpose: Navigating Towards your Debt-Free Life!!!</h2>
-		<a href="#about" class="btn-get-started scrollto">Get Started</a>
+		<h1>Welcome to <span>DebtSnowballer</span></h1>
+		<h2>A tool to Roll with Purpose: Navigating Towards your Debt-Free Life!!!</h2>
+		<AuthorizeView>
+			<Authorized Context="authContext">
+					<MudNavLink Href="DebtStrategyPlanner"></MudNavLink>
+					<a href="DebtStrategyPlanner" class="btn-get-started scrollto">Go to Plan</a>
+			</Authorized>
+			<NotAuthorized>
+				<a href="authentication/login" class="btn-get-started scrollto">Get Started</a>
+			</NotAuthorized>
+		</AuthorizeView>
 	</div>
 </section><!-- End Hero -->
 
 <main id="main">
 
-		<!-- ======= About the Tool ======= -->
+	<!-- ======= About the Tool ======= -->
 	<section id="what-we-do" class="what-we-do">
 		<div class="container">
 
 			<div class="section-title">
 				<h2>About the tool</h2>
-					<p>Use DebtSnowballer to create personalized debt payoff plans.</p>
+				<p>Use DebtSnowballer to create personalized debt payoff plans.</p>
 			</div>
 
 			<div class="row">
@@ -42,7 +50,7 @@
 							<i class="bx bxl-dribbble"></i>
 						</div>
 						<h4>
-								<a href="">Customized Plans</a>
+							<a href="">Customized Plans</a>
 						</h4>
 						<p>We tailor debt repayment strategies to fit your unique financial situation.</p>
 					</div>
@@ -54,10 +62,10 @@
 							<i class="bx bx-file"></i>
 						</div>
 						<h4>
-								<a href="">Financial Education</a>
-							</h4>
-							<p>We provide resources and guidance to empower you in your financial journey.</p>
-						</div>
+							<a href="">Financial Education</a>
+						</h4>
+						<p>We provide resources and guidance to empower you in your financial journey.</p>
+					</div>
 				</div>
 
 				<div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0">
@@ -66,24 +74,24 @@
 							<i class="bx bx-tachometer"></i>
 						</div>
 						<h4>
-								<a href="">Progress Tracking</a>
-							</h4>
-							<p>Monitor your debt reduction progress with our intuitive dashboard.</p>
-						</div>
+							<a href="">Progress Tracking</a>
+						</h4>
+						<p>Monitor your debt reduction progress with our intuitive dashboard.</p>
+					</div>
 				</div>
 
 			</div>
 
 		</div>
-		</section><!-- About the Tool -->
-		<!-- ======= Features Section ======= -->
+	</section><!-- About the Tool -->
+	<!-- ======= Features Section ======= -->
 	<section id="services" class="services section-bg">
 		<div class="container">
 
 			<div class="section-title">
-					<h2>Features</h2>
-					<p>Features that empower you on your debt free journey.</p>
-				</div>
+				<h2>Features</h2>
+				<p>Features that empower you on your debt free journey.</p>
+			</div>
 
 			<div class="row">
 				<div class="col-md-6">
@@ -126,10 +134,10 @@
 					<div class="icon-box">
 						<i class="bi bi-brightness-high"></i>
 						<h4>
-								<a href="#">Support & Guidance</a>
-							</h4>
-							<p>Our team is here to support you with expert advice and guidance.</p>
-						</div>
+							<a href="#">Support & Guidance</a>
+						</h4>
+						<p>Our team is here to support you with expert advice and guidance.</p>
+					</div>
 				</div>
 				<div class="col-md-6 mt-4">
 					<div class="icon-box">

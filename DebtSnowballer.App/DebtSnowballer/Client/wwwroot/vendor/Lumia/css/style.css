@@ -354,13 +354,13 @@ h6 {
 # Hero Section
 --------------------------------------------------------------*/
 #hero {
-  width: 100%;
-  height: 60vh;
-  background: url("../img/hero-bg.jpg") center center;
-  background-size: cover;
-  position: relative;
-  margin-top: 70px;
-  padding: 0;
+    width: 100%;
+    height: 70vh;
+    background: url("/img/HeroImage.jpg") center center;
+    background-size: cover;
+    position: relative;
+    margin-top: 0px;
+    padding: 0;
 }
 
 #hero:before {
