@@ -16,7 +16,7 @@
 }
 else
 {
-	<DebtTable Debts="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="true"/>
+	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="true"/>
 
 	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
 
@@ -26,7 +26,7 @@ else
 
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable Debts="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
+	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
 
 	<DebtForm LoanDetail="@_selectedLoanDetail" OnSave="SaveDebt" OnCancel="CancelEdit"/>
 }

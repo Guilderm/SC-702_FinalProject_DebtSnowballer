@@ -1,6 +1,51 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
+@using DebtSnowballer.Shared.Currency
 @inject IDebtService DebtService
+
+@inject ISnackbar Snackbar
+
+
+<MudTable Items="@LoanDetails" CanCancelEdit="true">
+	<HeaderContent>
+		<MudTh>Loan Name</MudTh>
+		<MudTh>Remaining Principal</MudTh>
+		<MudTh>Interest Rate</MudTh>
+		<MudTh>Bank Fees</MudTh>
+		<MudTh>Monthly Payment</MudTh>
+		<MudTh>Remaining Term (Months)</MudTh>
+		<MudTh>Currency</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="Loan Name">@context.Name</MudTd>
+		<MudTd DataLabel="Remaining Principal">@context.RemainingPrincipal</MudTd>
+		<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate</MudTd>
+		<MudTd DataLabel="Bank Fees">@context.BankFees</MudTd>
+		<MudTd DataLabel="Monthly Payment">@context.ContractedMonthlyPayment</MudTd>
+		<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
+		<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+	</RowTemplate>
+	<RowEditingTemplate>
+		<MudTd DataLabel="Loan Name"><MudTextField @bind-Value="@context.Name" Required /></MudTd>
+		<MudTd DataLabel="Remaining Principal"><MudNumericField @bind-Value="@context.RemainingPrincipal" Required /></MudTd>
+		<MudTd DataLabel="Interest Rate"><MudNumericField @bind-Value="@context.AnnualInterestRate" Required /></MudTd>
+		<MudTd DataLabel="Bank Fees"><MudNumericField @bind-Value="@context.BankFees" Required /></MudTd>
+		<MudTd DataLabel="Monthly Payment"><MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required /></MudTd>
+		<MudTd DataLabel="Remaining Term"><MudNumericField @bind-Value="@context.RemainingTermInMonths" Required /></MudTd>
+		<MudTd DataLabel="Currency">
+			<MudSelect @bind-Value="@context.CurrencyCode" Label="Currency">
+				@foreach (var currency in Currencies.SupportedCurrencies)
+					{
+					<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</MudSelectItem>
+					}
+			</MudSelect>
+		</MudTd>
+	</RowEditingTemplate>
+</MudTable>
+
+
+
+
 
 
 <table class="table">
@@ -22,7 +67,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	@foreach (LoanDetailDto debt in Debts)
+	@foreach (LoanDetailDto debt in LoanDetails)
 	{
 		string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
 		<tr>
@@ -53,7 +98,7 @@
 	public bool AreActionsShown { get; set; }
 
 	[Parameter]
-	public List<LoanDetailDto> Debts { get; set; }
+	public List<LoanDetailDto> LoanDetails { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -68,7 +113,7 @@
 
 	protected override void OnParametersSet()
 	{
-		_chartData = Debts.Select(debt => debt.RemainingPrincipal).ToList();
+		_chartData = LoanDetails.Select(debt => debt.RemainingPrincipal).ToList();
 	}
 
 
