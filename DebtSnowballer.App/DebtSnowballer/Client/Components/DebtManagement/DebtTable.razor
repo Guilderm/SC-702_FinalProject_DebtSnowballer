@@ -5,7 +5,7 @@
 @inject ISnackbar Snackbar
 
 
-<MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" CanCancelEditing="true" EditTrigger="TableEditTrigger.EditButton">
+<MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By">
 	<HeaderContent>
 		<MudTh>
 			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.Name)">Loan NickName</MudTableSortLabel>
@@ -30,6 +30,8 @@
 		</MudTh>
 		<MudTh></MudTh>
 	</HeaderContent>
+
+
 	<RowTemplate>
 		@if (_loanInEditMode == context)
 		{
@@ -75,14 +77,11 @@
 		}
 	</RowTemplate>
 
-	<EditButtonContent Context="button">
-		<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction"/>
-	</EditButtonContent>
+
 	<FooterContent>
 		<MudButton OnClick="AddLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
 	</FooterContent>
 </MudTable>
-
 
 @code {
 	private LoanDetailDto _loanInEditMode;
