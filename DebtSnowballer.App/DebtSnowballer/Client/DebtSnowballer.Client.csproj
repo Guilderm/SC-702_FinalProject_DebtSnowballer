@@ -39,4 +39,8 @@
 		<ProjectReference Include="..\Shared\DebtSnowballer.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="wwwroot\vendor\" />
+	</ItemGroup>
+
 </Project>
