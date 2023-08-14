@@ -75,7 +75,7 @@ VALUES ('Strict Debt Snowball'),
 CREATE TABLE [UserRole]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-                [Name]        NVARCHAR(20)       NOT NULL,
+    [Name]        NVARCHAR(20)       NOT NULL,
     [Description] NVARCHAR(50)       NOT NULL
 );
 
@@ -128,13 +128,14 @@ CREATE TABLE [SessionLog]
 CREATE TABLE [LoanDetail]
 (
     [Id]                       INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId]              NVARCHAR(75)      NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
+    [Auth0UserId]              NVARCHAR(75)       NOT NULL FOREIGN KEY REFERENCES [UserProfile] (Auth0UserId),
     [Name]                     NVARCHAR(50)       NOT NULL,
     [RemainingPrincipal]       DECIMAL(18, 2)     NOT NULL CHECK (RemainingPrincipal >= 0.01),
     [BankFees]                 DECIMAL(18, 2)     NOT NULL CHECK (BankFees >= 0),
     [ContractedMonthlyPayment] DECIMAL(18, 2)     NOT NULL CHECK (ContractedMonthlyPayment >= 0.01),
     [AnnualInterestRate]       DECIMAL(6, 4)      NOT NULL CHECK (AnnualInterestRate >= 0.01),
-    [MonthlyInterestRate]      DECIMAL(6, 4),    CHECK (MonthlyInterestRate >= 0.01),
+    [MonthlyInterestRate]      DECIMAL(6, 4),
+    CHECK (MonthlyInterestRate >= 0.01),
     [RemainingTermInMonths]    INT                NOT NULL CHECK (RemainingTermInMonths >= 1),
     [CurrencyCode]             NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
     [CardinalOrder]            INT                NOT NULL,

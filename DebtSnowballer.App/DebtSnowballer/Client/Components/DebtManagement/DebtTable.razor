@@ -6,128 +6,71 @@
 @inject ISnackbar Snackbar
 
 
-<MudTable Items="@LoanDetails" CanCancelEditing="true">
-	<ToolBarContent>
-		<MudButton OnClick="AddLoan">Add Loan</MudButton>
-	</ToolBarContent>
+<MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" CanCancelEditing="true" EditTrigger="TableEditTrigger.EditButton">
 	<HeaderContent>
-		<MudTh>Name</MudTh>
-		<MudTh>Remaining Principal</MudTh>
-		<MudTh>Interest Rate</MudTh>
-		<MudTh>BankFees</MudTh>
-		<MudTh>Monthly Payment</MudTh>
-		<MudTh>Remaining Term</MudTh>
-		<MudTh>Currency</MudTh>
-		<MudTh></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.Name)">Loan NickName</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.RemainingPrincipal)">Remaining Principal</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.AnnualInterestRate)">Interest Rate</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.BankFees)">BankFees</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.ContractedMonthlyPayment)">Monthly Payment</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.RemainingTermInMonths)">Remaining Term</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x=>x.CurrencyCode)">Currency</MudTableSortLabel></MudTh><MudTh></MudTh>
 	</HeaderContent>
 	<RowTemplate>
-		<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
-		<MudTd DataLabel="Remaining Principal">@context.RemainingPrincipal</MudTd>
-		<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate</MudTd>
-		<MudTd DataLabel="BankFees">@context.BankFees</MudTd>
-		<MudTd DataLabel="Monthly Payment">@context.ContractedMonthlyPayment</MudTd>
-		<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
-		<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
-		<MudTd>
-			<MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@((e) => context.StartEdit())"></MudIconButton>
-			<MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteLoan(context))"></MudIconButton> <!-- Delete Button -->
+		@if (_loanInEditMode == context)
+			{
+			<MudTd DataLabel="Loan NickName">
+				<MudTextField @bind-Value="@context.Name" Required />
 		</MudTd>
+			<MudTd DataLabel="Remaining Principal">
+				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required />
+		</MudTd>
+			<MudTd DataLabel="Interest Rate">
+				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required />
+		</MudTd>
+			<MudTd DataLabel="BankFees">
+				<MudNumericField @bind-Value="@context.BankFees" Required />
+		</MudTd>
+			<MudTd DataLabel="Monthly Payment">
+				<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required />
+		</MudTd>
+			<MudTd DataLabel="Remaining Term">
+				<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required />
+		</MudTd>
+			<MudTd DataLabel="Currency">
+				<MudTextField @bind-Value="@context.CurrencyCode" Required />
+		</MudTd>
+			<MudTd>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => EditDebt(context.Id))">Save</MudButton>
+				<MudButton Variant="Variant.Filled" Color="Color.Default">Cancel</MudButton>
+			</MudTd>
+			}
+		else
+			{
+			<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
+			<MudTd DataLabel="Remaining Principal">@GetCurrencySymbol(context.CurrencyCode) @context.RemainingPrincipal.ToString("N2")</MudTd>
+			<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
+			<MudTd DataLabel="BankFees">@GetCurrencySymbol(context.CurrencyCode) @context.BankFees.ToString("N2")</MudTd>
+			<MudTd DataLabel="Monthly Payment">@GetCurrencySymbol(context.CurrencyCode) @context.ContractedMonthlyPayment.ToString("N2")</MudTd>
+			<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
+			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+			<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
+			<MudTd>
+				<MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="(() => DeleteDebt(context.Id))"></MudIconButton>
+			</MudTd>
+			}
 	</RowTemplate>
-	<RowEditingTemplate>
-		<MudTd DataLabel="Loan NickName">
-			<MudTextField @bind-Value="@context.Name" Required />
-		</MudTd>
-		<MudTd DataLabel="Remaining Principal">
-			<MudNumericField @bind-Value="@context.RemainingPrincipal" Required />
-		</MudTd>
-		<MudTd DataLabel="Interest Rate">
-			<MudNumericField @bind-Value="@context.AnnualInterestRate" Required />
-		</MudTd>
-		<MudTd DataLabel="BankFees">
-			<MudNumericField @bind-Value="@context.BankFees" Required />
-		</MudTd>
-		<MudTd DataLabel="Monthly Payment">
-			<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required />
-		</MudTd>
-		<MudTd DataLabel="Remaining Term">
-			<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required />
-		</MudTd>
-		<MudTd DataLabel="Currency">
-			<MudTextField @bind-Value="@context.CurrencyCode" Required />
-		</MudTd>
-		<MudTd>
-			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@context.Commit">Save</MudButton>
-			<MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="@context.Cancel">Cancel</MudButton>
-		</MudTd>
-	</RowEditingTemplate>
+
+	<EditButtonContent Context="button">
+		<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction"/>
+	</EditButtonContent>
+	<FooterContent>
+		<MudButton OnClick="AddNewLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
+	</FooterContent>
 </MudTable>
 
-@code {
-	//private List<Loan> loans;
-
-	// Define Loan class according to your model
-
-	private void DeleteLoan(LoanDetailDto loan)
-	{
-	// Implement deletion logic here
-		LoanDetails.Remove(loan);
-	}
-
-	private void AddLoan()
-	{
-	// Implement add loan logic here
-	}
-}
 
 
-
-<br/>
-<br />
-
-
-<table class="table">
-	<thead>
-	<tr>
-		<th>Loan Nickname</th>
-		<th>Principal</th>
-		<th>BankFees</th>
-		<th>Monthly Payment</th>
-		<th>Interest Rate</th>
-		<th>Remaining Term</th>
-		<th>Cardinal Order</th>
-		<th>Currency</th>
-		<th>Start Date</th>
-		@if (AreActionsShown)
-		{
-			<th>Actions</th>
-		}
-	</tr>
-	</thead>
-	<tbody>
-	@foreach (LoanDetailDto debt in LoanDetails)
-	{
-		string currencySymbol = GetCurrencySymbol(debt.CurrencyCode);
-		<tr>
-			<td>@debt.Name</td>
-			<td>@currencySymbol @debt.RemainingPrincipal.ToString("N2")</td>
-			<td>@currencySymbol @debt.BankFees.ToString("N2")</td>
-			<td>@currencySymbol @debt.ContractedMonthlyPayment.ToString("N2")</td>
-			<td>@debt.AnnualInterestRate.ToString("P2")</td>
-			<td>@debt.RemainingTermInMonths</td>
-			<td>@debt.CardinalOrder</td>
-			<td>@debt.CurrencyCode</td>
-			<td>@debt.StartDate</td>
-			@if (AreActionsShown)
-			{
-				<td>
-					<button class="btn btn-primary" @onclick="() => EditDebt(debt.Id)">Edit</button>
-					<button class="btn btn-danger" @onclick="() => DeleteDebt(debt.Id)">Delete</button>
-				</td>
-			}
-		</tr>
-	}
-	</tbody>
-</table>
 
 @code {
 
@@ -146,14 +89,6 @@
 	[Parameter]
 	public EventCallback<int> OnDeleteDebt { get; set; }
 
-	private List<decimal> _chartData;
-
-	protected override void OnParametersSet()
-	{
-		_chartData = LoanDetails.Select(debt => debt.RemainingPrincipal).ToList();
-	}
-
-
 	private async Task EditDebt(int id)
 	{
 		await OnEditDebt.InvokeAsync(id);
@@ -164,4 +99,18 @@
 		await OnDeleteDebt.InvokeAsync(id);
 	}
 
+	private LoanDetailDto _loanInEditMode;
+
+	private void AddNewLoan()
+	{
+		LoanDetailDto newLoan = new LoanDetailDto(); // Set the initial properties as needed
+		LoanDetails.Add(newLoan);
+		EnterEditMode(newLoan);
+	}
+
+	private void EnterEditMode(LoanDetailDto loan)
+	{
+		_loanInEditMode = loan;
+		StateHasChanged();
+	}
 }
