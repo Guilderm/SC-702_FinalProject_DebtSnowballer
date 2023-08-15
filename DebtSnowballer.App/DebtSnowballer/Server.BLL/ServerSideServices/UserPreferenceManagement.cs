@@ -55,7 +55,7 @@ public class UserPreferenceManagement
 			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
 			oldUserPreference = new UserPreference { Auth0UserId = auth0UserId };
 			// Set any other required properties here
-			_repository.Insert(oldUserPreference);
+			await _repository.Insert(oldUserPreference);
 		}
 
 

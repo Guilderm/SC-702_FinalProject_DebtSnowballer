@@ -5,7 +5,7 @@
 @inject ISnackbar Snackbar
 
 
-<MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By">
+<MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" Hover="true" ReadOnly="@IsReadOnly">
 	<HeaderContent>
 		<MudTh>
 			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.Name)">Loan NickName</MudTableSortLabel>
@@ -88,7 +88,7 @@
 	private LoanDetailDto _loanInEditMode;
 
 	[Parameter]
-	public bool AreActionsShown { get; set; }
+	public bool IsReadOnly { get; set; }
 
 	[Parameter]
 	public List<LoanDetailDto> LoanDetails { get; set; }

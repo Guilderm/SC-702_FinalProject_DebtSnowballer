@@ -31,7 +31,7 @@ try
 	// Add services for the DB.
 	Log.Information("Configuring DbContext...");
 	builder.Services.AddDbContext<DebtSnowballerDbContext>(options =>
-		options.UseSqlServer(builder.Configuration.GetConnectionString("AzureBDConnection")));
+		options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDBConnection")));
 
 	Log.Information("Adding scoped services...");
 	builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -25,7 +25,7 @@ public partial class DebtSnowballer_DBContext : DbContext
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlServer("Name=AzureBDConnection");
+		if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlServer("Name=DefaultDBConnection");
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
