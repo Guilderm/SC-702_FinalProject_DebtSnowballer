@@ -8,6 +8,7 @@ public class UserPreference
 	public decimal DebtPlanMonthlyPayment { get; set; }
 	public int SelectedStrategy { get; set; }
 
+	public virtual UserProfile Auth0User { get; set; } = null!;
 	public virtual Currency BaseCurrencyNavigation { get; set; } = null!;
 	public virtual DebtPayDownMethod SelectedStrategyNavigation { get; set; } = null!;
 }

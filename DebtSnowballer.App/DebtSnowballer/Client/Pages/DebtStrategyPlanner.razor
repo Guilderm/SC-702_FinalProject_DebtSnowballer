@@ -1,4 +1,5 @@
-﻿@page "/DebtStrategyPlanner"
+﻿@page "/StrategyPlanner"
+@page "/DebtStrategyPlanner"
 @page "/DebtPlanManagement"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
@@ -49,22 +50,17 @@ else
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInBaseCurrency;
 	private UserPreferenceDto _userPreference;
-	private AuthenticationState _authState;
 	private IList<ExchangeRateDto> _usersExchangeRates;
 	private DebtPayoffPlan DebtPayoffPlan { get; set; }
 
 
 	protected override async Task OnInitializedAsync()
 	{
-		Console.WriteLine("Initializing component...");
+		Console.WriteLine("Initializing Strategy Planner");
 
-	// TODO: Need to get this data from the backend without getting any data from the front end.
-		Console.WriteLine("Getting authentication state...");
-		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		Console.WriteLine("Authentication state retrieved.");
 
-		Console.WriteLine("Starting concurrent tasks: loading user profile, exchange rates, debts in quote currency, and snowflakes in quote currency...");
-	//TODO: load user settings
+		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
+
 		Task loadExchangeRatesTask = LoadExchangeRates();
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();

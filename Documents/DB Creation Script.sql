@@ -88,7 +88,7 @@ VALUES ('EndUser', 'The user that the application is intended for'),
 CREATE TABLE [UserProfile]
 (
     [Id]          INT IDENTITY (1,1) NOT NULL PRIMARY KEY,
-    [Auth0UserId] NVARCHAR(75)       NOT NULL,
+    [Auth0UserId] NVARCHAR(75)       NOT NULL UNIQUE,
     [GivenName]   NVARCHAR(50)       NULL,
     [FamilyName]  NVARCHAR(50)       NULL,
     [NickName]    NVARCHAR(50)       NULL,

@@ -7,6 +7,7 @@ public class UserProfile
 		LoanDetails = new HashSet<LoanDetail>();
 		PlannedSnowflakes = new HashSet<PlannedSnowflake>();
 		SessionLogs = new HashSet<SessionLog>();
+		UserPreferences = new HashSet<UserPreference>();
 	}
 
 	public int Id { get; set; }
@@ -26,4 +27,5 @@ public class UserProfile
 	public virtual ICollection<LoanDetail> LoanDetails { get; set; }
 	public virtual ICollection<PlannedSnowflake> PlannedSnowflakes { get; set; }
 	public virtual ICollection<SessionLog> SessionLogs { get; set; }
+	public virtual ICollection<UserPreference> UserPreferences { get; set; }
 }
