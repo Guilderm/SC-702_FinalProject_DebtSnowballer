@@ -32,12 +32,9 @@
 @code {
 	private readonly List<Assembly> _lazyLoadedAssemblies = new();
 
-	private AuthenticationState _authState;
-
 	protected override async Task OnInitializedAsync()
 	{
-		_authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		await UserProfileService.CreateUpdateUserProfile(_authState.User);
+//TODO: load user settings and chache them
 	}
 
 }

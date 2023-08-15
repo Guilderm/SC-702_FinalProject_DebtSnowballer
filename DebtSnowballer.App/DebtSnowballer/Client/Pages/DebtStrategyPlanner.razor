@@ -24,15 +24,15 @@
 
 @if (_isEssentialDataLoaded)
 {
-	<BaseCurrencyManagement BaseCurrency="@_userProfile.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+	<BaseCurrencyManagement BaseCurrency="@_userPreference.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
 
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userProfile.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userProfile.DebtPlanMonthlyPayment"/>
+	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userPreference.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userPreference.DebtPlanMonthlyPayment"/>
 
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<StrategyManagement UserStrategyType="@_userProfile.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
+	<StrategyManagement UserStrategyType="@_userPreference.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
 
 	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 }
@@ -48,7 +48,7 @@ else
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInBaseCurrency;
-	private UserProfileDto _userProfile;
+	private UserPreferenceDto _userPreference;
 	private AuthenticationState _authState;
 	private IList<ExchangeRateDto> _usersExchangeRates;
 	private DebtPayoffPlan DebtPayoffPlan { get; set; }
@@ -64,11 +64,11 @@ else
 		Console.WriteLine("Authentication state retrieved.");
 
 		Console.WriteLine("Starting concurrent tasks: loading user profile, exchange rates, debts in quote currency, and snowflakes in quote currency...");
-		Task loadUserProfileTask = LoadUserProfile();
+	//TODO: load user settings
 		Task loadExchangeRatesTask = LoadExchangeRates();
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
-		await Task.WhenAll(loadUserProfileTask, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
+		await Task.WhenAll(loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isEssentialDataLoaded = true;
 		Console.WriteLine("Concurrent tasks completed.");
 
@@ -77,15 +77,6 @@ else
 
 		Console.WriteLine("Component initialization complete.");
 	}
-
-
-	private async Task LoadUserProfile()
-	{
-		Console.WriteLine("Starting to load user profile...");
-		_userProfile = await UserProfileService.CreateUpdateUserProfile(_authState.User);
-		Console.WriteLine($"User profile loaded successfully. User ID: {_userProfile?.Id}");
-	}
-
 
 	private async Task LoadExchangeRates()
 	{
@@ -133,7 +124,7 @@ else
 					AnnualInterestRate = debt.AnnualInterestRate,
 					RemainingTermInMonths = debt.RemainingTermInMonths,
 					CardinalOrder = debt.CardinalOrder,
-					CurrencyCode = _userProfile.BaseCurrency,
+					CurrencyCode = _userPreference.BaseCurrency,
 					StartDate = debt.StartDate
 				};
 
@@ -172,7 +163,7 @@ else
 					FrequencyInMonths = snowflake.FrequencyInMonths,
 					StartingAt = snowflake.StartingAt,
 					EndingAt = snowflake.EndingAt,
-					CurrencyCode = _userProfile.BaseCurrency
+					CurrencyCode = _userPreference.BaseCurrency
 				};
 
 				_snowflakesInBaseCurrency.Add(convertedPlannedSnowflake);
@@ -186,7 +177,7 @@ else
 	{
 		Console.WriteLine($"Starting to update base currency to: {selectedCurrency}...");
 		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
-		_userProfile.BaseCurrency = selectedCurrency;
+		_userPreference.BaseCurrency = selectedCurrency;
 		Console.WriteLine($"Base currency updated successfully to: {selectedCurrency}");
 		await ConvertDebtsToBaseCurrency();
 
@@ -218,8 +209,8 @@ else
 
 	private async Task UpdateSelectedStrategy(int selectedCurrency)
 	{
-		_userProfile.SelectedStrategy = selectedCurrency;
-		_userProfile = await UserProfileService.UpdateSelectedStrategy(selectedCurrency);
+		_userPreference.SelectedStrategy = selectedCurrency;
+		//TODO: update all setings
 		StateHasChanged();
 		Console.WriteLine("State has changed after UpdateSelectedStrategy payoff plan.");
 	}
@@ -229,7 +220,7 @@ else
 		if (_debtsInBaseCurrency is {Count: > 0 })
 		{
 			Console.WriteLine("Starting to create debt payoff plan...");
-			DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userProfile.DebtPlanMonthlyPayment);
+			DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userPreference.DebtPlanMonthlyPayment);
 			Console.WriteLine("Debt payoff plan created successfully.");
 			StateHasChanged();
 			Console.WriteLine("State has changed after creating debt payoff plan.");

@@ -2,13 +2,13 @@
 
 public class DebtPayDownMethod
 {
-    public DebtPayDownMethod()
-    {
-        UserProfiles = new HashSet<UserProfile>();
-    }
+	public DebtPayDownMethod()
+	{
+		UserPreferences = new HashSet<UserPreference>();
+	}
 
-    public int Id { get; set; }
-    public string Name { get; set; } = null!;
+	public int Id { get; set; }
+	public string Name { get; set; } = null!;
 
-    public virtual ICollection<UserProfile> UserProfiles { get; set; }
+	public virtual ICollection<UserPreference> UserPreferences { get; set; }
 }
