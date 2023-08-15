@@ -77,7 +77,7 @@
 			@if (!IsReadOnly)
 			{
 				<MudTd>
-					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0"/>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditLoan(context.Id)" />
 					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
 				</MudTd>
 			}

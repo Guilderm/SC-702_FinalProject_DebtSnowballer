@@ -23,14 +23,16 @@
 	<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
 
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
+	@if (_isDataCalculated)
+	{
+		<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
+		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
 
-	<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
+		<PlanAnalyse UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" DebtsInBaseCurrency="@_debtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<PlanAnalyse UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" DebtsInBaseCurrency="@_debtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
-
-	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
+		<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
+	}
 }
 else
 {
@@ -40,7 +42,8 @@ else
 
 
 @code {
-	private bool _isEssentialDataLoaded;
+	private bool _isEssentialDataLoaded = false;
+	private bool _isDataCalculated = false;
 	private List<LoanDetailDto> _debtsInQuoteCurrency;
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
@@ -60,10 +63,11 @@ else
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
 		await Task.WhenAll(loadUserPreference, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isEssentialDataLoaded = true;
+		StateHasChanged();
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
-
+		_isDataCalculated = true;
 		Console.WriteLine("Component initialization complete.");
 	}
 
