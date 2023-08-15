@@ -1,5 +1,5 @@
-﻿@using DebtSnowballer.Shared.Currency
-@using DebtSnowballer.Shared.DTOs
+﻿@using DebtSnowballer.Shared.DTOs
+@using DebtSnowballer.Shared.Currency
 <br>
 <br>
 
@@ -35,4 +35,5 @@ else
 		UserPreference.BaseCurrency = selectedCurrency.Value.ToString();
 		await SaveUserPreference.InvokeAsync(UserPreference);
 	}
+
 }

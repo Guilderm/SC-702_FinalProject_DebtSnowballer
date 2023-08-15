@@ -5,15 +5,15 @@ namespace Server.BLL.ServerSideServices;
 
 public class MultiPurposeService : IMultiPurposeService
 {
-    private readonly HttpClient _httpClient;
+	private readonly HttpClient _httpClient;
 
-    public MultiPurposeService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
+	public MultiPurposeService(HttpClient httpClient)
+	{
+		_httpClient = httpClient;
+	}
 
-    public async Task<List<DebtPayDownMethodDto>> GetAllStrategyTypesAsync()
-    {
-        return await _httpClient.GetFromJsonAsync<List<DebtPayDownMethodDto>>("api/MultiPurpose");
-    }
+	public async Task<List<DebtPayDownMethodDto>> GetAllStrategyTypesAsync()
+	{
+		return await _httpClient.GetFromJsonAsync<List<DebtPayDownMethodDto>>("api/MultiPurpose");
+	}
 }

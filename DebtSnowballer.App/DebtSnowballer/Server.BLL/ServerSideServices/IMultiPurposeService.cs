@@ -4,5 +4,5 @@ namespace Server.BLL.ServerSideServices;
 
 public interface IMultiPurposeService
 {
-    Task<List<DebtPayDownMethodDto>> GetAllStrategyTypesAsync();
+	Task<List<DebtPayDownMethodDto>> GetAllStrategyTypesAsync();
 }

@@ -41,7 +41,8 @@ else
 		if (int.TryParse(selectedStrategyId.Value!.ToString(), out int parsedValue))
 		{
 			UserPreference.SelectedStrategy = parsedValue;
-				await SaveUserPreference.InvokeAsync(UserPreference);
+			await SaveUserPreference.InvokeAsync(UserPreference);
 		}
 	}
-	}
+
+}

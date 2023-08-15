@@ -2,10 +2,10 @@
 
 public class DebtPayoffPlan
 {
-    public DebtPayoffPlan()
-    {
-        PaymentPlans = new Dictionary<string, List<AmortizationSchedule>>();
-    }
+	public DebtPayoffPlan()
+	{
+		PaymentPlans = new Dictionary<string, List<AmortizationSchedule>>();
+	}
 
-    public Dictionary<string, List<AmortizationSchedule>> PaymentPlans { get; set; }
+	public Dictionary<string, List<AmortizationSchedule>> PaymentPlans { get; set; }
 }

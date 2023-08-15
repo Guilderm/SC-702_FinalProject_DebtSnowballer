@@ -20,7 +20,7 @@
 
 @if (_isEssentialDataLoaded)
 {
-	<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" />
+	<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
 
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
@@ -28,7 +28,7 @@
 
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" />
+	<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
 
 	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 }
@@ -51,12 +51,13 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		Console.WriteLine("Initializing Strategy Planner");Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
+		Console.WriteLine("Initializing Strategy Planner");
+		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
 		Task loadUserPreference = LoadUserPreference();
 		Task loadExchangeRatesTask = LoadExchangeRates();
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
-		await Task.WhenAll(loadUserPreference,loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
+		await Task.WhenAll(loadUserPreference, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isEssentialDataLoaded = true;
 		Console.WriteLine("Concurrent tasks completed.");
 
@@ -68,13 +69,13 @@ else
 	private async Task LoadUserPreference()
 	{
 		_userPreference = await UserService.GetUserPreferenceAsync();
-		Console.WriteLine($"Loaded User Preference.");
-		}
+		Console.WriteLine("Loaded User Preference.");
+	}
 
 	private async Task SaveUserPreference(UserPreferenceDto userPreference)
 	{
 		_userPreference = await UserService.UpdateUserPreferenceAsync(userPreference);
-		Console.WriteLine($"Saved User Preference.");
+		Console.WriteLine("Saved User Preference.");
 
 		await CalculateData();
 		StateHasChanged();
@@ -173,7 +174,7 @@ else
 		}
 		return Task.CompletedTask;
 	}
-	
+
 	public string GetCurrencySymbol(string currencyCode)
 	{
 		Console.WriteLine($"Attempting to retrieve symbol for currency code: {currencyCode}...");
@@ -182,7 +183,7 @@ else
 		Console.WriteLine($"Retrieved symbol for currency code {currencyCode}: {symbol}");
 		return symbol;
 	}
-	
+
 	private async Task LoadSnowflakesInQuoteCurrency()
 	{
 		Console.WriteLine("Starting to load snowflakes in quote currency...");
@@ -215,4 +216,5 @@ else
 		await ConvertSnowflakesToQuoteCurrency();
 		await CreateDebtPayoffPlan();
 	}
-	}
+
+}
