@@ -1,6 +1,6 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
-@inject IUserProfileService UserProfileService
+@inject IUserService UserService
 
 <h3> Summary </h3>
 
@@ -59,7 +59,7 @@ else
 		{
 			if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
 			{
-				await UserProfileService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
+				await UserService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
 				DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
 			}
 			else

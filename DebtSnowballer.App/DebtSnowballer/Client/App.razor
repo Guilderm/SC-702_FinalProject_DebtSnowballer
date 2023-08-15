@@ -4,7 +4,7 @@
 @inject LazyAssemblyLoader LazyAssemblyLoader
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IUserProfileService UserProfileService
+@inject IUserService UserService
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@_lazyLoadedAssemblies">

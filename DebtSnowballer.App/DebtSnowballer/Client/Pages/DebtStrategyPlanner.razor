@@ -12,7 +12,7 @@
 @inject NavigationManager NavigationManager
 
 @inject IDebtService DebtService
-@inject IUserProfileService UserProfileService
+@inject IUserService UserService
 @inject ISnowflakeService SnowflakeService
 @inject IFinancialFreedomPlanner FinancialFreedomPlanner
 
@@ -172,7 +172,7 @@ else
 	private async Task UpdateBaseCurrency(string selectedCurrency)
 	{
 		Console.WriteLine($"Starting to update base currency to: {selectedCurrency}...");
-		await UserProfileService.UpdateBaseCurrency(selectedCurrency);
+		await UserService.UpdateBaseCurrency(selectedCurrency);
 		_userPreference.BaseCurrency = selectedCurrency;
 		Console.WriteLine($"Base currency updated successfully to: {selectedCurrency}");
 		await ConvertDebtsToBaseCurrency();
