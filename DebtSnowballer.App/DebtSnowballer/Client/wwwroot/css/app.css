@@ -16,3 +16,9 @@
 		transform: rotate(360deg);
 	}
 }
+
+
+/*For select box */
+.select-width {
+	max-width: 300px;
+}

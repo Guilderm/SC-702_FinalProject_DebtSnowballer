@@ -10,17 +10,17 @@
 {
 	<p>
 		<em>Loading strategies...</em>
-		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
 	</p>
 }
 else
 {
-	<select @onchange="SavePreferredBaseCurrency" value="@UserPreference">
+	<MudSelect T="string" Label="Select Currency" @bind-Value="UserPreference.BaseCurrency" Variant="Variant.Text" @oninput="SavePreferredBaseCurrency">
 		@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 		{
-			<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
+			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
 		}
-	</select>
+	</MudSelect>
 }
 
 @code {
