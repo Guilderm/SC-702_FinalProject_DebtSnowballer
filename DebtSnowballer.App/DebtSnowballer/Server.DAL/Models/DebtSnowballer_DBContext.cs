@@ -2,13 +2,13 @@
 
 namespace Server.DAL.Models;
 
-public partial class DebtSnowballer_DBContext : DbContext
+public partial class DebtSnowballerDbContext : DbContext
 {
-	public DebtSnowballer_DBContext()
+	public DebtSnowballerDbContext()
 	{
 	}
 
-	public DebtSnowballer_DBContext(DbContextOptions<DebtSnowballer_DBContext> options)
+	public DebtSnowballerDbContext(DbContextOptions<DebtSnowballerDbContext> options)
 		: base(options)
 	{
 	}

@@ -14,8 +14,4 @@ public class UserProfileDto
 	public int UserRoleId { get; set; }
 	public DateTime CreatedAt { get; set; }
 	public DateTime LastUpdated { get; set; }
-	public string UserRoleName { get; set; }
-	public int NumberOfLoans { get; set; }
-	public int NumberOfPlannedSnowflakes { get; set; }
-	public int NumberOfSessionLogs { get; set; }
 }

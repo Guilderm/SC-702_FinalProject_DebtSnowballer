@@ -16,7 +16,7 @@ public class ExchangeRateManagement
 	private readonly IMapper _mapper;
 	private readonly IGenericRepository<ExchangeRate> _repository;
 	private readonly IUnitOfWork _unitOfWork;
-	private readonly UserPreferenceManagement _userPrefenceManagement;
+	private readonly UserPreferenceManagement _userPreferenceManagement;
 	private ExchangeRate _exchangeRate;
 
 	public ExchangeRateManagement(IUnitOfWork unitOfWork, IConfiguration configuration,
@@ -29,12 +29,12 @@ public class ExchangeRateManagement
 		_apiKey = configuration["ExchangeRateApi:ApiKey"];
 		_baseUrl = configuration["ExchangeRateApi:BaseUrl"];
 		_repository = unitOfWork.GetRepository<ExchangeRate>();
-		_userPrefenceManagement = userProfileManagement;
+		_userPreferenceManagement = userProfileManagement;
 	}
 
 	public async Task<IEnumerable<ExchangeRateDto>> GetUsersExchangeRates(string auth0UserId)
 	{
-		UserPreference userPreference = await _userPrefenceManagement.GetUserPreferenceModel(auth0UserId);
+		UserPreferenceDto userPreference = await _userPreferenceManagement.GetUserPreference(auth0UserId);
 		IEnumerable<ExchangeRate> usersExchangeRates =
 			await GetAndUpdateExchangeRatesForBaseCurrency(userPreference.BaseCurrency);
 

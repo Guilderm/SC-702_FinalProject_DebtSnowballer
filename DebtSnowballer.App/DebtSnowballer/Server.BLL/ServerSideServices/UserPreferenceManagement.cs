@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DebtSnowballer.Shared.DTOs;
+using Microsoft.Extensions.Logging;
 using Server.DAL.Interfaces;
 using Server.DAL.Models;
 
@@ -7,58 +8,61 @@ namespace Server.BLL.ServerSideServices;
 
 public class UserPreferenceManagement
 {
+	private readonly ILogger<UserPreferenceManagement> _logger;
 	private readonly IMapper _mapper;
 	private readonly IGenericRepository<UserPreference> _repository;
 	private readonly IUnitOfWork _unitOfWork;
+	private readonly UserProfileManagement _userProfileManagement;
 
-	public UserPreferenceManagement(IUnitOfWork unitOfWork, IMapper mapper)
+	public UserPreferenceManagement(IUnitOfWork unitOfWork, IMapper mapper, ILogger<UserPreferenceManagement> logger,
+		UserProfileManagement userProfileManagement)
 	{
-		_unitOfWork = unitOfWork;
 		_mapper = mapper;
-		_repository = _unitOfWork.GetRepository<UserPreference>();
+		_unitOfWork = unitOfWork;
+		_repository = unitOfWork.GetRepository<UserPreference>();
+		_logger = logger;
+		_userProfileManagement = userProfileManagement;
 	}
 
-
-	public async Task<decimal> GetDebtPlanMonthlyPayment(string auth0UserId)
+	public async Task<UserPreferenceDto> GetUserPreference(string auth0UserId)
 	{
-		UserPreference userPreferenceModel = await GetUserPreferenceModel(auth0UserId);
-		return userPreferenceModel.DebtPlanMonthlyPayment;
+		_logger.LogInformation($"Getting user preference for user: {auth0UserId}");
+		UserPreference userPreference = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+		if (userPreference == null)
+		{
+			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
+			return new UserPreferenceDto(); // Return an empty DTO
+		}
+
+		_logger.LogInformation($"User preference retrieved for user: {auth0UserId}");
+		return _mapper.Map<UserPreferenceDto>(userPreference);
 	}
 
-	public async Task<bool> UpdateBaseCurrency(string baseCurrency, string auth0UserId)
+	public async Task<UserPreferenceDto> UpdateUserPreference(UserPreferenceDto NewUserPreferenceDto,
+		string auth0UserId)
 	{
-		UserPreference userPreferenceModel = await GetUserPreferenceModel(auth0UserId);
+		_logger.LogInformation($"Updating user preference for user: {auth0UserId}");
+		UserProfile userProfile = await _unitOfWork.GetRepository<UserProfile>().Get(u => u.Auth0UserId == auth0UserId);
+		if (userProfile == null)
+		{
+			_logger.LogWarning($"User profile not found for user: {auth0UserId}. Creating a new profile.");
+			await _userProfileManagement.CreateUserProfile(auth0UserId);
+		}
 
-		if (userPreferenceModel.BaseCurrency == baseCurrency)
-			return false;
+		UserPreference OldUserPreference = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+		if (OldUserPreference == null)
+		{
+			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
+			OldUserPreference = new UserPreference { Auth0UserId = auth0UserId };
+			// Set any other required properties here
+			_repository.Insert(OldUserPreference);
+		}
 
-		userPreferenceModel.BaseCurrency = baseCurrency;
-		_repository.Update(userPreferenceModel);
+
+		_mapper.Map(NewUserPreferenceDto, OldUserPreference);
+		_repository.Update(OldUserPreference);
 		await _unitOfWork.Save();
-
-		return true;
-	}
-
-	public async Task<UserPreferenceDto> PatchSelectedStrategy(string auth0UserId, int strategyTypeId)
-	{
-		UserPreference userPreferenceModel = await GetUserPreferenceModel(auth0UserId);
-		if (userPreferenceModel == null) return null;
-
-		userPreferenceModel.SelectedStrategy = strategyTypeId;
-		_repository.Update(userPreferenceModel);
-		await _unitOfWork.Save();
-
-		UserPreferenceDto userPreferenceDto = _mapper.Map<UserPreferenceDto>(userPreferenceModel);
-
-		return userPreferenceDto;
-	}
-
-	internal async Task<UserPreference> GetUserPreferenceModel(string auth0UserId)
-	{
-		UserPreference userPreferenceModel = await _repository.Get(u => u.Auth0UserId == auth0UserId);
-
-		return userPreferenceModel == null
-			? throw new Exception($"User profile not found for Auth0UserId: {auth0UserId}")
-			: userPreferenceModel;
+		_logger.LogInformation($"User preference updated for user: {auth0UserId}");
+		return _mapper.Map<UserPreferenceDto>(OldUserPreference);
 	}
 }
