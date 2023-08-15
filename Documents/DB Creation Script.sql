@@ -154,25 +154,13 @@ CREATE TABLE [PlannedSnowflakes]
     [CurrencyCode]      NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
 );
 
--- Insert data into UserProfile
+
+-- Insert data for Guilder
 INSERT INTO UserProfile (Auth0UserId, GivenName, FamilyName, Email, UserRoleId)
-VALUES ('google-oauth2|116471976465148595031', 'Guilder', 'Miliner', 'guilder@gmail.com', 1),
-       ('auth0|64cc577de4780fda44d0d662', 'Jim', 'Doe', 'jim.doe@example.com', 1);
+VALUES ('google-oauth2|116471976465148595031', 'Guilder', 'Miliner', 'guilder@gmail.com', 1)
 
 INSERT INTO [userPreferences] ([Auth0UserId], [BaseCurrency], [DebtPlanMonthlyPayment], [SelectedStrategy])
-VALUES ('google-oauth2|116471976465148595031', 'CRC', 30000, 1),
-       ('auth0|64cc577de4780fda44d0d662', 'CRC', 200.75, 2);
-
--- Insert data into Loan
-INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
-                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
-VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 250000, 0.035, 0, 1122.61, 360, 'USD', 1),
-       ('google-oauth2|116471976465148595031', '2024 Toyota Camry Loan', 22000, 0.045, 200, 411.53, 60, 'USD', 2),
-       ('google-oauth2|116471976465148595031', 'Personal Loan', 10000, 0.07, 0, 232.22, 48, 'USD', 3),
-       ('google-oauth2|116471976465148595031', 'Visa Credit Card', 5000, 0.18, 50, 180, 36, 'USD', 4),
-       ('google-oauth2|116471976465148595031', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
-       ('google-oauth2|116471976465148595031', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
-
+VALUES ('google-oauth2|116471976465148595031', 'CRC', 30000, 1)
 
 INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
                         RemainingTermInMonths, CurrencyCode, CardinalOrder)
@@ -183,7 +171,6 @@ VALUES ('google-oauth2|116471976465148595031', 'Home Mortgage', 250000, 0.035, 0
        ('google-oauth2|116471976465148595031', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
        ('google-oauth2|116471976465148595031', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
 
--- Insert data into Snowflakes
 INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
 VALUES ('google-oauth2|116471976465148595031', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'USD'),
@@ -191,12 +178,108 @@ VALUES ('google-oauth2|116471976465148595031', 'Snowflake1', 12, 1000.00, GETDAT
        ('google-oauth2|116471976465148595031', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
        ('google-oauth2|116471976465148595031', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'CRC'),
-       ('google-oauth2|116471976465148595031', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('google-oauth2|116471976465148595031', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
 
-       ('auth0|64cc577de4780fda44d0d662', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+
+-- Insert data for kevinocie
+INSERT INTO UserProfile (Auth0UserId, GivenName, FamilyName, Email, UserRoleId)
+VALUES ('auth0|64cc577de4780fda44d0d662', 'Guilder', 'Miliner', 'guilder@gmail.com', 1)
+
+INSERT INTO [userPreferences] ([Auth0UserId], [BaseCurrency], [DebtPlanMonthlyPayment], [SelectedStrategy])
+VALUES ('auth0|64cc577de4780fda44d0d662', 'CRC', 30000, 1)
+
+INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
+                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
+VALUES ('auth0|64cc577de4780fda44d0d662', 'Home Mortgage', 250000, 0.035, 0, 1122.61, 360, 'USD', 1),
+       ('auth0|64cc577de4780fda44d0d662', '2024 Toyota Camry Loan', 22000, 0.045, 200, 411.53, 60, 'USD', 2),
+       ('auth0|64cc577de4780fda44d0d662', 'Personal Loan', 10000, 0.07, 0, 232.22, 48, 'USD', 3),
+       ('auth0|64cc577de4780fda44d0d662', 'Visa Credit Card', 5000, 0.18, 50, 180, 36, 'USD', 4),
+       ('auth0|64cc577de4780fda44d0d662', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
+       ('auth0|64cc577de4780fda44d0d662', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
+
+INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
+VALUES ('auth0|64cc577de4780fda44d0d662', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'USD'),
        ('auth0|64cc577de4780fda44d0d662', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
        ('auth0|64cc577de4780fda44d0d662', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
        ('auth0|64cc577de4780fda44d0d662', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
         'CRC'),
        ('auth0|64cc577de4780fda44d0d662', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
+
+
+-- Insert data for ...
+INSERT INTO UserProfile (Auth0UserId, GivenName, FamilyName, Email, UserRoleId)
+VALUES ('google-oauth2|103543391824730602744', 'Guilder', 'Miliner', 'guilder@gmail.com', 1)
+
+INSERT INTO [userPreferences] ([Auth0UserId], [BaseCurrency], [DebtPlanMonthlyPayment], [SelectedStrategy])
+VALUES ('google-oauth2|103543391824730602744', 'CRC', 30000, 1)
+
+INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
+                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
+VALUES ('google-oauth2|103543391824730602744', 'Home Mortgage', 250000, 0.035, 0, 1122.61, 360, 'USD', 1),
+       ('google-oauth2|103543391824730602744', '2024 Toyota Camry Loan', 22000, 0.045, 200, 411.53, 60, 'USD', 2),
+       ('google-oauth2|103543391824730602744', 'Personal Loan', 10000, 0.07, 0, 232.22, 48, 'USD', 3),
+       ('google-oauth2|103543391824730602744', 'Visa Credit Card', 5000, 0.18, 50, 180, 36, 'USD', 4),
+       ('google-oauth2|103543391824730602744', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
+       ('google-oauth2|103543391824730602744', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
+
+INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
+VALUES ('google-oauth2|103543391824730602744', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'USD'),
+       ('google-oauth2|103543391824730602744', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
+       ('google-oauth2|103543391824730602744', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('google-oauth2|103543391824730602744', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'CRC'),
+       ('google-oauth2|103543391824730602744', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
+
+
+-- Insert data for ...
+INSERT INTO UserProfile (Auth0UserId, GivenName, FamilyName, Email, UserRoleId)
+VALUES ('google-oauth2|104852814927054137223', 'Guilder', 'Miliner', 'guilder@gmail.com', 1)
+
+INSERT INTO [userPreferences] ([Auth0UserId], [BaseCurrency], [DebtPlanMonthlyPayment], [SelectedStrategy])
+VALUES ('google-oauth2|104852814927054137223', 'CRC', 30000, 1)
+
+INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
+                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
+VALUES ('google-oauth2|104852814927054137223', 'Home Mortgage', 250000, 0.035, 0, 1122.61, 360, 'USD', 1),
+       ('google-oauth2|104852814927054137223', '2024 Toyota Camry Loan', 22000, 0.045, 200, 411.53, 60, 'USD', 2),
+       ('google-oauth2|104852814927054137223', 'Personal Loan', 10000, 0.07, 0, 232.22, 48, 'USD', 3),
+       ('google-oauth2|104852814927054137223', 'Visa Credit Card', 5000, 0.18, 50, 180, 36, 'USD', 4),
+       ('google-oauth2|104852814927054137223', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
+       ('google-oauth2|104852814927054137223', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
+
+INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
+VALUES ('google-oauth2|104852814927054137223', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'USD'),
+       ('google-oauth2|104852814927054137223', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
+       ('google-oauth2|104852814927054137223', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('google-oauth2|104852814927054137223', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'CRC'),
+       ('google-oauth2|104852814927054137223', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');
+
+
+-- Insert data for ...
+INSERT INTO UserProfile (Auth0UserId, GivenName, FamilyName, Email, UserRoleId)
+VALUES ('auth0|64c9ba177207e01f2d92c061', 'Guilder', 'Miliner', 'guilder@gmail.com', 1)
+
+INSERT INTO [userPreferences] ([Auth0UserId], [BaseCurrency], [DebtPlanMonthlyPayment], [SelectedStrategy])
+VALUES ('auth0|64c9ba177207e01f2d92c061', 'CRC', 30000, 1)
+
+INSERT INTO LoanDetail (Auth0UserId, Name, RemainingPrincipal, AnnualInterestRate, BankFees, ContractedMonthlyPayment,
+                        RemainingTermInMonths, CurrencyCode, CardinalOrder)
+VALUES ('auth0|64c9ba177207e01f2d92c061', 'Home Mortgage', 250000, 0.035, 0, 1122.61, 360, 'USD', 1),
+       ('auth0|64c9ba177207e01f2d92c061', '2024 Toyota Camry Loan', 22000, 0.045, 200, 411.53, 60, 'USD', 2),
+       ('auth0|64c9ba177207e01f2d92c061', 'Personal Loan', 10000, 0.07, 0, 232.22, 48, 'USD', 3),
+       ('auth0|64c9ba177207e01f2d92c061', 'Visa Credit Card', 5000, 0.18, 50, 180, 36, 'USD', 4),
+       ('auth0|64c9ba177207e01f2d92c061', 'Home Renovation Loan', 5000000, 0.1, 0, 161334.64, 36, 'CRC', 5),
+       ('auth0|64c9ba177207e01f2d92c061', 'Education Loan', 2000000, 0.08, 10000, 62650.96, 36, 'CRC', 6);
+
+INSERT INTO [PlannedSnowflakes] (Auth0UserId, Name, FrequencyInMonths, Amount, StartingAt, EndingAt, CurrencyCode)
+VALUES ('auth0|64c9ba177207e01f2d92c061', 'Snowflake1', 12, 1000.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'USD'),
+       ('auth0|64c9ba177207e01f2d92c061', 'Snowflake2', 6, 500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'CRC'),
+       ('auth0|64c9ba177207e01f2d92c061', 'Snowflake3', 3, 200.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD'),
+       ('auth0|64c9ba177207e01f2d92c061', 'Snowflake4', 12, 1500.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()),
+        'CRC'),
+       ('auth0|64c9ba177207e01f2d92c061', 'Snowflake5', 5, 750.00, GETDATE(), DATEADD(YEAR, 45, GETDATE()), 'USD');

@@ -6,7 +6,7 @@
 	<br>
 </h3>
 
-<h3>List all your debts</h3>
+<h3>Loan List</h3>
 <br>
 @if (DebtsInQuoteCurrency == null)
 {
@@ -17,9 +17,9 @@
 }
 else
 {
+		<h3>List all your Debts in their respective</h3>
+	<br>
 	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="false" />
-
-	<button class="btn btn-success" @onclick="OnAddNewDebt">Add New Loan</button>
 
 	<h3>
 		<br>
@@ -27,10 +27,9 @@ else
 
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" AreActionsShown="false"/>
+	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="false" />
 
-	<DebtForm LoanDetail="@_selectedLoanDetail" OnSave="SaveDebt" OnCancel="CancelEdit"/>
-}
+	}
 
 
 @code {

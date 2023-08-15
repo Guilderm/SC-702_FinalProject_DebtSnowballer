@@ -28,10 +28,13 @@
 		<MudTh>
 			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
 		</MudTh>
-		<MudTh></MudTh>
+		<MudTh>Start Date</MudTh>
+		@if (!IsReadOnly)
+		{
+			<MudTh>Actions</MudTh>
+		}
+
 	</HeaderContent>
-
-
 	<RowTemplate>
 		@if (_loanInEditMode == context)
 		{
@@ -71,18 +74,20 @@
 			<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
 			<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
-			<MudTd>
-				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0"/>
-				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
-			</MudTd>
+			@if (!IsReadOnly)
+			{
+				<MudTd>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0"/>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
+				</MudTd>
+			}
 		}
 	</RowTemplate>
-
-
 	<FooterContent>
 		<MudButton OnClick="AddLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
 	</FooterContent>
 </MudTable>
+
 
 @code {
 	private LoanDetailDto _loanInEditMode;
