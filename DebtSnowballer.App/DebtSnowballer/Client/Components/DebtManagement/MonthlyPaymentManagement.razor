@@ -13,8 +13,8 @@
 else
 {
 	<div class="summary">
-		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
-		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
 		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
 		{
 			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
@@ -38,10 +38,13 @@ else
 	public List<LoanDetailDto> DebtsInBaseCurrency { get; set; }
 
 	[Parameter]
-	public string BaseCurrency { get; set; }
+	public UserPreferenceDto UserPreference { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
+
+	[Parameter]
+	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
 
 
 	protected override Task OnParametersSetAsync()
@@ -57,15 +60,8 @@ else
 	{
 		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
 		{
-			if (newDebtPlanMonthlyPayment > AggregatedMonthlyPayment)
-			{
-				await UserService.UpdateDebtPlanMonthlyPayment(newDebtPlanMonthlyPayment);
-				DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
-			}
-			else
-			{
-				DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
-			}
+			UserPreference.DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
+			await SaveUserPreference.InvokeAsync(UserPreference);
 		}
 	}
 

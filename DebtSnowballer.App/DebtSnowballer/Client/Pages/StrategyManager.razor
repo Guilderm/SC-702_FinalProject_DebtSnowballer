@@ -1,15 +1,10 @@
-﻿@page "/StrategyPlanner"
-@page "/DebtStrategyPlanner"
-@page "/DebtPlanManagement"
+﻿@page "/StrategyManager"
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Shared.Currency
 @using DebtSnowballer.Client.Components.DebtManagement
 @using AmortizationSchedule = DebtSnowballer.Client.ClientSideServices.FinancialFreedom.AmortizationSchedule
-
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
 
 @inject IDebtService DebtService
 @inject IUserService UserService
@@ -25,15 +20,15 @@
 
 @if (_isEssentialDataLoaded)
 {
-	<BaseCurrencyManagement BaseCurrency="@_userPreference.BaseCurrency" UpdateBaseCurrency="UpdateBaseCurrency"/>
+	<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" />
 
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<MonthlyPaymentManagement DebtsInBaseCurrency="@_debtsInBaseCurrency" BaseCurrency="@_userPreference.BaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPlanMonthlyPayment="@_userPreference.DebtPlanMonthlyPayment"/>
+	<MonthlyPaymentManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" DebtsInBaseCurrency="@_debtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<StrategyManagement UserStrategyType="@_userPreference.SelectedStrategy" UpdateSelectedStrategy="UpdateSelectedStrategy"/>
+	<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" />
 
 	<AmortizationSchedule DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 }
@@ -56,22 +51,33 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		Console.WriteLine("Initializing Strategy Planner");
-
-
-		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
-
+		Console.WriteLine("Initializing Strategy Planner");Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
+		Task loadUserPreference = LoadUserPreference();
 		Task loadExchangeRatesTask = LoadExchangeRates();
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
-		await Task.WhenAll(loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
+		await Task.WhenAll(loadUserPreference,loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isEssentialDataLoaded = true;
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
-		Console.WriteLine("Dept pay off plans completed.");
 
 		Console.WriteLine("Component initialization complete.");
+	}
+
+	private async Task LoadUserPreference()
+	{
+		_userPreference = await UserService.GetUserPreferenceAsync();
+		Console.WriteLine($"Loaded User Preference.");
+		}
+
+	private async Task SaveUserPreference(UserPreferenceDto userPreference)
+	{
+		_userPreference = await UserService.UpdateUserPreferenceAsync(userPreference);
+		Console.WriteLine($"Saved User Preference.");
+
+		await CalculateData();
+		StateHasChanged();
 	}
 
 	private async Task LoadExchangeRates()
@@ -167,21 +173,7 @@ else
 		}
 		return Task.CompletedTask;
 	}
-
-
-	private async Task UpdateBaseCurrency(string selectedCurrency)
-	{
-		Console.WriteLine($"Starting to update base currency to: {selectedCurrency}...");
-		await UserService.UpdateBaseCurrency(selectedCurrency);
-		_userPreference.BaseCurrency = selectedCurrency;
-		Console.WriteLine($"Base currency updated successfully to: {selectedCurrency}");
-		await ConvertDebtsToBaseCurrency();
-
-		StateHasChanged();
-		Console.WriteLine("State updated with the new base currency.");
-	}
-
-
+	
 	public string GetCurrencySymbol(string currencyCode)
 	{
 		Console.WriteLine($"Attempting to retrieve symbol for currency code: {currencyCode}...");
@@ -190,8 +182,7 @@ else
 		Console.WriteLine($"Retrieved symbol for currency code {currencyCode}: {symbol}");
 		return symbol;
 	}
-
-
+	
 	private async Task LoadSnowflakesInQuoteCurrency()
 	{
 		Console.WriteLine("Starting to load snowflakes in quote currency...");
@@ -200,15 +191,6 @@ else
 
 		StateHasChanged();
 		Console.WriteLine("State has changed after loading snowflakes in Quote Currency.");
-	}
-
-
-	private async Task UpdateSelectedStrategy(int selectedCurrency)
-	{
-		_userPreference.SelectedStrategy = selectedCurrency;
-		//TODO: update all setings
-		StateHasChanged();
-		Console.WriteLine("State has changed after UpdateSelectedStrategy payoff plan.");
 	}
 
 	private async Task CreateDebtPayoffPlan()
@@ -233,5 +215,4 @@ else
 		await ConvertSnowflakesToQuoteCurrency();
 		await CreateDebtPayoffPlan();
 	}
-
-}
+	}

@@ -1,11 +1,12 @@
 ﻿@using DebtSnowballer.Shared.Currency
+@using DebtSnowballer.Shared.DTOs
 <br>
 <br>
 
 <h3>Select your base currency</h3>
 <p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
 <br>
-@if (BaseCurrency == null)
+@if (UserPreference == null)
 {
 	<p>
 		<em>Loading strategies...</em>
@@ -13,7 +14,7 @@
 }
 else
 {
-	<select @onchange="OnChange" value="@BaseCurrency">
+	<select @onchange="SavePreferredBaseCurrency" value="@UserPreference">
 		@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 		{
 			<option value="@currency.AlphaCode">@currency.Name (@currency.AlphaCode)</option>
@@ -24,14 +25,14 @@ else
 @code {
 
 	[Parameter]
-	public string BaseCurrency { get; set; }
+	public UserPreferenceDto UserPreference { get; set; }
 
 	[Parameter]
-	public EventCallback<string> UpdateBaseCurrency { get; set; }
+	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
 
-	private async Task OnChange(ChangeEventArgs selectedCurrency)
+	private async Task SavePreferredBaseCurrency(ChangeEventArgs selectedCurrency)
 	{
-		await UpdateBaseCurrency.InvokeAsync(selectedCurrency.Value.ToString());
+		UserPreference.BaseCurrency = selectedCurrency.Value.ToString();
+		await SaveUserPreference.InvokeAsync(UserPreference);
 	}
-
 }

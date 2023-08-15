@@ -13,7 +13,7 @@
 }
 else
 {
-	<select @onchange="OnStrategyChange" value="@UserStrategyType">
+	<select @onchange="OnStrategyChange" value="@UserPreference">
 		@foreach (DebtPayDownMethodDto strategyType in _strategyTypes)
 		{
 			<option value="@strategyType.Id">@strategyType.Name</option>
@@ -26,10 +26,10 @@ else
 	private IList<DebtPayDownMethodDto> _strategyTypes;
 
 	[Parameter]
-	public int UserStrategyType { get; set; }
+	public UserPreferenceDto UserPreference { get; set; }
 
 	[Parameter]
-	public EventCallback<int> UpdateSelectedStrategy { get; set; }
+	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -38,8 +38,10 @@ else
 
 	private async Task OnStrategyChange(ChangeEventArgs selectedStrategyId)
 	{
-		if (int.TryParse(selectedStrategyId.Value.ToString(), out int parsedValue))
-			await UpdateSelectedStrategy.InvokeAsync(parsedValue);
+		if (int.TryParse(selectedStrategyId.Value!.ToString(), out int parsedValue))
+		{
+			UserPreference.SelectedStrategy = parsedValue;
+				await SaveUserPreference.InvokeAsync(UserPreference);
+		}
 	}
-
-}
+	}

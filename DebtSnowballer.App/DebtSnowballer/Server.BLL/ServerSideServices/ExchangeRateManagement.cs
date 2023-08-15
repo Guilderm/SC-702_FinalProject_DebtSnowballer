@@ -45,10 +45,13 @@ public class ExchangeRateManagement
 	{
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency);
 
-		bool isExchangeRateNull = _exchangeRate == null;
-		bool isExchangeRateStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
+		if (_exchangeRate == null)
+		{
+			baseCurrency = "USD";
+			Console.WriteLine("Exchange rate is null, defaulting to USD.");
+		}
 
-		if (isExchangeRateNull || isExchangeRateStale)
+		if (_exchangeRate.NextUpdateTime < DateTime.UtcNow)
 			await UpdateExchangeRateFromApi(baseCurrency);
 
 		IEnumerable<ExchangeRate> exchangeRateList = await GetAllExchangeRatesFromDatabase(baseCurrency);
@@ -70,8 +73,11 @@ public class ExchangeRateManagement
 	{
 		try
 		{
+			string url = $"{_baseUrl}{_apiKey}/latest/{baseCurrency}";
+			Console.WriteLine($"Fetching exchange rate from: {url}"); // Log the URL
+
 			HttpClient client = _clientFactory.CreateClient();
-			string apiResponse = await client.GetStringAsync($"{_baseUrl}{_apiKey}/latest/{baseCurrency}");
+			string apiResponse = await client.GetStringAsync(url); // Use the constructed URL
 			JsonDocument jsonDocument = JsonDocument.Parse(apiResponse);
 
 			DateTime nextUpdateTime = GetNextUpdateTimeFromApiResponse(jsonDocument);

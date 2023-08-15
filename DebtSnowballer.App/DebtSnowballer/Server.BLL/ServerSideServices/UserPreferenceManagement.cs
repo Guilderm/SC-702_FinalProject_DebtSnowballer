@@ -38,7 +38,7 @@ public class UserPreferenceManagement
 		return _mapper.Map<UserPreferenceDto>(userPreference);
 	}
 
-	public async Task<UserPreferenceDto> UpdateUserPreference(UserPreferenceDto NewUserPreferenceDto,
+	public async Task<UserPreferenceDto> UpdateUserPreference(UserPreferenceDto newUserPreferenceDto,
 		string auth0UserId)
 	{
 		_logger.LogInformation($"Updating user preference for user: {auth0UserId}");
@@ -49,20 +49,20 @@ public class UserPreferenceManagement
 			await _userProfileManagement.CreateUserProfile(auth0UserId);
 		}
 
-		UserPreference OldUserPreference = await _repository.Get(u => u.Auth0UserId == auth0UserId);
-		if (OldUserPreference == null)
+		UserPreference oldUserPreference = await _repository.Get(u => u.Auth0UserId == auth0UserId);
+		if (oldUserPreference == null)
 		{
 			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
-			OldUserPreference = new UserPreference { Auth0UserId = auth0UserId };
+			oldUserPreference = new UserPreference { Auth0UserId = auth0UserId };
 			// Set any other required properties here
-			_repository.Insert(OldUserPreference);
+			_repository.Insert(oldUserPreference);
 		}
 
 
-		_mapper.Map(NewUserPreferenceDto, OldUserPreference);
-		_repository.Update(OldUserPreference);
+		_mapper.Map(newUserPreferenceDto, oldUserPreference);
+		_repository.Update(oldUserPreference);
 		await _unitOfWork.Save();
 		_logger.LogInformation($"User preference updated for user: {auth0UserId}");
-		return _mapper.Map<UserPreferenceDto>(OldUserPreference);
+		return _mapper.Map<UserPreferenceDto>(oldUserPreference);
 	}
 }

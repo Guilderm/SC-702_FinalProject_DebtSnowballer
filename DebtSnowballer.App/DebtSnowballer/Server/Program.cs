@@ -30,7 +30,7 @@ try
 
 	// Add services for the DB.
 	Log.Information("Configuring DbContext...");
-	builder.Services.AddDbContext<DebtSnowballerContext>(options =>
+	builder.Services.AddDbContext<DebtSnowballerDbContext>(options =>
 		options.UseSqlServer(builder.Configuration.GetConnectionString("AzureBDConnection")));
 
 	Log.Information("Adding scoped services...");
@@ -40,6 +40,7 @@ try
 	builder.Services.AddScoped<ExchangeRateManagement>();
 	builder.Services.AddScoped<SnowflakeManagement>();
 	builder.Services.AddScoped<MultiPurposeManagement>();
+	builder.Services.AddScoped<UserProfileManagement>();
 
 
 	Log.Information("Configuring authentication...");
