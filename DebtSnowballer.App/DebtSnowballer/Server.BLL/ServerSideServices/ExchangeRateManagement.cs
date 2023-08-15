@@ -45,14 +45,18 @@ public class ExchangeRateManagement
 	{
 		_exchangeRate = await GetExchangeRateFromDatabase(baseCurrency);
 
-		if (_exchangeRate == null)
+		bool isExchangeRateNull = _exchangeRate == null;
+		bool isExchangeRateStale = _exchangeRate != null && _exchangeRate.NextUpdateTime < DateTime.UtcNow;
+
+		if (isExchangeRateNull)
 		{
 			baseCurrency = "USD";
 			Console.WriteLine("Exchange rate is null, defaulting to USD.");
 		}
 
-		if (_exchangeRate.NextUpdateTime < DateTime.UtcNow)
+		if (isExchangeRateNull || isExchangeRateStale)
 			await UpdateExchangeRateFromApi(baseCurrency);
+
 
 		IEnumerable<ExchangeRate> exchangeRateList = await GetAllExchangeRatesFromDatabase(baseCurrency);
 
