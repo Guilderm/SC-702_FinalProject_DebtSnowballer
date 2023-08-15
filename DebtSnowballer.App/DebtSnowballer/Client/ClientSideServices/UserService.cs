@@ -3,78 +3,31 @@ using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices;
 
-public class UserProfileService : IUserProfileService
+public class UserService : IUserService
 {
 	private readonly string _backendUrl;
 	private readonly HttpClient _httpClient;
 
-	public UserProfileService(HttpClient httpClient)
+	public UserService(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_backendUrl = _httpClient.BaseAddress + "api/UserProfile";
+		_backendUrl = _httpClient.BaseAddress + "api/User";
 	}
 
-
-	public async Task UpdateBaseCurrency(string baseCurrency)
+	public async Task<UserPreferenceDto> GetUserPreferenceAsync()
 	{
-		Console.WriteLine($"Entered function 'UpdateBaseCurrency' with input: {baseCurrency}");
-		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{baseCurrency}");
-		HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-		if (!response.IsSuccessStatusCode)
-		{
-			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
-			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
-		}
-
-		Console.WriteLine($"Successfully updated base currency to: {baseCurrency}");
+		return await _httpClient.GetFromJsonAsync<UserPreferenceDto>(_backendUrl + "/GetUserPreference");
 	}
 
-	public async Task UpdateDebtPlanMonthlyPayment(decimal debtPlanMonthlyPayment)
+	public async Task<UserPreferenceDto> UpdateUserPreferenceAsync(UserPreferenceDto userPreferenceDto)
 	{
-		Console.WriteLine($"Entered function 'UpdateDebtPlanMonthlyPayment' with input: {debtPlanMonthlyPayment}");
-		HttpRequestMessage request = new(HttpMethod.Put, $"{_backendUrl}/UpdateBaseCurrency/{debtPlanMonthlyPayment}");
-		HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-		if (!response.IsSuccessStatusCode)
-		{
-			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
-			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
-		}
-
-		Console.WriteLine($"Successfully updated base currency to: {debtPlanMonthlyPayment}");
+		var response = await _httpClient.PutAsJsonAsync(_backendUrl + "/UpdateUserPreference", userPreferenceDto);
+		response.EnsureSuccessStatusCode();
+		return await response.Content.ReadFromJsonAsync<UserPreferenceDto>();
 	}
 
-	public async Task<decimal> GetDebtPlanMonthlyPayment()
+	public async Task<UserProfileDto> GetUserProfileAsync()
 	{
-		Console.WriteLine("Entered function 'GetDebtPlanMonthlyPayment'");
-		HttpResponseMessage response = await _httpClient.GetAsync($"{_backendUrl}/GetDebtPlanMonthlyPayment");
-
-		if (!response.IsSuccessStatusCode)
-		{
-			Console.WriteLine($"Error fetching DebtPlanMonthlyPayment: {response.ReasonPhrase}");
-			throw new Exception($"Error fetching DebtPlanMonthlyPayment: {response.ReasonPhrase}");
-		}
-
-		decimal debtPlanMonthlyPayment = await response.Content.ReadFromJsonAsync<decimal>();
-		Console.WriteLine($"Successfully fetched DebtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
-		return debtPlanMonthlyPayment;
-	}
-
-	public async Task<UserProfileDto> UpdateSelectedStrategy(int strategyTypeId)
-	{
-		Console.WriteLine($"Entered function 'UpdateSelectedStrategy' with input: {strategyTypeId}");
-		HttpRequestMessage request = new(HttpMethod.Patch, $"{_backendUrl}/PatchSelectedStrategy/{strategyTypeId}");
-		HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-		if (!response.IsSuccessStatusCode)
-		{
-			Console.WriteLine($"Error updating user profile: {response.ReasonPhrase}");
-			throw new Exception($"Error updating user profile: {response.ReasonPhrase}");
-		}
-
-		UserProfileDto updatedUserProfile = await response.Content.ReadFromJsonAsync<UserProfileDto>();
-		Console.WriteLine($"Successfully updated strategy type to: {strategyTypeId}");
-		return updatedUserProfile;
+		return await _httpClient.GetFromJsonAsync<UserProfileDto>(_backendUrl + "/GetUserProfile");
 	}
 }

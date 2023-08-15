@@ -2,10 +2,9 @@
 
 namespace DebtSnowballer.Client.ClientSideServices;
 
-public interface IUserProfileService
+public interface IUserService
 {
-	Task UpdateBaseCurrency(string baseCurrency);
-	Task UpdateDebtPlanMonthlyPayment(decimal debtPlanMonthlyPayment);
-	Task<decimal> GetDebtPlanMonthlyPayment();
-	Task<UserProfileDto> UpdateSelectedStrategy(int strategyTypeId);
+	Task<UserPreferenceDto> GetUserPreferenceAsync();
+	Task<UserPreferenceDto> UpdateUserPreferenceAsync(UserPreferenceDto userPreferenceDto);
+	Task<UserProfileDto> GetUserProfileAsync();
 }
