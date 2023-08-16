@@ -7,11 +7,11 @@ namespace Server.DAL.Repositories;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
-	private readonly DebtSnowballerDbContext _context;
+	private readonly DebtSnowballer_DBContext _context;
 	private readonly ILogger<UnitOfWork> _logger;
 	private readonly ILoggerFactory _loggerFactory;
 
-	public UnitOfWork(DebtSnowballerDbContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
+	public UnitOfWork(DebtSnowballer_DBContext context, ILogger<UnitOfWork> logger, ILoggerFactory loggerFactory)
 	{
 		_context = context;
 		_logger = logger;

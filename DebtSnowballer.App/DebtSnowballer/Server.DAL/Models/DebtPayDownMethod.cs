@@ -1,14 +1,18 @@
-﻿namespace Server.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class DebtPayDownMethod
+namespace Server.DAL.Models
 {
-	public DebtPayDownMethod()
-	{
-		UserPreferences = new HashSet<UserPreference>();
-	}
+    public partial class DebtPayDownMethod
+    {
+        public DebtPayDownMethod()
+        {
+            UserPreferences = new HashSet<UserPreference>();
+        }
 
-	public int Id { get; set; }
-	public string Name { get; set; } = null!;
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
 
-	public virtual ICollection<UserPreference> UserPreferences { get; set; }
+        public virtual ICollection<UserPreference> UserPreferences { get; set; }
+    }
 }
