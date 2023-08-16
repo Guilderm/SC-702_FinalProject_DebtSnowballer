@@ -11,7 +11,9 @@
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 				<Authorizing>
-					<p>Determining session state, please wait...</p>
+					<div style="margin: 0 auto; width: 100vw; height: 100vh">
+						<iframe id="splashScreen" src="splash.html" style="border:none; position:absolute; width:100%; height:100%"></iframe>
+					</div>
 				</Authorizing>
 				<NotAuthorized>
 					<h1>Sorry</h1>
@@ -35,3 +37,5 @@
 	//TODO: load user settings and chache them
 
 }
+
+CL$h3rri,.33
