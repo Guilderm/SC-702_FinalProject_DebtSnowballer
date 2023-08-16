@@ -73,14 +73,16 @@
 		}
 		else
 		{
-			<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
-			<MudTd DataLabel="Remaining Principal">@GetCurrencySymbol(context.CurrencyCode) @context.RemainingPrincipal.ToString("N2")</MudTd>
-			<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
-			<MudTd DataLabel="BankFees">@GetCurrencySymbol(context.CurrencyCode) @context.BankFees.ToString("N2")</MudTd>
-			<MudTd DataLabel="Monthly Payment">@GetCurrencySymbol(context.CurrencyCode) @context.ContractedMonthlyPayment.ToString("N2")</MudTd>
-			<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
-			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
-			<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
+			SetCurrencySymbol(context.CurrencyCode);
+		<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
+			<MudTd DataLabel="Remaining Principal">@_currencySymbol @context.RemainingPrincipal.ToString("N2")</MudTd>
+		<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
+			<MudTd DataLabel="BankFees">@_currencySymbol @context.BankFees.ToString("N2")</MudTd>
+		<MudTd DataLabel="Monthly Payment">@_currencySymbol @context.ContractedMonthlyPayment.ToString("N2")</MudTd>
+		<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
+		<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+		<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
+
 			@if (!IsReadOnly)
 			{
 				<MudTd>
@@ -101,6 +103,7 @@
 
 @code {
 	private LoanDetailDto _loanInEditMode;
+	private string _currencySymbol;
 
 	[Parameter]
 	public bool IsReadOnly { get; set; }
@@ -118,9 +121,9 @@
 	public Func<Task> CalculateData { get; set; }
 
 
-	private decimal Convert(decimal percentage)
+	private void SetCurrencySymbol(string Symbol)
 	{
-		return percentage / 100;
+		_currencySymbol=GetCurrencySymbol(Symbol);
 	}
 
 
