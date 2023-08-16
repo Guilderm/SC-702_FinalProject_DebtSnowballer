@@ -1,5 +1,11 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Shared.Currency
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+@inject ILogger<DebtTable> Logger
+
 <br>
 <br>
 
@@ -15,13 +21,12 @@
 }
 else
 {
-	<MudSelect T="string" Label="Select Currency" @bind-Value="UserPreference.BaseCurrency" Variant="Variant.Text" @oninput="SavePreferredBaseCurrency">
+	<MudSelect T="string" Label="Select Currency" Value="UserPreference.BaseCurrency" Variant="Variant.Text" ValueChanged="SavePreferredBaseCurrency">
 		@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
 		{
 			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
 		}
-	</MudSelect>
-}
+	</MudSelect>}
 
 @code {
 
@@ -31,10 +36,21 @@ else
 	[Parameter]
 	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
 
-	private async Task SavePreferredBaseCurrency(ChangeEventArgs selectedCurrency)
+	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
-		UserPreference.BaseCurrency = selectedCurrency.Value.ToString();
-		await SaveUserPreference.InvokeAsync(UserPreference);
+		Console.WriteLine("Inside SavePreferredBaseCurrency method");
+		try
+		{
+			UserPreference.BaseCurrency = selectedCurrency;
+			await SaveUserPreference.InvokeAsync(UserPreference);
+			Snackbar.Add("Base currency saved successfully.", Severity.Success);
+			Logger.LogInformation("Base currency saved successfully.");
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add($"Error saving base currency: {ex.Message}", Severity.Error);
+			Logger.LogError(ex, "Error saving base currency.");
+		}
 	}
-
+	
 }
