@@ -38,14 +38,14 @@
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (firstRender)
+		if (_isFirstRender)
 		{
 			AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 			ClaimsPrincipal user = authState.User;
 
-			if (user.Identity.IsAuthenticated)
+			if (user.Identity is {IsAuthenticated: true })
 			{
-	//TODO: load all user settings and cache them
+				//TODO: load all user settings and cache them
 				Console.WriteLine("Will load user preference.");
 				await UserService.GetUserPreferenceAsync();
 				Console.WriteLine("Loaded User Preference.");

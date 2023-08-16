@@ -3,6 +3,8 @@
 @inject IDebtService DebtService
 
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
 @inject ILogger<DebtTable> Logger
 
 
@@ -209,21 +211,34 @@
 	private async Task DeleteLoan(int loanId)
 	{
 		Logger.LogInformation($"Attempting to delete loan with ID {loanId}");
-		try
+		var parameters = new DialogParameters();
+		parameters.Add("ContentText", "Are you sure you want to delete this loan?");
+		parameters.Add("ButtonText", "Delete");
+		parameters.Add("Color", Color.Error);
+
+		var dialog = DialogService.Show<Dialog>("Delete Confirmation", parameters);
+		var result = await dialog.Result;
+
+		if (!result.Canceled)
 		{
-			var loan = GetLoanFromCashe(loanId);
-			await DebtService.DeleteLoan(loan.Id);
-			LoanDetails.Remove(loan);
-			await RefreshPage();
-			Snackbar.Add($"Loan with name {loan.Name} was deleted successfully.", Severity.Success);
-			Logger.LogInformation($"Successfully deleted loan with ID {loanId}");
-		}
-		catch (Exception ex)
-		{
-			Snackbar.Add($"Error deleting debt with ID {loanId}: {ex.Message}", Severity.Error);
-			Logger.LogError(ex, $"Error deleting loan with ID {loanId}");
+			try
+			{
+				var loan = GetLoanFromCashe(loanId);
+				await DebtService.DeleteLoan(loan.Id);
+				LoanDetails.Remove(loan);
+				await RefreshPage();
+				Snackbar.Add($"Loan with name {loan.Name} was deleted successfully.", Severity.Success);
+				Logger.LogInformation($"Successfully deleted loan with ID {loanId}");
+			}
+			catch (Exception ex)
+			{
+				Snackbar.Add($"Error deleting debt with ID {loanId}: {ex.Message}", Severity.Error);
+				Logger.LogError(ex, $"Error deleting loan with ID {loanId}");
+			}
 		}
 	}
+
+
 
 	private async Task RefreshPage()
 	{
