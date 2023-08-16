@@ -9,12 +9,27 @@
 </MudDialog>
 
 @code {
-	[Parameter] public string ContentText { get; set; }
-	[Parameter] public string ButtonText { get; set; }
-	[Parameter] public Color Color { get; set; }
 
-	[CascadingParameter] MudDialogInstance MudDialog { get; set; }
+	[Parameter]
+	public string ContentText { get; set; }
 
-	void Cancel() => MudDialog.Cancel();
-	void Ok() => MudDialog.Close(DialogResult.Ok(true));
+	[Parameter]
+	public string ButtonText { get; set; }
+
+	[Parameter]
+	public Color Color { get; set; }
+
+	[CascadingParameter]
+	MudDialogInstance MudDialog { get; set; }
+
+	void Cancel()
+	{
+		MudDialog.Cancel();
+	}
+
+	void Ok()
+	{
+		MudDialog.Close(DialogResult.Ok(true));
+	}
+
 }

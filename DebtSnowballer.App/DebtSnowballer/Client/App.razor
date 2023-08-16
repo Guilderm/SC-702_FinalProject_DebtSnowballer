@@ -45,7 +45,7 @@
 
 			if (user.Identity is {IsAuthenticated: true })
 			{
-				//TODO: load all user settings and cache them
+	//TODO: load all user settings and cache them
 				Console.WriteLine("Will load user preference.");
 				await UserService.GetUserPreferenceAsync();
 				Console.WriteLine("Loaded User Preference.");

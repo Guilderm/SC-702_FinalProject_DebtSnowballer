@@ -30,7 +30,7 @@ try
 
 	// Add services for the DB.
 	Log.Information("Configuring DbContext...");
-	builder.Services.AddDbContext<DebtSnowballerDbContext>(options =>
+	builder.Services.AddDbContext<DebtSnowballer_DBContext>(options =>
 		options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDBConnection")));
 
 	Log.Information("Adding scoped services...");

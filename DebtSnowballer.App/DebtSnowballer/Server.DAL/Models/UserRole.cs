@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Server.DAL.Models;
 
-namespace Server.DAL.Models
+public class UserRole
 {
-    public partial class UserRole
-    {
-        public UserRole()
-        {
-            UserProfiles = new HashSet<UserProfile>();
-        }
+	public UserRole()
+	{
+		UserProfiles = new HashSet<UserProfile>();
+	}
 
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
+	public int Id { get; set; }
+	public string Name { get; set; } = null!;
+	public string Description { get; set; } = null!;
 
-        public virtual ICollection<UserProfile> UserProfiles { get; set; }
-    }
+	public virtual ICollection<UserProfile> UserProfiles { get; set; }
 }
