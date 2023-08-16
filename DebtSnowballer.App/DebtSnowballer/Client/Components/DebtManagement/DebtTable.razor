@@ -3,6 +3,7 @@
 @inject IDebtService DebtService
 
 @inject ISnackbar Snackbar
+@inject ILogger<DebtTable> Logger
 
 
 <MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" Hover="true" ReadOnly="@IsReadOnly">
@@ -39,26 +40,27 @@
 		@if (_loanInEditMode == context)
 		{
 			<MudTd DataLabel="Loan NickName">
-				<MudTextField @bind-Value="@context.Name" Required/>
+				<MudTextField @bind-Value="@context.Name" Required For="@(() => context.Name)"/>
 			</MudTd>
 			<MudTd DataLabel="Remaining Principal">
-				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required/>
+				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required For="@(() => context.RemainingPrincipal)"/>
 			</MudTd>
 			<MudTd DataLabel="Interest Rate">
-				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required/>
+				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required For="@(() => context.AnnualInterestRate)"/>
 			</MudTd>
 			<MudTd DataLabel="BankFees">
-				<MudNumericField @bind-Value="@context.BankFees" Required/>
+				<MudNumericField @bind-Value="@context.BankFees" Required For="@(() => context.BankFees)"/>
 			</MudTd>
 			<MudTd DataLabel="Monthly Payment">
-				<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required/>
+				<MudNumericField @bind-Value="@context.ContractedMonthlyPayment" Required For="@(() => context.ContractedMonthlyPayment)"/>
 			</MudTd>
 			<MudTd DataLabel="Remaining Term">
-				<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required/>
+				<MudNumericField @bind-Value="@context.RemainingTermInMonths" Required For="@(() => context.RemainingTermInMonths)"/>
 			</MudTd>
 			<MudTd DataLabel="Currency">
-				<MudTextField @bind-Value="@context.CurrencyCode" Required/>
+				<MudTextField @bind-Value="@context.CurrencyCode" Required For="@(() => context.CurrencyCode)"/>
 			</MudTd>
+
 			<MudTd>
 				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => OnSave(context.Id)"/>
 				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Cancel" Class="pa-0" OnClick="CancelEdit"/>
@@ -111,29 +113,33 @@
 	private void CancelEdit()
 	{
 		_loanInEditMode = null;
+		Logger.LogInformation("Edit mode canceled.");
 	}
 
 	private void EditLoan(int loanId)
 	{
-		LoanDetailDto Loan = GetLoanFromCashe(loanId);
-		if (Loan == null)
+		Logger.LogInformation($"Editing loan with ID {loanId}");
+		LoanDetailDto loan = GetLoanFromCashe(loanId);
+		if (loan == null)
 		{
 			CancelEdit();
 		}
-		if (Loan != null)
+		if (loan != null)
 		{
-			EnterEditMode(Loan);
+			EnterEditMode(loan);
 		}
 	}
 
 	private LoanDetailDto GetLoanFromCashe(int loanId)
 	{
-		LoanDetailDto loanToEdit = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
-		return loanToEdit;
+		LoanDetailDto loan = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
+		Logger.LogInformation($"Fetched loan from cache with ID: {loan!.Id} Name: {loan!.Name}");
+		return loan;
 	}
 
 	private void AddLoan()
 	{
+		Logger.LogInformation("Adding new loan.");
 		LoanDetailDto newLoan = new()
 		{
 			Name = "Visa Credit Card",
@@ -153,11 +159,12 @@
 	{
 		_loanInEditMode = loan;
 		StateHasChanged();
+		Logger.LogInformation($"Entered edit mode for loan with ID: {loan!.Id} Name: {loan!.Name}");
 	}
-
 
 	private async Task OnSave(int loanId)
 	{
+		Logger.LogInformation($"Attempting to save loan with ID {loanId}");
 		try
 		{
 			if (_loanInEditMode == null)
@@ -183,34 +190,33 @@
 				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was updated successfully.", Severity.Success);
 			}
 
-	// Refresh the data and exit edit mode
-			LoanDetails.Add(_loanInEditMode);
-			await RefreshPage();
 		}
 		catch (Exception ex)
 		{
 			Snackbar.Add($"Error saving loan: {ex.Message}", Severity.Error);
+			return;
 		}
+		
+		LoanDetails.Add(_loanInEditMode);
+		await RefreshPage();
 	}
 
 	private async Task DeleteLoan(int loanId)
 	{
+		Logger.LogInformation($"Attempting to delete loan with ID {loanId}");
 		try
 		{
 			var loan = GetLoanFromCashe(loanId);
-
 			await DebtService.DeleteLoan(loan.Id);
 			LoanDetails.Remove(loan);
-
 			await RefreshPage();
-
-	// Success message
-			Snackbar.Add($"Loan whit name {loan.Name} was deleted successfully.", Severity.Success);
+			Snackbar.Add($"Loan with name {loan.Name} was deleted successfully.", Severity.Success);
+			Logger.LogInformation($"Successfully deleted loan with ID {loanId}");
 		}
 		catch (Exception ex)
 		{
-	// Error message
 			Snackbar.Add($"Error deleting debt with ID {loanId}: {ex.Message}", Severity.Error);
+			Logger.LogError(ex, $"Error deleting loan with ID {loanId}");
 		}
 	}
 

@@ -1,6 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
-@inject IDebtService DebtService
 
 <h3>
 	<br>
@@ -19,7 +18,7 @@ else
 {
 		<h3>List all your Debts in their respective</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnLoanEdit="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="false" />
+	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false" />
 
 	<h3>
 		<br>
@@ -27,14 +26,12 @@ else
 
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnLoanEdit="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="true" />
+	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData"  IsReadOnly="true" />
 
 	}
 
 
 @code {
-	private LoanDetailDto _selectedLoanDetail;
-
 	[Parameter]
 	public List<LoanDetailDto> DebtsInQuoteCurrency { get; set; }
 
@@ -49,52 +46,4 @@ else
 
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
-
-
-	private void OnAddNewDebt()
-	{
-		_selectedLoanDetail = new LoanDetailDto();
-	}
-
-	private async Task EditDebt(int id)
-	{
-		_selectedLoanDetail = await DebtService.GetDebtById(id);
-
-		await LoadDebtsInQuoteCurrency();
-		StateHasChanged();
-		await CalculateData();
-	}
-
-	private async Task DeleteDebt(int id)
-	{
-		await DebtService.DeleteDebt(id);
-
-		await LoadDebtsInQuoteCurrency();
-		StateHasChanged();
-		await CalculateData();
-	}
-
-	private async Task SaveDebt(LoanDetailDto loanDetailItem)
-	{
-		if (loanDetailItem.Id == 0)
-		{
-			await DebtService.AddDebt(loanDetailItem);
-		}
-		else
-		{
-			await DebtService.UpdateDebt(loanDetailItem);
-		}
-
-		_selectedLoanDetail = null;
-
-		await LoadDebtsInQuoteCurrency();
-		StateHasChanged();
-		await CalculateData();
-	}
-
-	private void CancelEdit()
-	{
-		_selectedLoanDetail = null;
-	}
-
 }

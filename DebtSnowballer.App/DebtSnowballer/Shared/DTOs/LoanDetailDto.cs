@@ -16,7 +16,7 @@ public class LoanDetailDto
 
 	[Required] [Range(0.01, 1000000000)] public decimal ContractedMonthlyPayment { get; set; }
 
-	[Required] [Range(0.01, 1.0)] public decimal AnnualInterestRate { get; set; }
+	[Required] [Range(0.0001, 1.0)] public decimal AnnualInterestRate { get; set; }
 
 	[Required(ErrorMessage = "Remaining Term has to be between 2 moths and 45 years.")]
 	[Range(2, 540)]
