@@ -16,7 +16,7 @@ public class DebtService : IDebtService
 		_logger = logger;
 	}
 
-	public async Task DeleteDebt(int id)
+	public async Task DeleteLoan(int id)
 	{
 		_logger.LogInformation("Deleting debt with id {id}", id);
 		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_backendUrl}/{id}");

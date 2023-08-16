@@ -60,7 +60,7 @@
 				<MudTextField @bind-Value="@context.CurrencyCode" Required/>
 			</MudTd>
 			<MudTd>
-				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => SaveEdit(context.Id)"/>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => OnSave(context.Id)"/>
 				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Cancel" Class="pa-0" OnClick="CancelEdit"/>
 			</MudTd>
 		}
@@ -77,7 +77,7 @@
 			@if (!IsReadOnly)
 			{
 				<MudTd>
-					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditLoan(context.Id)" />
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditLoan(context.Id)"/>
 					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
 				</MudTd>
 			}
@@ -102,20 +102,11 @@
 	public Func<string, string> GetCurrencySymbol { get; set; }
 
 	[Parameter]
-	public EventCallback<int> OnEditDebt { get; set; }
+	public Func<Task> LoadDebtsInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public EventCallback<int> OnDeleteDebt { get; set; }
+	public Func<Task> CalculateData { get; set; }
 
-	private async Task SaveEdit(int id)
-	{
-		await OnEditDebt.InvokeAsync(id);
-	}
-
-	private async Task DeleteLoan(int id)
-	{
-		await OnDeleteDebt.InvokeAsync(id);
-	}
 
 	private void CancelEdit()
 	{
@@ -124,20 +115,36 @@
 
 	private void EditLoan(int loanId)
 	{
-		LoanDetailDto loanToEdit = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
-		if (loanToEdit == null)
+		LoanDetailDto Loan = GetLoanFromCashe(loanId);
+		if (Loan == null)
 		{
 			CancelEdit();
 		}
-		if (loanToEdit != null)
+		if (Loan != null)
 		{
-			EnterEditMode(loanToEdit);
+			EnterEditMode(Loan);
 		}
+	}
+
+	private LoanDetailDto GetLoanFromCashe(int loanId)
+	{
+		LoanDetailDto loanToEdit = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
+		return loanToEdit;
 	}
 
 	private void AddLoan()
 	{
-		LoanDetailDto newLoan = new(); // Set the initial properties as needed
+		LoanDetailDto newLoan = new()
+		{
+			Name = "Visa Credit Card",
+			RemainingPrincipal = 5000.00m,
+			BankFees = 25.00m,
+			ContractedMonthlyPayment = 150.00m,
+			AnnualInterestRate = 0.1799m,
+			RemainingTermInMonths = 24,
+			CurrencyCode = "USD", CardinalOrder = 1,
+			StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
+		};
 		LoanDetails.Add(newLoan);
 		EnterEditMode(newLoan);
 	}
@@ -146,6 +153,73 @@
 	{
 		_loanInEditMode = loan;
 		StateHasChanged();
+	}
+
+
+	private async Task OnSave(int loanId)
+	{
+		try
+		{
+			if (_loanInEditMode == null)
+			{
+				Snackbar.Add("No loan selected for saving.", Severity.Error);
+				return;
+			}
+
+			if (_loanInEditMode.Id != loanId)
+			{
+				Snackbar.Add($"Internal error saving loan {_loanInEditMode.Name}.", Severity.Error);
+				return;
+			}
+
+			if (_loanInEditMode.Id == 0)
+			{
+				await DebtService.AddDebt(_loanInEditMode);
+				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was added successfully.", Severity.Success);
+			}
+			else
+			{
+				await DebtService.UpdateDebt(_loanInEditMode);
+				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was updated successfully.", Severity.Success);
+			}
+
+	// Refresh the data and exit edit mode
+			LoanDetails.Add(_loanInEditMode);
+			await RefreshPage();
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add($"Error saving loan: {ex.Message}", Severity.Error);
+		}
+	}
+
+	private async Task DeleteLoan(int loanId)
+	{
+		try
+		{
+			var loan = GetLoanFromCashe(loanId);
+
+			await DebtService.DeleteLoan(loan.Id);
+			LoanDetails.Remove(loan);
+
+			await RefreshPage();
+
+	// Success message
+			Snackbar.Add($"Loan whit name {loan.Name} was deleted successfully.", Severity.Success);
+		}
+		catch (Exception ex)
+		{
+	// Error message
+			Snackbar.Add($"Error deleting debt with ID {loanId}: {ex.Message}", Severity.Error);
+		}
+	}
+
+	private async Task RefreshPage()
+	{
+		_loanInEditMode = null;
+		StateHasChanged();
+		await LoadDebtsInQuoteCurrency();
+		await CalculateData();
 	}
 
 }

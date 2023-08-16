@@ -19,7 +19,7 @@ else
 {
 		<h3>List all your Debts in their respective</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="false" />
+	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" OnLoanEdit="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="false" />
 
 	<h3>
 		<br>
@@ -27,7 +27,7 @@ else
 
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditDebt="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="true" />
+	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnLoanEdit="EditDebt" OnDeleteDebt="DeleteDebt" IsReadOnly="true" />
 
 	}
 
