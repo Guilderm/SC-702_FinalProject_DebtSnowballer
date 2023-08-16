@@ -44,10 +44,10 @@ else
 @code {
 	private bool _isEssentialDataLoaded;
 	private bool _isDataCalculated;
-	private List<LoanDetailDto> _debtsInQuoteCurrency;
-	private List<LoanDetailDto> _debtsInBaseCurrency;
-	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
-	private List<PlannedSnowflakeDto> _snowflakesInBaseCurrency;
+	private List<LoanDto> _debtsInQuoteCurrency;
+	private List<LoanDto> _debtsInBaseCurrency;
+	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
+	private List<SnowflakeDto> _snowflakesInBaseCurrency;
 	private UserPreferenceDto _userPreference;
 	private IList<ExchangeRateDto> _usersExchangeRates;
 	private DebtPayoffPlan DebtPayoffPlan { get; set; }
@@ -106,7 +106,7 @@ else
 
 	private Task ConvertDebtsToBaseCurrency()
 	{
-		_debtsInBaseCurrency = new List<LoanDetailDto>();
+		_debtsInBaseCurrency = new List<LoanDto>();
 
 		if (_usersExchangeRates == null)
 		{
@@ -114,14 +114,14 @@ else
 			return Task.CompletedTask;
 		}
 
-		foreach (LoanDetailDto debt in _debtsInQuoteCurrency)
+		foreach (LoanDto debt in _debtsInQuoteCurrency)
 		{
 			ExchangeRateDto baseRate = _usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == debt.CurrencyCode);
 			if (baseRate != null)
 			{
 				Console.WriteLine($"Converting debt with ID {debt.Id} using base rate for currency {baseRate.QuoteCurrency}: {baseRate.ConversionRate}");
 
-				LoanDetailDto convertedLoanDetail = new()
+				LoanDto convertedLoan = new()
 				{
 					Id = debt.Id,
 					Name = debt.Name,
@@ -136,7 +136,7 @@ else
 					StartDate = debt.StartDate
 				};
 
-				_debtsInBaseCurrency.Add(convertedLoanDetail);
+				_debtsInBaseCurrency.Add(convertedLoan);
 			}
 			else
 			{
@@ -150,7 +150,7 @@ else
 
 	private Task ConvertSnowflakesToQuoteCurrency()
 	{
-		_snowflakesInBaseCurrency = new List<PlannedSnowflakeDto>();
+		_snowflakesInBaseCurrency = new List<SnowflakeDto>();
 
 		if (_usersExchangeRates == null)
 		{
@@ -158,12 +158,12 @@ else
 			return Task.CompletedTask;
 		}
 
-		foreach (PlannedSnowflakeDto snowflake in _snowflakesInQuoteCurrency)
+		foreach (SnowflakeDto snowflake in _snowflakesInQuoteCurrency)
 		{
 			if (_usersExchangeRates.FirstOrDefault(x => x.QuoteCurrency == snowflake.CurrencyCode) is { } baseRate)
 			{
 				Console.WriteLine($"Converting debt with ID {snowflake.Id} using base rate for currency {baseRate.QuoteCurrency}: {baseRate.ConversionRate}");
-				PlannedSnowflakeDto convertedPlannedSnowflake = new()
+				SnowflakeDto convertedSnowflake = new()
 				{
 					Id = snowflake.Id,
 					Name = snowflake.Name,
@@ -174,7 +174,7 @@ else
 					CurrencyCode = _userPreference.BaseCurrency
 				};
 
-				_snowflakesInBaseCurrency.Add(convertedPlannedSnowflake);
+				_snowflakesInBaseCurrency.Add(convertedSnowflake);
 			}
 		}
 		return Task.CompletedTask;

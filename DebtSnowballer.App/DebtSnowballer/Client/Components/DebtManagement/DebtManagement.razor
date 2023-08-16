@@ -31,10 +31,10 @@ else
 @code {
 
 	[Parameter]
-	public List<LoanDetailDto> DebtsInQuoteCurrency { get; set; }
+	public List<LoanDto> DebtsInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public List<LoanDetailDto> DebtsInBaseCurrency { get; set; }
+	public List<LoanDto> DebtsInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }

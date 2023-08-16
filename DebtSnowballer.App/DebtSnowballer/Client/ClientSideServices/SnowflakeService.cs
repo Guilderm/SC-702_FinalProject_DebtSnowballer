@@ -26,47 +26,47 @@ public class SnowflakeService : ISnowflakeService
 		}
 	}
 
-	public async Task<IList<PlannedSnowflakeDto>> GetAllSnowflakes()
+	public async Task<IList<SnowflakeDto>> GetAllSnowflakes()
 	{
-		IList<PlannedSnowflakeDto> snowflakes =
-			await _httpClient.GetFromJsonAsync<IList<PlannedSnowflakeDto>>($"{_backendUrl}");
+		IList<SnowflakeDto> snowflakes =
+			await _httpClient.GetFromJsonAsync<IList<SnowflakeDto>>($"{_backendUrl}");
 		_logger.LogInformation($"Retrieved {snowflakes.Count} snowflakes.");
 		return snowflakes;
 	}
 
-	public async Task<PlannedSnowflakeDto> GetSnowflakeById(int id)
+	public async Task<SnowflakeDto> GetSnowflakeById(int id)
 	{
-		PlannedSnowflakeDto plannedSnowflake =
-			await _httpClient.GetFromJsonAsync<PlannedSnowflakeDto>($"{_backendUrl}/{id}");
+		SnowflakeDto snowflake =
+			await _httpClient.GetFromJsonAsync<SnowflakeDto>($"{_backendUrl}/{id}");
 		_logger.LogInformation($"Retrieved snowflake with ID {id}.");
-		return plannedSnowflake;
+		return snowflake;
 	}
 
-	public async Task<PlannedSnowflakeDto> AddSnowflake(PlannedSnowflakeDto plannedSnowflakeDto)
+	public async Task<SnowflakeDto> AddSnowflake(SnowflakeDto snowflakeDto)
 	{
-		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, plannedSnowflakeDto);
+		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, snowflakeDto);
 		if (!response.IsSuccessStatusCode)
 		{
 			_logger.LogError($"Error posting snowflake: {response.ReasonPhrase}");
 			throw new Exception($"Error posting snowflake: {response.ReasonPhrase}");
 		}
 
-		PlannedSnowflakeDto result = await response.Content.ReadFromJsonAsync<PlannedSnowflakeDto>();
+		SnowflakeDto result = await response.Content.ReadFromJsonAsync<SnowflakeDto>();
 		_logger.LogInformation($"Added new snowflake with ID {result.Id}.");
 		return result;
 	}
 
-	public async Task<PlannedSnowflakeDto> UpdateSnowflake(PlannedSnowflakeDto plannedSnowflakeDto)
+	public async Task<SnowflakeDto> UpdateSnowflake(SnowflakeDto snowflakeDto)
 	{
 		HttpResponseMessage response =
-			await _httpClient.PutAsJsonAsync($"{_backendUrl}/{plannedSnowflakeDto.Id}", plannedSnowflakeDto);
+			await _httpClient.PutAsJsonAsync($"{_backendUrl}/{snowflakeDto.Id}", snowflakeDto);
 		if (!response.IsSuccessStatusCode)
 		{
 			_logger.LogError($"Error updating snowflake: {response.ReasonPhrase}");
 			throw new Exception($"Error updating snowflake: {response.ReasonPhrase}");
 		}
 
-		PlannedSnowflakeDto result = await response.Content.ReadFromJsonAsync<PlannedSnowflakeDto>();
+		SnowflakeDto result = await response.Content.ReadFromJsonAsync<SnowflakeDto>();
 		_logger.LogInformation($"Updated snowflake with ID {result.Id}.");
 		return result;
 	}

@@ -1,70 +1,50 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
-@inject IDebtService DebtService
 
-<table class="table">
-	<thead>
-	<tr>
-		<th>NickName</th>
-		<th>Frequency In Months</th>
-		<th>Amount</th>
-		<th>Start Date</th>
-		<th>End Date</th>
-		<th>CurrencyCode</th>
-		@if (AreActionsShown)
-		{
-			<th>Actions</th>
-		}
-	</tr>
-	</thead>
-	<tbody>
-	@foreach (PlannedSnowflakeDto snowflake in Snowflakes)
-	{
-		string currencySymbol = GetCurrencySymbol(snowflake.CurrencyCode);
-		<tr>
-			<td>@snowflake.Name</td>
-			<td>@snowflake.FrequencyInMonths</td>
-			<td>@currencySymbol @snowflake.Amount.ToString("N2")</td>
-			<td>@snowflake.StartingAt</td>
-			<td>@snowflake.EndingAt</td>
-			<td>@snowflake.CurrencyCode</td>
-			@if (AreActionsShown)
-			{
-				<td>
-					<button class="btn btn-primary" @onclick="() => EditSnowflake(snowflake.Id)">Edit</button>
-					<button class="btn btn-danger" @onclick="() => DeleteSnowflake(snowflake.Id)">Delete</button>
-				</td>
-			}
-		</tr>
-	}
-	</tbody>
-</table>
+@inject ISnowflakeService FlakeService
+
+<MudTable Items="@PlannedSnowflakes" Dense="true" Hover="true">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Name)">Nick Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.FrequencyInMonths)">Frequency In Months</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Amount)">Amount</MudTableSortLabel></MudTh>
+        <MudTh>Starting At</MudTh>
+        <MudTh>Ending At</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel></MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nick Name">@context.Name</MudTd>
+        <MudTd DataLabel="Frequency In Months">@context.FrequencyInMonths</MudTd>
+        <MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
+        <MudTd DataLabel="Starting At">@context.StartingAt?.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd DataLabel="Ending At">@context.EndingAt?.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+        <MudTd>
+            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditPlannedSnowflake(context.Id)" />
+            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeletePlannedSnowflake(context.Id)" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
 
 @code {
+    private List<SnowflakeDto> PlannedSnowflakes { get; set; }
 
-	[Parameter]
-	public bool AreActionsShown { get; set; }
+    protected override async Task OnInitializedAsync()
+        {
+        PlannedSnowflakes = await FlakeService.GetAllSnowflakes();
+        return base.OnInitializedAsync();
+        }
 
-	[Parameter]
-	public List<PlannedSnowflakeDto> Snowflakes { get; set; }
+    private void EditPlannedSnowflake(int id)
+        {
+        // Navigate to the edit page or open a dialog for editing
+        }
 
-	[Parameter]
-	public Func<string, string> GetCurrencySymbol { get; set; }
-
-	[Parameter]
-	public EventCallback<int> OnEditSnowflake { get; set; }
-
-	[Parameter]
-	public EventCallback<int> OnDeleteSnowflake { get; set; }
-
-	private async Task EditSnowflake(int id)
-	{
-		await OnEditSnowflake.InvokeAsync(id);
-	}
-
-	private async Task DeleteSnowflake(int id)
-	{
-		await OnDeleteSnowflake.InvokeAsync(id);
-	}
-
+    private async Task DeletePlannedSnowflake(int id)
+        {
+        // Confirm deletion and call the service to delete the planned snowflake
+        await FlakeService.DeletePlannedSnowflakeAsync(id);
+        PlannedSnowflakes = await FlakeService.GetAllPlannedSnowflakesAsync();
+        }
 }

@@ -29,20 +29,20 @@ else
 	<br>
 	<SnowflakeTable Snowflakes="SnowflakesInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" OnEditSnowflake="EditSnowflake" OnDeleteSnowflake="DeleteSnowflake" AreActionsShown="false"/>
 
-	<SnowflakeForm PlannedSnowflake="SelectedPlannedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
+	<SnowflakeForm Snowflake="SelectedSnowflake" OnSave="OnSave" OnCancel="OnCancel"/>
 }
 
 
 @code {
 
-	private PlannedSnowflakeDto _newPlannedSnowflake = new();
-	private PlannedSnowflakeDto SelectedPlannedSnowflake { get; set; }
+	private SnowflakeDto _newSnowflake = new();
+	private SnowflakeDto SelectedSnowflake { get; set; }
 
 	[Parameter]
-	public List<PlannedSnowflakeDto> SnowflakesInQuoteCurrency { get; set; }
+	public List<SnowflakeDto> SnowflakesInQuoteCurrency { get; set; }
 
 	[Parameter]
-	public List<PlannedSnowflakeDto> SnowflakesInBaseCurrency { get; set; }
+	public List<SnowflakeDto> SnowflakesInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -56,7 +56,7 @@ else
 
 	private async Task EditSnowflake(int id)
 	{
-		SelectedPlannedSnowflake = await SnowflakeService.GetSnowflakeById(id);
+		SelectedSnowflake = await SnowflakeService.GetSnowflakeById(id);
 
 		await LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
@@ -65,25 +65,25 @@ else
 
 	private void OnAddNewSnowflake()
 	{
-		SelectedPlannedSnowflake = new PlannedSnowflakeDto();
+		SelectedSnowflake = new SnowflakeDto();
 
 		LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
 		CalculateData();
 	}
 
-	private async Task OnSave(PlannedSnowflakeDto plannedSnowflake)
+	private async Task OnSave(SnowflakeDto snowflake)
 	{
-		if (plannedSnowflake.Id == 0)
+		if (snowflake.Id == 0)
 		{
-			await SnowflakeService.AddSnowflake(plannedSnowflake);
+			await SnowflakeService.AddSnowflake(snowflake);
 		}
 		else
 		{
-			await SnowflakeService.UpdateSnowflake(plannedSnowflake);
+			await SnowflakeService.UpdateSnowflake(snowflake);
 		}
 		await LoadSnowflakesInQuoteCurrency();
-		SelectedPlannedSnowflake = null;
+		SelectedSnowflake = null;
 
 		await LoadSnowflakesInQuoteCurrency();
 		StateHasChanged();
@@ -92,7 +92,7 @@ else
 
 	private void OnCancel()
 	{
-		SelectedPlannedSnowflake = null;
+		SelectedSnowflake = null;
 	}
 
 	private async Task DeleteSnowflake(int id)

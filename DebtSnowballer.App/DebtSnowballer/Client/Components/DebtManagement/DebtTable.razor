@@ -12,25 +12,25 @@
 <MudTable Items="@LoanDetails" Dense="true" SortLabel="Sort By" Hover="true" ReadOnly="@IsReadOnly">
 	<HeaderContent>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.Name)">Loan NickName</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.Name)">Loan NickName</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.RemainingPrincipal)">Remaining Principal</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.RemainingPrincipal)">Remaining Principal</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.AnnualInterestRate)">Interest Rate</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.AnnualInterestRate)">Interest Rate</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.BankFees)">BankFees</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.BankFees)">BankFees</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.ContractedMonthlyPayment)">Monthly Payment</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.ContractedMonthlyPayment)">Monthly Payment</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.RemainingTermInMonths)">Remaining Term</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.RemainingTermInMonths)">Remaining Term</MudTableSortLabel>
 		</MudTh>
 		<MudTh>
-			<MudTableSortLabel SortBy="new Func<LoanDetailDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
+			<MudTableSortLabel SortBy="new Func<LoanDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
 		</MudTh>
 		<MudTh>Start Date</MudTh>
 		@if (!IsReadOnly)
@@ -102,14 +102,14 @@
 }
 
 @code {
-	private LoanDetailDto _loanInEditMode;
+	private LoanDto _loanInEditMode;
 	private string _currencySymbol;
 
 	[Parameter]
 	public bool IsReadOnly { get; set; }
 
 	[Parameter]
-	public List<LoanDetailDto> LoanDetails { get; set; }
+	public List<LoanDto> LoanDetails { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
@@ -121,9 +121,9 @@
 	public Func<Task> CalculateData { get; set; }
 
 
-	private void SetCurrencySymbol(string Symbol)
+	private void SetCurrencySymbol(string symbol)
 	{
-		_currencySymbol=GetCurrencySymbol(Symbol);
+		_currencySymbol=GetCurrencySymbol(symbol);
 	}
 
 
@@ -136,7 +136,7 @@
 	private void EditLoan(int loanId)
 	{
 		Logger.LogInformation($"Editing loan with ID {loanId}");
-		LoanDetailDto loan = GetLoanFromCashe(loanId);
+		LoanDto loan = GetLoanFromCashe(loanId);
 		if (loan == null)
 		{
 			CancelEdit();
@@ -147,9 +147,9 @@
 		}
 	}
 
-	private LoanDetailDto GetLoanFromCashe(int loanId)
+	private LoanDto GetLoanFromCashe(int loanId)
 	{
-		LoanDetailDto loan = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
+		LoanDto loan = LoanDetails.FirstOrDefault(loan => loan.Id == loanId);
 		Logger.LogInformation($"Fetched loan from cache with ID: {loan!.Id} Name: {loan!.Name}");
 		return loan;
 	}
@@ -157,7 +157,7 @@
 	private void AddLoan()
 	{
 		Logger.LogInformation("Adding new loan.");
-		LoanDetailDto newLoan = new()
+		LoanDto newLoan = new()
 		{
 			Name = "Visa Credit Card",
 			RemainingPrincipal = 5000.00m,
@@ -172,7 +172,7 @@
 		EnterEditMode(newLoan);
 	}
 
-	private void EnterEditMode(LoanDetailDto loan)
+	private void EnterEditMode(LoanDto loan)
 	{
 		_loanInEditMode = loan;
 		StateHasChanged();

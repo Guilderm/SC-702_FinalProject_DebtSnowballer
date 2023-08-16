@@ -6,13 +6,13 @@ namespace Server.BLL.Configurations;
 
 public class AutoMapperConfiguration : Profile
 {
-	public AutoMapperConfiguration()
-	{
-		CreateMap<LoanDetail, LoanDetailDto>().ReverseMap();
-		CreateMap<UserProfile, UserProfileDto>().ReverseMap();
-		CreateMap<UserPreference, UserPreferenceDto>().ReverseMap();
-		CreateMap<PlannedSnowflake, PlannedSnowflakeDto>().ReverseMap();
-		CreateMap<ExchangeRate, ExchangeRateDto>().ReverseMap();
-		CreateMap<DebtPayDownMethod, DebtPayDownMethodDto>().ReverseMap();
-	}
+    public AutoMapperConfiguration()
+    {
+        CreateMap<LoanDetail, LoanDto>().ReverseMap();
+        CreateMap<UserProfile, UserProfileDto>().ReverseMap();
+        CreateMap<UserPreference, UserPreferenceDto>().ReverseMap();
+        CreateMap<PlannedSnowflake, SnowflakeDto>().ReverseMap();
+        CreateMap<ExchangeRate, ExchangeRateDto>().ReverseMap();
+        CreateMap<DebtPayDownMethod, DebtPayDownMethodDto>().ReverseMap();
+    }
 }

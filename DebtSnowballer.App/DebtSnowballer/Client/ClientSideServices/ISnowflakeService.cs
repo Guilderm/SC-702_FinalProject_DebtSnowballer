@@ -4,9 +4,9 @@ namespace DebtSnowballer.Client.ClientSideServices;
 
 public interface ISnowflakeService
 {
-	Task<PlannedSnowflakeDto> AddSnowflake(PlannedSnowflakeDto plannedSnowflakeDto);
-	Task DeleteSnowflake(int id);
-	Task<IList<PlannedSnowflakeDto>> GetAllSnowflakes();
-	Task<PlannedSnowflakeDto> GetSnowflakeById(int id);
-	Task<PlannedSnowflakeDto> UpdateSnowflake(PlannedSnowflakeDto plannedSnowflakeDto);
+    Task<SnowflakeDto> AddSnowflake(SnowflakeDto snowflakeDto);
+    Task DeleteSnowflake(int id);
+    Task<IList<SnowflakeDto>> GetAllSnowflakes();
+    Task<SnowflakeDto> GetSnowflakeById(int id);
+    Task<SnowflakeDto> UpdateSnowflake(SnowflakeDto snowflakeDto);
 }
