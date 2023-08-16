@@ -37,13 +37,13 @@
 else
 {
 	<p>Loading your data...</p>
-	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
 }
 
 
 @code {
-	private bool _isEssentialDataLoaded = false;
-	private bool _isDataCalculated = false;
+	private bool _isEssentialDataLoaded;
+	private bool _isDataCalculated;
 	private List<LoanDetailDto> _debtsInQuoteCurrency;
 	private List<LoanDetailDto> _debtsInBaseCurrency;
 	private List<PlannedSnowflakeDto> _snowflakesInQuoteCurrency;
@@ -221,4 +221,5 @@ else
 		await ConvertSnowflakesToQuoteCurrency();
 		await CreateDebtPayoffPlan();
 	}
+
 }

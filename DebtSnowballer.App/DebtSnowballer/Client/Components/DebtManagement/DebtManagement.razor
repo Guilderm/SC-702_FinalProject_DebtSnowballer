@@ -1,6 +1,4 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.ClientSideServices
-
 <h3>
 	<br>
 </h3>
@@ -11,14 +9,14 @@
 {
 	<p>
 		<em>Loading debts...</em>
-		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7" />
+		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
 	</p>
 }
 else
 {
-		<h3>List all your Debts in their respective</h3>
+	<h3>List all your Debts in their respective</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false" />
+	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false"/>
 
 	<h3>
 		<br>
@@ -26,12 +24,12 @@ else
 
 	<h3>Debts converted to base currency</h3>
 	<br>
-	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData"  IsReadOnly="true" />
-
-	}
+	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="true"/>
+}
 
 
 @code {
+
 	[Parameter]
 	public List<LoanDetailDto> DebtsInQuoteCurrency { get; set; }
 
@@ -46,4 +44,5 @@ else
 
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
+
 }

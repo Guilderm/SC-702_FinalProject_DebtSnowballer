@@ -46,9 +46,8 @@
 				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required For="@(() => context.RemainingPrincipal)"/>
 			</MudTd>
 			<MudTd DataLabel="Interest Rate">
-				<MudNumericField @bind-Value="context.AnnualInterestRate" Converter="new Func<decimal, string>(v => (v * 100).ToString())" ConverterBack="new Func<string, decimal>(v => decimal.Parse(v) / 100)" Required For="@(() => context.AnnualInterestRate)"/>
+				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required For="@(() => context.AnnualInterestRate)"/>
 			</MudTd>
-
 			<MudTd DataLabel="BankFees">
 				<MudNumericField @bind-Value="@context.BankFees" Required For="@(() => context.BankFees)"/>
 			</MudTd>
@@ -109,6 +108,12 @@
 
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
+
+
+	private decimal Convert(decimal percentage)
+	{
+		return percentage / 100;
+	}
 
 
 	private void CancelEdit()
@@ -190,14 +195,13 @@
 				await DebtService.UpdateDebt(_loanInEditMode);
 				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was updated successfully.", Severity.Success);
 			}
-
 		}
 		catch (Exception ex)
 		{
 			Snackbar.Add($"Error saving loan: {ex.Message}", Severity.Error);
 			return;
 		}
-		
+
 		LoanDetails.Add(_loanInEditMode);
 		await RefreshPage();
 	}

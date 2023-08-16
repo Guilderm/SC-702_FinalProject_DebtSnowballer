@@ -37,21 +37,22 @@
 	private bool _isFirstRender = true;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
-		{
+	{
 		if (firstRender)
-			{
+		{
 			AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 			ClaimsPrincipal user = authState.User;
 
 			if (user.Identity.IsAuthenticated)
-				{
-					//TODO: load all user settings and cache them
+			{
+	//TODO: load all user settings and cache them
 				Console.WriteLine("Will load user preference.");
 				await UserService.GetUserPreferenceAsync();
 				Console.WriteLine("Loaded User Preference.");
-				}
+			}
 
 			_isFirstRender = false;
-			}
 		}
+	}
+
 }
