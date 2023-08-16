@@ -21,7 +21,8 @@ public class UserService : IUserService
 
 	public async Task<UserPreferenceDto> UpdateUserPreferenceAsync(UserPreferenceDto userPreferenceDto)
 	{
-		HttpResponseMessage response = await _httpClient.PutAsJsonAsync(_backendUrl + "/UpdateUserPreference", userPreferenceDto);
+		HttpResponseMessage response =
+			await _httpClient.PutAsJsonAsync(_backendUrl + "/UpdateUserPreference", userPreferenceDto);
 		response.EnsureSuccessStatusCode();
 		return await response.Content.ReadFromJsonAsync<UserPreferenceDto>();
 	}

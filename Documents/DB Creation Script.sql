@@ -137,7 +137,7 @@ CREATE TABLE [LoanDetail]
     CHECK (MonthlyInterestRate >= 0.01),
     [RemainingTermInMonths]    INT                NOT NULL CHECK (RemainingTermInMonths >= 1),
     [CurrencyCode]             NVARCHAR(3)        NOT NULL DEFAULT 'USD' REFERENCES [Currencies] (AlphaCode),
-    [CardinalOrder]            INT                NOT NULL,
+    [CardinalOrder]            INT                NOT NULL DEFAULT 1,
     [StartDate]                DATE               NOT NULL DEFAULT (DATEFROMPARTS(YEAR(CURRENT_TIMESTAMP),
                                                                                   MONTH(CURRENT_TIMESTAMP), 1))
 );

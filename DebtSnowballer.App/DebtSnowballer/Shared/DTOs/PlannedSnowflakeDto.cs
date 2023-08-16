@@ -24,11 +24,12 @@ public class PlannedSnowflakeDto
 
 	[Required]
 	[CustomValidation(typeof(PlannedSnowflakeDto), "ValidateEndingAt")]
-	public DateTime? EndingAt { get; set; }
+	public DateTime? EndingAt { get; set; } =
+		new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1); // Default to the first day of the current month
 
 	[Required]
 	[StringLength(3, ErrorMessage = "Currency must be a valid ISO 4217 alpha code.")]
-	public string CurrencyCode { get; set; }
+	public string CurrencyCode { get; set; } = "USD";
 
 	public static ValidationResult ValidateEndingAt(DateTime? endingAt, ValidationContext context)
 	{
