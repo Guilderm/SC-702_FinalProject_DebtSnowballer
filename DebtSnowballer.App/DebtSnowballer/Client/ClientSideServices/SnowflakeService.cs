@@ -26,10 +26,10 @@ public class SnowflakeService : ISnowflakeService
 		}
 	}
 
-	public async Task<IList<SnowflakeDto>> GetAllSnowflakes()
+	public async Task<List<SnowflakeDto>> GetAllSnowflakes()
 	{
-		IList<SnowflakeDto> snowflakes =
-			await _httpClient.GetFromJsonAsync<IList<SnowflakeDto>>($"{_backendUrl}");
+		List<SnowflakeDto> snowflakes =
+			await _httpClient.GetFromJsonAsync<List<SnowflakeDto>>($"{_backendUrl}");
 		_logger.LogInformation($"Retrieved {snowflakes.Count} snowflakes.");
 		return snowflakes;
 	}
@@ -42,7 +42,7 @@ public class SnowflakeService : ISnowflakeService
 		return snowflake;
 	}
 
-	public async Task<SnowflakeDto> AddSnowflake(SnowflakeDto snowflakeDto)
+	public async Task<SnowflakeDto> CreateSnowflake(SnowflakeDto snowflakeDto)
 	{
 		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, snowflakeDto);
 		if (!response.IsSuccessStatusCode)

@@ -74,14 +74,14 @@
 		else
 		{
 			SetCurrencySymbol(context.CurrencyCode);
-		<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
+			<MudTd DataLabel="Loan NickName">@context.Name</MudTd>
 			<MudTd DataLabel="Remaining Principal">@_currencySymbol @context.RemainingPrincipal.ToString("N2")</MudTd>
-		<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
+			<MudTd DataLabel="Interest Rate">@context.AnnualInterestRate.ToString("P2")</MudTd>
 			<MudTd DataLabel="BankFees">@_currencySymbol @context.BankFees.ToString("N2")</MudTd>
-		<MudTd DataLabel="Monthly Payment">@_currencySymbol @context.ContractedMonthlyPayment.ToString("N2")</MudTd>
-		<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
-		<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
-		<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
+			<MudTd DataLabel="Monthly Payment">@_currencySymbol @context.ContractedMonthlyPayment.ToString("N2")</MudTd>
+			<MudTd DataLabel="Remaining Term">@context.RemainingTermInMonths</MudTd>
+			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+			<MudTd DataLabel="Start Date">@context.StartDate.ToString("yyyy-MM")</MudTd>
 
 			@if (!IsReadOnly)
 			{
@@ -123,7 +123,7 @@
 
 	private void SetCurrencySymbol(string symbol)
 	{
-		_currencySymbol=GetCurrencySymbol(symbol);
+		_currencySymbol = GetCurrencySymbol(symbol);
 	}
 
 

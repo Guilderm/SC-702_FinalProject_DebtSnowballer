@@ -1,50 +1,259 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
+@using System.ComponentModel.DataAnnotations
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
-@inject ISnowflakeService FlakeService
+@inject ILogger<SnowflakeTable> Logger
+@inject ISnowflakeService SnowflakeService
 
-<MudTable Items="@PlannedSnowflakes" Dense="true" Hover="true">
-    <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Name)">Nick Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.FrequencyInMonths)">Frequency In Months</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Amount)">Amount</MudTableSortLabel></MudTh>
-        <MudTh>Starting At</MudTh>
-        <MudTh>Ending At</MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel></MudTh>
-        <MudTh>Actions</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Nick Name">@context.Name</MudTd>
-        <MudTd DataLabel="Frequency In Months">@context.FrequencyInMonths</MudTd>
-        <MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
-        <MudTd DataLabel="Starting At">@context.StartingAt?.ToString("yyyy-MM-dd")</MudTd>
-        <MudTd DataLabel="Ending At">@context.EndingAt?.ToString("yyyy-MM-dd")</MudTd>
-        <MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
-        <MudTd>
-            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditPlannedSnowflake(context.Id)" />
-            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeletePlannedSnowflake(context.Id)" />
-        </MudTd>
-    </RowTemplate>
+
+<MudTable Items="@Snowflakes" Dense="true" SortLabel="Sort By" Hover="true" ReadOnly="@IsReadOnly">
+	<HeaderContent>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Name)">Nick Name</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.FrequencyInMonths)">Frequency In Months</MudTableSortLabel>
+		</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.Amount)">Amount</MudTableSortLabel>
+		</MudTh>
+		<MudTh>Starting At</MudTh>
+		<MudTh>Ending At</MudTh>
+		<MudTh>
+			<MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
+		</MudTh>
+		<MudTh>Actions</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		@if (_snowflakeInEditMode == context)
+		{
+			<MudTd DataLabel="Loan NickName">
+				<MudTextField @bind-Value="@context.Name" Required For="@(() => context.Name)"/>
+			</MudTd>
+			<MudTd DataLabel="Frequency In Months">
+				<MudNumericField @bind-Value="@context.FrequencyInMonths" Required For="@(() => context.FrequencyInMonths)"/>
+			</MudTd>
+			<MudTd DataLabel="Amount">
+				<MudNumericField @bind-Value="@context.Amount" Required For="@(() => context.Amount)"/>
+			</MudTd>
+			<MudTd DataLabel="Starting">
+				<MudTextField @bind-Value="@context.StartingAt" Required For="@(() => context.StartingAt)"/>
+			</MudTd>
+			<MudTd DataLabel="Ending">
+				<MudTextField @bind-Value="@context.EndingAt" Required For="@(() => context.EndingAt)"/>
+			</MudTd>
+			<MudTd DataLabel="Currency">
+				<MudTextField @bind-Value="@context.CurrencyCode" Required For="@(() => context.CurrencyCode)"/>
+			</MudTd>
+			<MudTd>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => OnSave(context.Id)"/>
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Cancel" Class="pa-0" OnClick="CancelEdit"/>
+			</MudTd>
+		}
+		else
+		{
+			SetCurrencySymbol(context.CurrencyCode);
+			<MudTd DataLabel="Nick Name">@context.Name</MudTd>
+			<MudTd DataLabel="Frequency In Months">@context.FrequencyInMonths</MudTd>
+			<MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
+			<MudTd DataLabel="Starting At">@context.StartingAt?.ToString("yyyy-MM")</MudTd>
+			<MudTd DataLabel="Ending At">@context.EndingAt?.ToString("yyyy-MM")</MudTd>
+			<MudTd DataLabel="Currency">@context.CurrencyCode</MudTd>
+			@if (!IsReadOnly)
+			{
+				<MudTd>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditSnowflake(context.Id)"/>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => OnDelete(context.Id)"/>
+				</MudTd>
+			}
+		}
+	</RowTemplate>
+	<FooterContent>
+
+	</FooterContent>
 </MudTable>
+@if (!IsReadOnly)
+{
+	<MudButton OnClick="AddSnowflake" Variant="Variant.Filled" Color="Color.Primary">Add Snowflake</MudButton>
+}
+
+
 
 @code {
-    private List<SnowflakeDto> PlannedSnowflakes { get; set; }
+	private SnowflakeDto _snowflakeInEditMode;
+	private string _currencySymbol;
 
-    protected override async Task OnInitializedAsync()
-        {
-        PlannedSnowflakes = await FlakeService.GetAllSnowflakes();
-        return base.OnInitializedAsync();
-        }
+	[Parameter]
+	public bool IsReadOnly { get; set; }
 
-    private void EditPlannedSnowflake(int id)
-        {
-        // Navigate to the edit page or open a dialog for editing
-        }
+	[Parameter]
+	public List<SnowflakeDto> Snowflakes { get; set; }
 
-    private async Task DeletePlannedSnowflake(int id)
-        {
-        // Confirm deletion and call the service to delete the planned snowflake
-        await FlakeService.DeletePlannedSnowflakeAsync(id);
-        PlannedSnowflakes = await FlakeService.GetAllPlannedSnowflakesAsync();
-        }
+	[Parameter]
+	public Func<string, string> GetCurrencySymbol { get; set; }
+
+	[Parameter]
+	public Func<Task> LoadSnowflakesInQuoteCurrency { get; set; }
+
+	[Parameter]
+	public Func<Task> CalculateData { get; set; }
+
+
+	private void SetCurrencySymbol(string symbol)
+	{
+		_currencySymbol = GetCurrencySymbol(symbol);
+	}
+
+
+	private void CancelEdit()
+	{
+		_snowflakeInEditMode = null;
+		Logger.LogInformation("Edit mode canceled.");
+	}
+
+	private void EditSnowflake(int snowflakeId)
+	{
+		Logger.LogInformation($"Editing Snowflake with ID {snowflakeId}");
+		SnowflakeDto snowflake = GetSnowflakeFromCashe(snowflakeId);
+		if (snowflake == null)
+		{
+			CancelEdit();
+		}
+		if (snowflake != null)
+		{
+			EnterEditMode(snowflake);
+		}
+	}
+
+	private SnowflakeDto GetSnowflakeFromCashe(int snowflakeId)
+	{
+		SnowflakeDto snowflake = Snowflakes.FirstOrDefault(snowflake => snowflake.Id == snowflakeId);
+		Logger.LogInformation($"Fetched Snowflake from cache with ID: {snowflake!.Id} Name: {snowflake!.Name}");
+		return snowflake;
+	}
+
+	private void AddSnowflake()
+	{
+		Logger.LogInformation("Adding new Snowflake.");
+		SnowflakeDto newSnowflake = new()
+		{
+			Name = "Bonus Payment",
+			FrequencyInMonths = 3,
+			Amount = 500.00m,
+			StartingAt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
+			EndingAt = new DateTime(DateTime.Now.Year + 5, DateTime.Now.Month, 1),
+			CurrencyCode = "USD"
+		}
+			;
+		Snowflakes.Add(newSnowflake);
+		EnterEditMode(newSnowflake);
+	}
+
+	private void EnterEditMode(SnowflakeDto snowflake)
+	{
+		_snowflakeInEditMode = snowflake;
+		StateHasChanged();
+		Logger.LogInformation($"Entered edit mode for Snowflake with ID: {snowflake!.Id} Name: {snowflake!.Name}");
+	}
+
+	private async Task OnSave(int snowflakeId)
+	{
+		Logger.LogInformation($"Attempting to save Snowflake with ID {snowflakeId}");
+
+		if (_snowflakeInEditMode == null)
+		{
+			Snackbar.Add("No Snowflake selected for saving.", Severity.Error);
+			return;
+		}
+
+		if (_snowflakeInEditMode.Id != snowflakeId)
+		{
+			Snackbar.Add($"Internal error saving Snowflake {_snowflakeInEditMode.Name}.", Severity.Error);
+			return;
+		}
+
+		ValidationContext validationContext = new(_snowflakeInEditMode, null, null);
+
+		List<ValidationResult> validationResults = new List<ValidationResult>();
+
+		bool isValid = Validator.TryValidateObject(_snowflakeInEditMode, validationContext, validationResults, true);
+
+		if (!isValid)
+		{
+			foreach (ValidationResult validationResult in validationResults)
+			{
+				Logger.LogError($"Validation error: {validationResult.ErrorMessage}");
+				Snackbar.Add($"Validation error: {validationResult.ErrorMessage}", Severity.Error);
+			}
+			return;
+		}
+
+		try
+		{
+			if (_snowflakeInEditMode.Id == 0)
+			{
+				await SnowflakeService.CreateSnowflake(_snowflakeInEditMode);
+				Snackbar.Add($"Snowflake with name {_snowflakeInEditMode.Name} was added successfully.", Severity.Success);
+				Logger.LogInformation($"Snowflake with name {_snowflakeInEditMode.Name} was added successfully.");
+			}
+			else
+			{
+				await SnowflakeService.UpdateSnowflake(_snowflakeInEditMode);
+				Snackbar.Add($"Snowflake with name {_snowflakeInEditMode.Name} was updated successfully.", Severity.Success);
+				Logger.LogInformation($"Snowflake with name {_snowflakeInEditMode.Name} was updated successfully.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add($"Error saving Snowflake: {ex.Message}", Severity.Error);
+			Logger.LogError(ex, $"Error saving Snowflake with ID {_snowflakeInEditMode.Id} and name {_snowflakeInEditMode.Name}. Full exception details: {ex}");
+			return;
+		}
+
+
+		Snowflakes.Add(_snowflakeInEditMode);
+		await RefreshPage();
+	}
+
+	private async Task OnDelete(int snowflakeId)
+	{
+		Logger.LogInformation($"Attempting to delete Snowflake with ID {snowflakeId}");
+		var parameters = new DialogParameters();
+		parameters.Add("ContentText", "Are you sure you want to delete this Snowflake?");
+		parameters.Add("ButtonText", "Delete");
+		parameters.Add("Color", Color.Error);
+
+		var dialog = DialogService.Show<Dialog>("Delete Confirmation", parameters);
+		var result = await dialog.Result;
+
+		if (!result.Canceled)
+		{
+			try
+			{
+				var snowflake = GetSnowflakeFromCashe(snowflakeId);
+				await SnowflakeService.DeleteSnowflake(snowflake.Id);
+				Snowflakes.Remove(snowflake);
+				await RefreshPage();
+				Snackbar.Add($"Snowflake with name {snowflake.Name} was deleted successfully.", Severity.Success);
+				Logger.LogInformation($"Successfully deleted Snowflake with ID {snowflakeId}");
+			}
+			catch (Exception ex)
+			{
+				Snackbar.Add($"Error deleting debt with ID {snowflakeId}: {ex.Message}", Severity.Error);
+				Logger.LogError(ex, $"Error deleting Snowflake with ID {snowflakeId}");
+			}
+		}
+	}
+
+
+	private async Task RefreshPage()
+	{
+		_snowflakeInEditMode = null;
+		StateHasChanged();
+		await CalculateData();
+		await LoadSnowflakesInQuoteCurrency();
+	}
+
 }

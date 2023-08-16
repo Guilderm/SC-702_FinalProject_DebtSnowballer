@@ -1,6 +1,5 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Shared.Currency
-
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
@@ -26,7 +25,8 @@ else
 		{
 			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
 		}
-	</MudSelect>}
+	</MudSelect>
+}
 
 @code {
 
@@ -52,5 +52,5 @@ else
 			Logger.LogError(ex, "Error saving base currency.");
 		}
 	}
-	
+
 }
