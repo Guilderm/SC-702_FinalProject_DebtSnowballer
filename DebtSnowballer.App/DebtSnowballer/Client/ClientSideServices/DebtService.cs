@@ -18,7 +18,7 @@ public class DebtService : IDebtService
 
 	public async Task DeleteLoan(int id)
 	{
-		_logger.LogInformation("Deleting debt with id {id}", id);
+		_logger.LogInformation($"Deleting loan with ID: {id}");
 		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_backendUrl}/{id}");
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error deleting debt: {response.ReasonPhrase}");
@@ -34,26 +34,18 @@ public class DebtService : IDebtService
 		return debts;
 	}
 
-	public async Task<LoanDetailDto> GetDebtById(int id)
+	public async Task<LoanDetailDto> CreateLoan(LoanDetailDto loan)
 	{
-		_logger.LogInformation("Fetching debt with id {id}", id);
-		LoanDetailDto loanDetail = await _httpClient.GetFromJsonAsync<LoanDetailDto>($"{_backendUrl}/{id}");
-		_logger.LogInformation("Fetched debt with id {id}", id);
-		return loanDetail;
-	}
-
-	public async Task<LoanDetailDto> AddDebt(LoanDetailDto loanDetailDto)
-	{
-		_logger.LogInformation("Adding new debt");
-		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, loanDetailDto);
+		_logger.LogInformation($"Adding new loan with ID: {loan.Id} Name: {loan.Name}");
+		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, loan);
 		if (!response.IsSuccessStatusCode)
 			throw new Exception($"Error posting debt: {response.ReasonPhrase}");
 		LoanDetailDto result = await response.Content.ReadFromJsonAsync<LoanDetailDto>();
-		_logger.LogInformation("Added new debt with id {id}", result.Id);
+		_logger.LogInformation($"Added new loan with ID: {loan.Id} Name: {loan.Name}");
 		return result;
 	}
 
-	public async Task<LoanDetailDto> UpdateDebt(LoanDetailDto loanDetailDto)
+	public async Task<LoanDetailDto> UpdateLoan(LoanDetailDto loanDetailDto)
 	{
 		_logger.LogInformation("Updating debt with id {id}", loanDetailDto.Id);
 		HttpResponseMessage response =

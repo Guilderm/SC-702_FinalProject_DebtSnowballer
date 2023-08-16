@@ -21,17 +21,34 @@ public class DebtController : BaseController
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Post([FromBody] LoanDetailDto requestDto)
+	public async Task<IActionResult> Post([FromBody] LoanDetailDto loan)
 	{
-		string? auth0UserId = GetAuth0UserId();
-		_logger.LogInformation("Creating debt for user {userId}", auth0UserId);
+		if (!ModelState.IsValid)
+		{
+			var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+			var errorString = string.Join("; ", errors);
+			_logger.LogWarning("Invalid request data for creating a Loan. Errors: {errors}", errorString);
+			return BadRequest(ModelState);
+		}
 
-		LoanDetailDto createdLoanDetail = await _debtManagement.CreateDebt(requestDto, auth0UserId);
+		try
+		{
+			string? auth0UserId = GetAuth0UserId();
+			_logger.LogInformation("Creating debt for user {userId}", auth0UserId);
 
-		_logger.LogInformation("Debt created with id {debtId}", createdLoanDetail.Id);
+			LoanDetailDto createdLoanDetail = await _debtManagement.CreateNewLoan(loan, auth0UserId);
 
-		return CreatedAtAction(nameof(Get), new { id = createdLoanDetail.Id }, createdLoanDetail);
+			_logger.LogInformation("Debt created with id {debtId}", createdLoanDetail.Id);
+
+			return CreatedAtAction(nameof(Get), new { id = createdLoanDetail.Id }, createdLoanDetail);
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(ex, "An error occurred while creating debt for user {userId}", GetAuth0UserId());
+			return BadRequest(new { message = "An error occurred while creating the debt. Please try again." });
+		}
 	}
+
 
 	[HttpPut("{id:int}")]
 	public async Task<IActionResult> Put(int id, [FromBody] LoanDetailDto requestDto)

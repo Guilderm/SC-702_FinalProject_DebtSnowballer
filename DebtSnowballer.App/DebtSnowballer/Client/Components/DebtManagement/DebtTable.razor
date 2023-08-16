@@ -1,5 +1,9 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
+
+@using System.ComponentModel.DataAnnotations;
+@using System.Collections.Generic;
+
 @inject IDebtService DebtService
 
 @inject ISnackbar Snackbar
@@ -62,7 +66,9 @@
 			<MudTd DataLabel="Currency">
 				<MudTextField @bind-Value="@context.CurrencyCode" Required For="@(() => context.CurrencyCode)"/>
 			</MudTd>
-
+			<MudTd DataLabel="Start Date">
+				<MudTextField @bind-Value="@context.StartDate" Required For="@(() => context.StartDate)"/>
+			</MudTd>
 			<MudTd>
 				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Save" Class="pa-0" OnClick="() => OnSave(context.Id)"/>
 				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Cancel" Class="pa-0" OnClick="CancelEdit"/>
@@ -82,16 +88,19 @@
 			{
 				<MudTd>
 					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="() => EditLoan(context.Id)"/>
-					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => DeleteLoan(context.Id)"/>
+					<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Class="pa-0" OnClick="() => OnDelete(context.Id)"/>
 				</MudTd>
 			}
 		}
 	</RowTemplate>
 	<FooterContent>
-		<MudButton OnClick="AddLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
+
 	</FooterContent>
 </MudTable>
-
+@if (!IsReadOnly)
+{
+	<MudButton OnClick="AddLoan" Variant="Variant.Filled" Color="Color.Primary">Add Loan</MudButton>
+}
 
 @code {
 	private LoanDetailDto _loanInEditMode;
@@ -157,7 +166,7 @@
 			AnnualInterestRate = 0.1799m,
 			RemainingTermInMonths = 24,
 			CurrencyCode = "USD", CardinalOrder = 1,
-			StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)
+				StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1)
 		};
 		LoanDetails.Add(newLoan);
 		EnterEditMode(newLoan);
@@ -173,42 +182,63 @@
 	private async Task OnSave(int loanId)
 	{
 		Logger.LogInformation($"Attempting to save loan with ID {loanId}");
+
+		if (_loanInEditMode == null)
+		{
+			Snackbar.Add("No loan selected for saving.", Severity.Error);
+			return;
+		}
+
+		if (_loanInEditMode.Id != loanId)
+		{
+			Snackbar.Add($"Internal error saving loan {_loanInEditMode.Name}.", Severity.Error);
+			return;
+		}
+
+		ValidationContext validationContext = new(_loanInEditMode, serviceProvider: null, items: null);
+
+		List<ValidationResult> validationResults = new List<ValidationResult>();
+
+		bool isValid = Validator.TryValidateObject(_loanInEditMode, validationContext, validationResults, true);
+
+		if (!isValid)
+		{
+			foreach (ValidationResult validationResult in validationResults)
+			{
+				Logger.LogError($"Validation error: {validationResult.ErrorMessage}");
+				Snackbar.Add($"Validation error: {validationResult.ErrorMessage}", Severity.Error);
+			}
+			return;
+		}
+
 		try
 		{
-			if (_loanInEditMode == null)
-			{
-				Snackbar.Add("No loan selected for saving.", Severity.Error);
-				return;
-			}
-
-			if (_loanInEditMode.Id != loanId)
-			{
-				Snackbar.Add($"Internal error saving loan {_loanInEditMode.Name}.", Severity.Error);
-				return;
-			}
-
 			if (_loanInEditMode.Id == 0)
 			{
-				await DebtService.AddDebt(_loanInEditMode);
-				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was added successfully.", Severity.Success);
+				await DebtService.CreateLoan(_loanInEditMode);
+				Snackbar.Add($"Loan with name {_loanInEditMode.Name} was added successfully.", Severity.Success);
+				Logger.LogInformation($"Loan with name {_loanInEditMode.Name} was added successfully.");
 			}
 			else
 			{
-				await DebtService.UpdateDebt(_loanInEditMode);
-				Snackbar.Add($"Loan whit name {_loanInEditMode.Name} was updated successfully.", Severity.Success);
+				await DebtService.UpdateLoan(_loanInEditMode);
+				Snackbar.Add($"Loan with name {_loanInEditMode.Name} was updated successfully.", Severity.Success);
+				Logger.LogInformation($"Loan with name {_loanInEditMode.Name} was updated successfully.");
 			}
 		}
 		catch (Exception ex)
 		{
 			Snackbar.Add($"Error saving loan: {ex.Message}", Severity.Error);
+			Logger.LogError(ex, $"Error saving loan with ID {_loanInEditMode.Id} and name {_loanInEditMode.Name}. Full exception details: {ex}");
 			return;
 		}
+
 
 		LoanDetails.Add(_loanInEditMode);
 		await RefreshPage();
 	}
 
-	private async Task DeleteLoan(int loanId)
+	private async Task OnDelete(int loanId)
 	{
 		Logger.LogInformation($"Attempting to delete loan with ID {loanId}");
 		var parameters = new DialogParameters();
