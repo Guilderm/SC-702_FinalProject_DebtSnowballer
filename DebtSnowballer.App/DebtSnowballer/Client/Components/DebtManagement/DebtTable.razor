@@ -46,8 +46,9 @@
 				<MudNumericField @bind-Value="@context.RemainingPrincipal" Required For="@(() => context.RemainingPrincipal)"/>
 			</MudTd>
 			<MudTd DataLabel="Interest Rate">
-				<MudNumericField @bind-Value="@context.AnnualInterestRate" Required For="@(() => context.AnnualInterestRate)"/>
+				<MudNumericField @bind-Value="context.AnnualInterestRate" Converter="new Func<decimal, string>(v => (v * 100).ToString())" ConverterBack="new Func<string, decimal>(v => decimal.Parse(v) / 100)" Required For="@(() => context.AnnualInterestRate)"/>
 			</MudTd>
+
 			<MudTd DataLabel="BankFees">
 				<MudNumericField @bind-Value="@context.BankFees" Required For="@(() => context.BankFees)"/>
 			</MudTd>

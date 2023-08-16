@@ -34,7 +34,7 @@
 
 @code {
 	private readonly List<Assembly> _lazyLoadedAssemblies = new();
-	private bool isFirstRender = true;
+	private bool _isFirstRender = true;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
@@ -51,7 +51,7 @@
 				Console.WriteLine("Loaded User Preference.");
 				}
 
-			isFirstRender = false;
+			_isFirstRender = false;
 			}
 		}
 }
