@@ -25,7 +25,7 @@
 
 	@if (_isDataCalculated)
 	{
-		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" DebtsInBaseCurrency="@_debtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" DebtPayoffPlan="@DebtPayoffPlan" CalculateDebtPayoffPlan="CalculateDebtPayoffPlan"/>
+		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" DebtsInBaseCurrency="@_debtsInBaseCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" />
 	}
 }
 else
@@ -44,9 +44,7 @@ else
 	private List<SnowflakeDto> _snowflakesInBaseCurrency;
 	private UserPreferenceDto _userPreference;
 	private IList<ExchangeRateDto> _usersExchangeRates;
-	private DebtPayoffPlan DebtPayoffPlan { get; set; }
-
-
+	
 	protected override async Task OnInitializedAsync()
 	{
 		Console.WriteLine("Initializing Strategy Planner");
@@ -193,32 +191,10 @@ else
 		Console.WriteLine("State has changed after loading snowflakes in Quote Currency.");
 	}
 
-	private async Task CreateDebtPayoffPlan()
-	{
-		if (_debtsInBaseCurrency is {Count: > 0 })
-		{
-			Console.WriteLine("Starting to create debt payoff plan...");
-			DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(_debtsInBaseCurrency, _snowflakesInBaseCurrency, _userPreference.DebtPlanMonthlyPayment);
-			Console.WriteLine("Debt payoff plan created successfully.");
-			StateHasChanged();
-			Console.WriteLine("State has changed after creating debt payoff plan.");
-		}
-		else
-		{
-			Console.WriteLine("No debts available. Debt payoff plan creation skipped.");
-		}
-	}
-
 	private async Task CalculateData()
 	{
 		await ConvertDebtsToBaseCurrency();
 		await ConvertSnowflakesToQuoteCurrency();
-	}
-
-	private async Task CalculateDebtPayoffPlan()
-	{
-		await CalculateData();
-		await CreateDebtPayoffPlan();
 	}
 
 }

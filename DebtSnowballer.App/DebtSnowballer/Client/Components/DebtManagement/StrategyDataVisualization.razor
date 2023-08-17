@@ -1,4 +1,5 @@
 ﻿@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
+@using DebtSnowballer.Shared.DTOs
 @inject IFinancialFreedomPlanner FinancialFreedomPlanner
 @inject NavigationManager NavigationManager
 
@@ -74,20 +75,25 @@
 }
 
 @code {
+	private DebtPayoffPlan DebtPayoffPlan { get; set; } = new();
+
 	public List<ChartSeries> Series { get; set; } = new();
 	public List<string> XAxisLabels { get; set; } = new();
-
+	
 	[Parameter]
-	public DebtPayoffPlan DebtPayoffPlan { get; set; }
+	public UserPreferenceDto UserPreference { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
 
+	[Parameter]
+	public List<LoanDto> DebtsInBaseCurrency { get; set; }
 
-	protected override void OnParametersSet()
-	{
-		PopulateChartData();
-	}
+	[Parameter]
+	public List<SnowflakeDto> SnowflakesInBaseCurrency { get; set; }
+	
+	[Parameter]
+	public Func<Task> CalculateData { get; set; }
 
 	private void PopulateChartData()
 	{
@@ -107,5 +113,25 @@
 			Series.Add(new ChartSeries { Name = plan.Key, Data = interestPaidData.ToArray() });
 		}
 	}
+	private async Task CreateDebtPayoffPlan()
+	{
+		if (DebtsInBaseCurrency is { Count: > 0 })
+		{
+			Console.WriteLine("Starting to create debt payoff plan...");
+			DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(DebtsInBaseCurrency, SnowflakesInBaseCurrency, UserPreference.DebtPlanMonthlyPayment);
+			Console.WriteLine("Debt payoff plan created successfully.");
+			StateHasChanged();
+			Console.WriteLine("State has changed after creating debt payoff plan.");
+		}
+		else
+		{
+			Console.WriteLine("No debts available. Debt payoff plan creation skipped.");
+		}
+	}
 
+	private async Task CalculateDebtPayoffPlan()
+		{
+		await CalculateData();
+		await CreateDebtPayoffPlan();
+		}
 }

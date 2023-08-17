@@ -52,11 +52,9 @@ else
 
 	<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
 
-	@if (DebtPayoffPlan != null)
-	{
-		<StrategyTable DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
-	}
-}
+	<StrategyDataVisualization UserPreference="@_userPreference" GetCurrencySymbol="GetCurrencySymbol" CalculateData="CalculateData" DebtsInBaseCurrency="DebtsInBaseCurrency" SnowflakesInBaseCurrency="SnowflakesInBaseCurrency"/>
+
+		}
 
 @code {
 	private IList<DebtPayDownMethodDto> _strategyTypes;
@@ -65,7 +63,7 @@ else
 	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
 
 	private UserPreferenceDto _userPreference;
-
+	
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
 
@@ -77,16 +75,19 @@ else
 
 	[Parameter]
 	public List<LoanDto> DebtsInBaseCurrency { get; set; }
+	
+	[Parameter]
+	public List<SnowflakeDto> SnowflakesInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
-
-	[Parameter]
-	public DebtPayoffPlan DebtPayoffPlan { get; set; }
-
+	
 	[Parameter]
 	public Func<Task> CalculateDebtPayoffPlan { get; set; }
 
+	[Parameter]
+	public Func<Task> CalculateData { get; set; }
+	
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
 		Console.WriteLine("Inside SavePreferredBaseCurrency method");
@@ -135,5 +136,4 @@ else
 			await SaveUserPreference.InvokeAsync(UserPreference);
 		}
 	}
-
 }
