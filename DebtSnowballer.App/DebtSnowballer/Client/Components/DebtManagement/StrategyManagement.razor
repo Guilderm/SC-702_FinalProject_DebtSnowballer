@@ -58,6 +58,8 @@ else
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
 	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
 
+	private UserPreferenceDto _userPreference;
+
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
 
