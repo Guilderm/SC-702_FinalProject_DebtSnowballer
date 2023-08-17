@@ -34,10 +34,26 @@ else
 			<option value="@strategyType.Id">@strategyType.Name</option>
 		}
 	</select>
+
+	<div class="summary">
+		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
+		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
+		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+		{
+			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
+		}
+		<p>
+			Preferred Monthly Payment:
+			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
+		</p>
+	</div>
 }
 
 @code {
 	private IList<DebtPayDownMethodDto> _strategyTypes;
+
+	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
+	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
 
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
@@ -45,6 +61,15 @@ else
 	[Parameter]
 	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
 
+	[Parameter]
+	public decimal DebtPlanMonthlyPayment { get; set; }
+
+	[Parameter]
+	public List<LoanDto> DebtsInBaseCurrency { get; set; }
+
+	[Parameter]
+	public Func<string, string> GetCurrencySymbol { get; set; }
+	
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
 		Console.WriteLine("Inside SavePreferredBaseCurrency method");
@@ -75,5 +100,22 @@ else
 			await SaveUserPreference.InvokeAsync(UserPreference);
 		}
 	}
+	
+	protected override Task OnParametersSetAsync()
+		{
+		if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+			{
+			DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
+			}
+		return Task.CompletedTask;
+		}
 
+	private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
+		{
+		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
+			{
+			UserPreference.DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
+			await SaveUserPreference.InvokeAsync(UserPreference);
+			}
+		}
 }
