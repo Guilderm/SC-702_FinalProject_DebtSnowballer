@@ -20,7 +20,7 @@
 
 @if (_isEssentialDataLoaded)
 {
-	<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>
+	@*<BaseCurrencyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference"/>*@
 
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
