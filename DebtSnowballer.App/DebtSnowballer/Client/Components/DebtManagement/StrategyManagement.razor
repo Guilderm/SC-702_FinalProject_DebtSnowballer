@@ -1,5 +1,6 @@
 ﻿@using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
+@using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Shared.Currency
 @inject ILogger<DebtTable> Logger
 
@@ -47,6 +48,8 @@ else
 			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
 		</p>
 	</div>
+	
+	<StrategyTable DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 }
 
 @code {
@@ -69,6 +72,9 @@ else
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
+
+	[Parameter]
+	public DebtPayoffPlan DebtPayoffPlan { get; set; }
 	
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
@@ -118,4 +124,5 @@ else
 			await SaveUserPreference.InvokeAsync(UserPreference);
 			}
 		}
+
 }
