@@ -4,7 +4,7 @@
 
 <h1>Amortization Schedule</h1>
 <div>
-	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()" ></MudChart>
+	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()"></MudChart>
 	<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
 </div>
 
@@ -13,7 +13,7 @@
 	<h3>Strategy Name: @plan.Key</h3>
 	<h4>Loan Details</h4>
 
-	@foreach (ClientSideServices.FinancialFreedom.AmortizationSchedule schedule in plan.Value)
+	@foreach (AmortizationSchedule schedule in plan.Value)
 	{
 		string currencySymbol = GetCurrencySymbol(schedule.CurrencyCode);
 
@@ -107,4 +107,5 @@
 			Series.Add(new ChartSeries { Name = plan.Key, Data = interestPaidData.ToArray() });
 		}
 	}
+
 }

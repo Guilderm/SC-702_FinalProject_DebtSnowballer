@@ -19,9 +19,9 @@
 
 @if (_isEssentialDataLoaded)
 {
-	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" />
+	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
-	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" />
+	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
 
 	@if (_isDataCalculated)
 	{
@@ -216,8 +216,9 @@ else
 	}
 
 	private async Task CalculateDebtPayoffPlan()
-		{
+	{
 		await CalculateData();
 		await CreateDebtPayoffPlan();
-		}
+	}
+
 }

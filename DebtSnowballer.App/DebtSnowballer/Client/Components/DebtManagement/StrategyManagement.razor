@@ -1,6 +1,6 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
+@using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Shared.Currency
 @inject ILogger<StrategyManagement> Logger
 
@@ -18,7 +18,8 @@
 }
 else
 {
-	<br><h3>Select your base currency</h3>
+	<br>
+	<h3>Select your base currency</h3>
 	<p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
 	<br>
 	<MudSelect T="string" Label="Select Currency" Value="UserPreference.BaseCurrency" Variant="Variant.Text" ValueChanged="SavePreferredBaseCurrency">
@@ -27,7 +28,7 @@ else
 			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
 		}
 	</MudSelect>
-	
+
 	<h3>Choose your strategy</h3>
 	<select @onchange="OnStrategyChange" value="@UserPreference">
 		@foreach (DebtPayDownMethodDto strategyType in _strategyTypes)
@@ -48,14 +49,14 @@ else
 			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
 		</p>
 	</div>
-	
+
 	<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
 
 	@if (DebtPayoffPlan != null)
 	{
 		<StrategyTable DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
 	}
-	}
+}
 
 @code {
 	private IList<DebtPayDownMethodDto> _strategyTypes;
@@ -82,10 +83,10 @@ else
 
 	[Parameter]
 	public DebtPayoffPlan DebtPayoffPlan { get; set; }
-	
+
 	[Parameter]
 	public Func<Task> CalculateDebtPayoffPlan { get; set; }
-	
+
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
 		Console.WriteLine("Inside SavePreferredBaseCurrency method");
@@ -116,22 +117,23 @@ else
 			await SaveUserPreference.InvokeAsync(UserPreference);
 		}
 	}
-	
+
 	protected override Task OnParametersSetAsync()
-		{
+	{
 		if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
-			{
+		{
 			DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
-			}
-		return Task.CompletedTask;
 		}
+		return Task.CompletedTask;
+	}
 
 	private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
-		{
+	{
 		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
-			{
+		{
 			UserPreference.DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
 			await SaveUserPreference.InvokeAsync(UserPreference);
-			}
 		}
+	}
+
 }
