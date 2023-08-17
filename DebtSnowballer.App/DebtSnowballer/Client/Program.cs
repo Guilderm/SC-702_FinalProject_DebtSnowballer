@@ -1,7 +1,7 @@
 using Blazor.Extensions.Logging;
 using DebtSnowballer.Client;
 using DebtSnowballer.Client.ClientSideServices;
-using DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
+using DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

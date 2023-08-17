@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using DebtSnowballer.Shared.DTOs;
 
-namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
+namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
 public class FinancialFreedomPlanner : IFinancialFreedomPlanner
 {

@@ -1,7 +1,7 @@
 ﻿using DebtSnowballer.Shared.DTOs;
 using Microsoft.VisualBasic;
 
-namespace DebtSnowballer.Client.ClientSideServices.FinancialFreedom;
+namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
 public class PaymentInstallmentCreator
 {
