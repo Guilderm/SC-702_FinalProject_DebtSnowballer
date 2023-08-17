@@ -1,6 +1,5 @@
 ﻿@page "/StrategyManager"
 @using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.ClientSideServices.SolvencyEngine
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Shared.Currency
 @using DebtSnowballer.Client.Components.DebtManagement
@@ -8,7 +7,6 @@
 @inject IDebtService DebtService
 @inject IUserService UserService
 @inject ISnowflakeService SnowflakeService
-@inject ISolvencyPlanner SolvencyPlanner
 
 @attribute [Authorize]
 

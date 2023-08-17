@@ -3,7 +3,7 @@ using DebtSnowballer.Shared.DTOs;
 
 namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
-public class FinancialFreedomPlanner : IFinancialFreedomPlanner
+public class SolvencyPlanner : ISolvencyPlanner
 {
 	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(
 		List<LoanDto> debts,
