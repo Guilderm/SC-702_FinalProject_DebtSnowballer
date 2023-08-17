@@ -24,7 +24,10 @@
 		<MudTh>
 			<MudTableSortLabel SortBy="new Func<SnowflakeDto, object>(x => x.CurrencyCode)">Currency</MudTableSortLabel>
 		</MudTh>
-		<MudTh>Actions</MudTh>
+		@if (!IsReadOnly)
+		{
+			<MudTh>Actions</MudTh>
+		}
 	</HeaderContent>
 	<RowTemplate>
 		@if (_snowflakeInEditMode == context)

@@ -22,13 +22,13 @@ public class DebtPayoffPlanCreator
 
 		DebtPayoffPlan debtPayoffPlan = new();
 
-		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Baseline", debts, d => d.Id);
+		//await CalculateAndAddPaymentPlan(debtPayoffPlan, "Baseline", debts, d => d.Id);
 
 		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Snowball", debts, d => d.RemainingPrincipal);
 
 		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Avalanche", debts, d => d.AnnualInterestRate);
 
-		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Custom", debts, d => d.CardinalOrder);
+		//await CalculateAndAddPaymentPlan(debtPayoffPlan, "Custom", debts, d => d.CardinalOrder);
 
 		Console.WriteLine("Successfully calculated all payment plans");
 		return debtPayoffPlan;

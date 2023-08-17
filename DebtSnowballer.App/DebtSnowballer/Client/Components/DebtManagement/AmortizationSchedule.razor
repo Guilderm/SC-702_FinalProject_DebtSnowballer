@@ -3,13 +3,10 @@
 @inject NavigationManager NavigationManager
 
 <h1>Amortization Schedule</h1>
-
-
 <div>
-	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="_index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()" ></MudChart>
 	<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
 </div>
-
 
 @foreach (var plan in DebtPayoffPlan.PaymentPlans)
 {
@@ -77,10 +74,8 @@
 }
 
 @code {
-
-	private int _index = -1;
 	public List<ChartSeries> Series { get; set; } = new();
-	private string[] XAxisLabels { get; set; } = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	public List<string> XAxisLabels { get; set; } = new();
 
 	[Parameter]
 	public DebtPayoffPlan DebtPayoffPlan { get; set; }
@@ -98,26 +93,18 @@
 	{
 	// Clear existing data
 		Series.Clear();
+		XAxisLabels.Clear();
 
-	// Create a list to store interest paid data for each strategy
-		var interestPaidData = new Dictionary<string, List<double>>();
-
-	// Iterate through payment plans and extract interest paid
+	// Iterate through payment plans and extract data
 		foreach (var plan in DebtPayoffPlan.PaymentPlans)
 		{
-			string strategyName = plan.Key;
-			interestPaidData[strategyName] = new List<double>();
-
+			var interestPaidData = new List<double>();
 			foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.PaymentInstallments))
 			{
-				interestPaidData[strategyName].Add((double)detail.InterestPaid);
+				interestPaidData.Add((double)detail.InterestPaid);
+				XAxisLabels.Add(detail.EndOfMonthLoanState.StartDate.ToString("MM-yyyy"));
 			}
-		}
-
-		foreach (var item in interestPaidData)
-		{
-			Series.Add(new ChartSeries { Name = item.Key, Data = item.Value.ToArray() });
+			Series.Add(new ChartSeries { Name = plan.Key, Data = interestPaidData.ToArray() });
 		}
 	}
-
 }
