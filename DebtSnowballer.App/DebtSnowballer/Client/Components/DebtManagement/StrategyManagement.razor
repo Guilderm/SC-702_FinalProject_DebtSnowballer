@@ -2,7 +2,7 @@
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Client.ClientSideServices.FinancialFreedom
 @using DebtSnowballer.Shared.Currency
-@inject ILogger<DebtTable> Logger
+@inject ILogger<StrategyManagement> Logger
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -49,8 +49,13 @@ else
 		</p>
 	</div>
 	
-	<StrategyTable DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
-}
+	<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
+
+	@if (DebtPayoffPlan != null)
+	{
+		<StrategyTable DebtPayoffPlan="@DebtPayoffPlan" GetCurrencySymbol="GetCurrencySymbol"/>
+	}
+	}
 
 @code {
 	private IList<DebtPayDownMethodDto> _strategyTypes;
@@ -77,6 +82,9 @@ else
 
 	[Parameter]
 	public DebtPayoffPlan DebtPayoffPlan { get; set; }
+	
+	[Parameter]
+	public Func<Task> CalculateDebtPayoffPlan { get; set; }
 	
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
@@ -126,5 +134,4 @@ else
 			await SaveUserPreference.InvokeAsync(UserPreference);
 			}
 		}
-
 }
