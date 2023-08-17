@@ -1,6 +1,6 @@
 ﻿@using DebtSnowballer.Client.ClientSideServices.SolvencyEngine
 @using DebtSnowballer.Shared.DTOs
-@inject IFinancialFreedomPlanner FinancialFreedomPlanner
+@inject ISolvencyPlanner SolvencyPlanner
 @inject NavigationManager NavigationManager
 
 <h1>Amortization Schedule</h1>
@@ -118,7 +118,7 @@
 		if (DebtsInBaseCurrency is { Count: > 0 })
 		{
 			Console.WriteLine("Starting to create debt payoff plan...");
-			DebtPayoffPlan = await FinancialFreedomPlanner.CalculatePaymentPlansAsync(DebtsInBaseCurrency, SnowflakesInBaseCurrency, UserPreference.DebtPlanMonthlyPayment);
+			DebtPayoffPlan = await SolvencyPlanner.CalculatePaymentPlansAsync(DebtsInBaseCurrency, SnowflakesInBaseCurrency, UserPreference.DebtPlanMonthlyPayment);
 			Console.WriteLine("Debt payoff plan created successfully.");
 			StateHasChanged();
 			Console.WriteLine("State has changed after creating debt payoff plan.");

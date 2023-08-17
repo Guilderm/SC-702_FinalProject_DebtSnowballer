@@ -31,7 +31,7 @@ builder.Services
 		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-builder.Services.AddScoped<IFinancialFreedomPlanner, FinancialFreedomPlanner>();
+builder.Services.AddScoped<ISolvencyPlanner, SolvencyPlanner>();
 
 
 builder.Services.AddOidcAuthentication(options =>

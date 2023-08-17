@@ -2,7 +2,7 @@
 
 namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
-public interface IFinancialFreedomPlanner
+public interface ISolvencyPlanner
 {
 	Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDto> debts, List<SnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment);
