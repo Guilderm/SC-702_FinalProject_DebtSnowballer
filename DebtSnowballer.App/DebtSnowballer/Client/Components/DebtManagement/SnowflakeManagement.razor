@@ -8,17 +8,6 @@
 
 <h3>List all your Snowflakes</h3>
 <br>
-
-@if (SnowflakesInQuoteCurrency == null)
-{
-	<p>
-		<em>Loading your Snowflakes...</em>
-		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
-	</p>
-}
-else
-{
-}
 	<SnowflakeTable Snowflakes="SnowflakesInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false"/>
 
 	<h3>
@@ -28,7 +17,6 @@ else
 	<h3>Debts converted to base currency</h3>
 	<br>
 	<SnowflakeTable Snowflakes="SnowflakesInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="true"/>
-
 
 @code {
 

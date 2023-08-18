@@ -13,32 +13,23 @@
 @attribute [Authorize]
 
 
-<PageTitle>Debt Management</PageTitle>
+<PageTitle>Debt Pay down Strategy</PageTitle>
 
-<h3>Create a strategy to become debt free</h3>
+<MudText Typo="Typo.h3">Create a strategy to become debt free</MudText>
 
-@if (_isEssentialDataLoaded)
-{
+<div id="DebtManagement">
 	<DebtManagement DebtsInQuoteCurrency="@_debtsInQuoteCurrency" DebtsInBaseCurrency="@_debtsInBaseCurrency" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
-
+</div>
+<div id="SnowflakeManagement">
 	<SnowflakeManagement SnowflakesInQuoteCurrency="@_snowflakesInQuoteCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" LoadSnowflakesInQuoteCurrency="LoadSnowflakesInQuoteCurrency" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol"/>
-
-	@if (_isDataCalculated)
-	{
-		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" DebtsInBaseCurrency="@_debtsInBaseCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency"/>
-	}
-}
-else
-{
-	<p>Loading your data...</p>
-	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="_pctComplited" Class="my-7"/>
-}
+</div>
+<div id="StrategyManagement">
+	<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" DebtsInBaseCurrency="@_debtsInBaseCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency"/>
+</div>
 
 
 @code {
-	private bool _isEssentialDataLoaded;
-	private bool _isDataCalculated;
-	private double _pctComplited;
+
 	private List<LoanDto> _debtsInQuoteCurrency = new();
 	private List<LoanDto> _debtsInBaseCurrency = new();
 	private List<SnowflakeDto> _snowflakesInQuoteCurrency = new();
@@ -48,30 +39,16 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		Console.WriteLine("Initializing Strategy Planner");
 		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
 
-		_isEssentialDataLoaded = true;
-		_isDataCalculated = true;
-
-		_pctComplited = 0;
 		Task loadUserPreference = LoadUserPreference();
-		_pctComplited = 10;
 		Task loadExchangeRatesTask = LoadExchangeRates();
-		_pctComplited = 20;
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
-		_pctComplited = 30;
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
-		_pctComplited = 70;
 		await Task.WhenAll(loadUserPreference, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
-		
-		StateHasChanged();
-		_pctComplited = 80;
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
-		_pctComplited = 90;
-
 		Console.WriteLine("Component initialization complete.");
 	}
 
