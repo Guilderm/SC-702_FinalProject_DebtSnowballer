@@ -4,83 +4,79 @@
 @inject NavigationManager NavigationManager
 
 
+
 <MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
 
-
 @if (Series != null && XAxisLabels != null)
-{
-	<h1>Amortization Schedule</h1>
+	{
+		<MudDivider />
+		<MudText Typo="Typo.h4">Amortization Schedule</MudText>
 	<div>
 		<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()"></MudChart>
 		<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
 	</div>
-}
+	}
+
 @if (SolvencyPlan != null)
-{
-@foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
-{
-	string currencySymbol = "";
-	<h3>Strategy Name: @plan.Key</h3>
-	<h4>Loan Details</h4>
-
-	@foreach (LoanAmortization schedule in plan.Value)
 	{
-		currencySymbol = GetCurrencySymbol(schedule.CurrencyCode);
+	foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
+		{
+		string currencySymbol = "";
+		<MudDivider />
+			<MudDivider />
+		<MudText Typo="Typo.h4">Strategy Name: @plan.Key</MudText>
+		<MudText Typo="Typo.h5">Loan Details</MudText>
 
-		<h5>
-			<br>@schedule.Name
-		</h5>
-		<p>Loans Currency: @schedule.CurrencyCode</p>
-		<p>Annual Interest Rate: @schedule.AnnualInterestRate.ToString("P2")</p>
-		<p>Bank Fees: @currencySymbol @schedule.BankFees.ToString("N2")</p>
-		<p>Contracted Monthly Payment: @currencySymbol @schedule.ContractedMonthlyPayment.ToString("N2")</p>
-		<br>
-		<p>Total Interest Paid: @currencySymbol @schedule.TotalInterestPaid.ToString("N2")</p>
-		<p>Total Bank Fees Paid: @currencySymbol @schedule.TotalBankFeesPaid.ToString("N2")</p>
-		<p>Total Principal Paid: @currencySymbol @schedule.TotalPrincipalPaid.ToString("N2")</p>
-		<p>Total ExtraPayment Paid: @currencySymbol @schedule.TotalExtraPayment.ToString("N2")</p>
-		<br>
+		foreach (LoanAmortization schedule in plan.Value)
+			{
+			<MudText Typo="Typo.h5">
+				<br>@schedule.Name
+			</MudText>
+			<MudText>Loans Currency: @schedule.CurrencyCode</MudText>
+			<MudText>Annual Interest Rate: @schedule.AnnualInterestRate.ToString("P2")</MudText>
+			<MudText>Bank Fees: @currencySymbol @schedule.BankFees.ToString("N2")</MudText>
+			<MudText>Contracted Monthly Payment: @currencySymbol @schedule.ContractedMonthlyPayment.ToString("N2")</MudText>
+			<br>
+			<MudText>Total Interest Paid: @currencySymbol @schedule.TotalInterestPaid.ToString("N2")</MudText>
+			<MudText>Total Bank Fees Paid: @currencySymbol @schedule.TotalBankFeesPaid.ToString("N2")</MudText>
+			<MudText>Total Principal Paid: @currencySymbol @schedule.TotalPrincipalPaid.ToString("N2")</MudText>
+			<MudText>Total ExtraPayment Paid: @currencySymbol @schedule.TotalExtraPayment.ToString("N2")</MudText>
+			<br>
+
+			<MudTable Items="schedule.Schedule">
+				<HeaderContent>
+					<MudTh>Loan</MudTh>
+					<MudTh>Month</MudTh>
+					<MudTh>Date</MudTh>
+					<MudTh>Interest Paid</MudTh>
+					<MudTh>Bank Fees Paid</MudTh>
+					<MudTh>Principal Paid</MudTh>
+					<MudTh>Accumulated Interest Paid</MudTh>
+					<MudTh>Accumulated Bank Fees Paid</MudTh>
+					<MudTh>Accumulated Principal Paid</MudTh>
+					<MudTh>Accumulated Extra Payment</MudTh>
+					<MudTh>Unallocated Payment</MudTh>
+					<MudTh>Extra Payment</MudTh>
+				</HeaderContent>
+				<RowTemplate>
+					<MudTd>@context.Name</MudTd>
+					<MudTd>@context.Month</MudTd>
+					<MudTd>@context.Date.ToString("yyyy-MM")</MudTd>
+					<MudTd>@currencySymbol @context.InterestPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.BankFeesPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.PrincipalPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.TotalInterestPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.TotalBankFeesPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.TotalPrincipalPaid.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.TotalExtraPayment.ToString("N2")</MudTd>
+					<MudTd>@currencySymbol @context.UnallocatedPayment.ToString("N2")</MudTd>
+				</RowTemplate>
+			</MudTable>
+			}
+		}
 	}
 
 
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Loan</th>
-			<th>Month</th>
-			<th>Date</th>
-			<th>Interest Paid</th>
-			<th>Bank Fees Paid</th>
-			<th>Principal Paid</th>
-			<th>Accumulated Interest Paid</th>
-			<th>Accumulated Bank Fees Paid</th>
-			<th>Accumulated Principal Paid</th>
-			<th>Accumulated Extra Payment</th>
-			<th>Unallocated Payment</th>
-			<th>Extra Payment</th>
-		</tr>
-		</thead>
-		<tbody>
-		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.Schedule))
-		{
-			<tr>
-				<td>@detail.Name</td>
-				<td>@detail.Month</td>
-				<td>@detail.Date.ToString("yyyy-MM")</td>
-				<td>@currencySymbol @detail.InterestPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.BankFeesPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.PrincipalPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.TotalInterestPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.TotalBankFeesPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.TotalPrincipalPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.TotalExtraPayment.ToString("N2")</td>
-				<td>@currencySymbol @detail.UnallocatedPayment.ToString("N2")</td>
-			</tr>
-		}
-		</tbody>
-	</table>
-}
-}
 
 @code {
 	private SolvencyPlan SolvencyPlan { get; set; }
@@ -156,5 +152,6 @@
 		await CreateDebtPayoffPlan();
 		Console.WriteLine("calling PopulateChartData()");
 		PopulateChartData();
+		StateHasChanged();
 	}
 }
