@@ -31,6 +31,11 @@ builder.Services
 		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
+
+builder.Services.AddTransient<AmortizationScheduleCreator>();
+builder.Services.AddTransient<DebtPayoffPlanCreator>();
+builder.Services.AddTransient<PaymentInstallmentCreator>();
+builder.Services.AddTransient<SnowflakesScheduleCreator>();
 builder.Services.AddScoped<ISolvencyPlanner, SolvencyPlanner>();
 
 

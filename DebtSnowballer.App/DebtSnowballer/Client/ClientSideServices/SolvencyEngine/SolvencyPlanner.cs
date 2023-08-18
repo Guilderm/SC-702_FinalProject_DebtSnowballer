@@ -5,22 +5,53 @@ namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
 public class SolvencyPlanner : ISolvencyPlanner
 {
+	private readonly DebtPayoffPlanCreator _debtPayoffPlanCreator;
+	private readonly SnowflakesScheduleCreator _snowflakesScheduleCreator;
+
+	public SolvencyPlanner(DebtPayoffPlanCreator debtPayoffPlanCreator,
+		SnowflakesScheduleCreator snowflakesScheduleCreator)
+	{
+		_debtPayoffPlanCreator =
+			debtPayoffPlanCreator ?? throw new ArgumentNullException(nameof(debtPayoffPlanCreator));
+		_snowflakesScheduleCreator = snowflakesScheduleCreator ??
+		                             throw new ArgumentNullException(nameof(snowflakesScheduleCreator));
+	}
+
 	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(
 		List<LoanDto> debts,
 		List<SnowflakeDto> snowflakes,
+		decimal debtPlanMonthlyPayment)
+	{
+		Console.WriteLine(
+			$"Entered function 'CalculatePaymentPlansAsync' with debts: {JsonSerializer.Serialize(debts)}," +
+			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
+
+		if (!IsInputsValid(debts, snowflakes, debtPlanMonthlyPayment))
+			return new DebtPayoffPlan(); // Return empty DebtPayoffPlan if inputs are not valid
+
+		CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
+
+		DebtPayoffPlan result = await _debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
+
+		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
+
+		return result;
+	}
+
+	private static bool IsInputsValid(List<LoanDto> debts, List<SnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
 	{
 		if (debts == null || debts.Count < 1)
 		{
 			Console.WriteLine(
 				"Debts parameter is null or has a count of zero. Exiting function 'CalculatePaymentPlansAsync'.");
-			throw new ArgumentNullException(nameof(debts), "Debts cannot be null, or has a count of zero.");
+			return false;
 		}
 
 		if (snowflakes == null)
 		{
 			Console.WriteLine("Snowflakes parameter is null. Exiting function 'CalculatePaymentPlansAsync'.");
-			throw new ArgumentNullException(nameof(snowflakes), "Snowflakes cannot be null.");
+			return false;
 		}
 
 		if (debtPlanMonthlyPayment < (decimal)0.001)
@@ -30,25 +61,16 @@ public class SolvencyPlanner : ISolvencyPlanner
 			debtPlanMonthlyPayment = 0;
 		}
 
-		Console.WriteLine(
-			$"Entered function 'CalculatePaymentPlansAsync' with debts: {JsonSerializer.Serialize(debts)}," +
-			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
+		return true;
+	}
 
-
+	private void CreateSnowflakesSchedule(List<LoanDto> debts, List<SnowflakeDto> snowflakes,
+		decimal debtPlanMonthlyPayment)
+	{
 		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
-		SnowflakesScheduleCreator snowflakesScheduleCreator = new();
-		var snowflakesSchedule = snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
-
+		var snowflakesSchedule = _snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
 		CalculateExtraPayment(debts, debtPlanMonthlyPayment);
-
-
-		DebtPayoffPlanCreator debtPayoffPlanCreator = new(new AmortizationScheduleCreator());
-		DebtPayoffPlan result = await debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
-
-		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
-
-		return result;
 	}
 
 	private static void CalculateExtraPayment(List<LoanDto> debts, decimal debtPlanMonthlyPayment)
