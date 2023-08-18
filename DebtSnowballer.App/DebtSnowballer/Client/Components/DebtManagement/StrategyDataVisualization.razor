@@ -7,6 +7,8 @@
 
 @if (SolvencyPlan != null)
 {
+	string currencySymbol =  GetCurrencySymbol(UserPreference.BaseCurrency)
+		;
 	<MudTable Items="@TableRows">
 		<HeaderContent>
 			<MudTh>Date</MudTh>
@@ -14,9 +16,9 @@
 			<MudTh>Avalanche Interest Paid</MudTh>
 		</HeaderContent>
 		<RowTemplate>
-			<MudTd>@context.Date</MudTd>
-			<MudTd>@context.Snowball</MudTd>
-			<MudTd>@context.Avalanche</MudTd>
+			<MudTd>@context.Date.ToString("yyyy-MM")</MudTd>
+			<MudTd>@currencySymbol @context.Snowball.ToString("N2")</MudTd>
+			<MudTd>@currencySymbol @context.Avalanche.ToString("N2")</MudTd>
 		</RowTemplate>
 	</MudTable>
 }
@@ -35,14 +37,15 @@
 	{
 	foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
 		{
-		string currencySymbol = "$";
+		string currencySymbol =  GetCurrencySymbol(UserPreference.BaseCurrency)
+		;
 		<MudDivider />
 			<MudDivider />
 		<MudText Typo="Typo.h4">Strategy Name: @plan.Key</MudText>
 		<MudText Typo="Typo.h5">Loan Details</MudText>
 
 		foreach (LoanAmortization schedule in plan.Value)
-			{
+		{
 			<MudText Typo="Typo.h5">
 				<br>@schedule.Name
 			</MudText>
@@ -97,11 +100,12 @@
 
 @code {
 	private class DataRow
-		{
-		public string Date { get; set; }
-		public string Snowball { get; set; }
-		public string Avalanche { get; set; }
-		}
+	{
+		public DateTime Date { get; set; }
+		public decimal Snowball { get; set; }
+		public decimal Avalanche { get; set; }
+	}
+
 
 	private List<DataRow> TableRows { get; set; } = new();
 
@@ -132,29 +136,74 @@
 		await CalculateData();
 		Console.WriteLine("calling CreateDebtPayoffPlan()");
 		await CreateDebtPayoffPlan();
+		PopulateTableRows(); // Only one call needed
 		Console.WriteLine("calling PopulateChartData()");
-	//PopulateChartData();
-
-		PopulateDataRow();
+		//PopulateChartData();
 
 		StateHasChanged();
 	}
 
-	private void PopulateDataRow()
+	private void PopulateTableRows()
 	{
-		for (int i = 0; i < SolvencyPlan.PaymentPlans["Snowball"].Count; i++)
+	// Clear the existing table rows
+		TableRows.Clear();
+
+	// Find the length of the longest schedule
+		int maxScheduleLength = SolvencyPlan.PaymentPlans.Values
+			.SelectMany(plans => plans)
+			.Max(amortization => amortization.Schedule.Count);
+
+	// Initialize the interest sums for Snowball and Avalanche for each month
+		List<decimal> snowballInterestSums = new List<decimal>(new decimal[maxScheduleLength]);
+		List<decimal> avalancheInterestSums = new List<decimal>(new decimal[maxScheduleLength]);
+		List<DateTime> yearMonth = new List<DateTime>(new DateTime[maxScheduleLength]);
+
+
+	// Iterate through each plan, loan amortization, and schedule entry
+		foreach (var plan in SolvencyPlan.PaymentPlans)
 		{
-			for (int j = 0; j < SolvencyPlan.PaymentPlans["Snowball"][i].Schedule.Count; j++)
+			foreach (var amortization in plan.Value)
 			{
-				TableRows.Add(new DataRow
+				for (int month = 0; month < amortization.Schedule.Count; month++)
 				{
-					Date = SolvencyPlan.PaymentPlans["Snowball"][i].Schedule[j].Date.ToString("MM-yyyy"),
-					Snowball = SolvencyPlan.PaymentPlans["Snowball"][i].Schedule[j].TotalInterestPaid.ToString("N2"),
-					Avalanche = SolvencyPlan.PaymentPlans["Avalanche"][i].Schedule[j].TotalInterestPaid.ToString("N2")
-				});
+	// Add the total interest paid to the corresponding month's sum
+					if (plan.Key == "Snowball")
+					{
+						snowballInterestSums[month] += amortization.Schedule[month].TotalInterestPaid;
+					}
+					else if (plan.Key == "Avalanche")
+					{
+						avalancheInterestSums[month] += amortization.Schedule[month].TotalInterestPaid;
+					}
+					yearMonth[month] = amortization.Schedule[month].Date;
+				}
 			}
 		}
+
+	// Populate the table rows with the new data
+		for (int month = 0; month < maxScheduleLength; month++)
+		{
+			TableRows.Add(new DataRow
+			{
+					Date = yearMonth[month],
+				Snowball = snowballInterestSums[month],
+				Avalanche = avalancheInterestSums[month]
+			});
+		}
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	private void PopulateChartData()
 	{
@@ -185,13 +234,6 @@
 	private async Task CreateDebtPayoffPlan()
 	{
 		Console.WriteLine("Starting to create debt payoff plan...");
-
-		Console.WriteLine($"SolvencyPlanner is {(SolvencyPlanner == null ? "null" : "not null")}");
-		Console.WriteLine($"DebtsInBaseCurrency is {(DebtsInBaseCurrency == null ? "null" : $"not null, Count: {DebtsInBaseCurrency.Count}")}");
-		Console.WriteLine($"UserPreference is {(UserPreference == null ? "null" : $"not null, it is {UserPreference.DebtPlanMonthlyPayment}")}");
-		Console.WriteLine($"CalculateData is {(CalculateData == null ? "null" : "not null")}");
-		Console.WriteLine($"GetCurrencySymbol is {(GetCurrencySymbol == null ? "null" : $"not null, it is {GetCurrencySymbol}")}");
-		Console.WriteLine($"SnowflakesInBaseCurrency is {(SnowflakesInBaseCurrency == null ? "null" : $"not null, Count: {SnowflakesInBaseCurrency.Count}")}");
 
 		if (DebtsInBaseCurrency is {Count: > 0 } && SolvencyPlanner != null)
 		{
