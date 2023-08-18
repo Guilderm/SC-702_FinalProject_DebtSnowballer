@@ -1,5 +1,4 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-@using DebtSnowballer.Client.ClientSideServices.SolvencyEngine
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Shared.Currency
 @inject ILogger<StrategyManagement> Logger
@@ -9,42 +8,43 @@
 @inject IMultiPurposeService MultiPurposeService
 
 
-	<br>
-	<h3>Select your base currency</h3>
-	<p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
-	<br>
-	<MudSelect T="string" Label="Select Currency" Value="UserPreference.BaseCurrency" Variant="Variant.Text" ValueChanged="SavePreferredBaseCurrency">
-		@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
-		{
-			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
-		}
-	</MudSelect>
-<br />
-<br />
-	<div class="summary">
-		<MudText> Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong> </MudText>
-		<br/>
-		<MudText> Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong> </MudText>
-		<br/>
+<br>
+<h3>Select your base currency</h3>
+<p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
+<br>
+<MudSelect T="string" Label="Select Currency" Value="UserPreference.BaseCurrency" Variant="Variant.Text" ValueChanged="SavePreferredBaseCurrency">
+	@foreach (CurrencyInfo currency in Currencies.SupportedCurrencies)
+	{
+		<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
+	}
+</MudSelect>
+<br/>
+<br/>
+<div class="summary">
+	<MudText> Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong> </MudText>
+	<br/>
+	<MudText> Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong> </MudText>
+	<br/>
 
-		<MudText>Preferred Monthly Payment:</MudText>
-		<MudNumericField Value="UserPreference.DebtPlanMonthlyPayment"
-		                 ValueChanged="(decimal newValue) => UpdatePreferredMonthlyPayment(newValue)"
-						 Min="@AggregatedMonthlyPayment" 
-		                 Format="N2" 
-		                 Adornment="Adornment.Start" 
-		                 AdornmentText="@GetCurrencySymbol(UserPreference.BaseCurrency)" />
+	<MudText>Preferred Monthly Payment:</MudText>
+	<MudNumericField Value="UserPreference.DebtPlanMonthlyPayment"
+	                 ValueChanged="(decimal newValue) => UpdatePreferredMonthlyPayment(newValue)"
+	                 Min="@AggregatedMonthlyPayment"
+	                 Format="N2"
+	                 Adornment="Adornment.Start"
+	                 AdornmentText="@GetCurrencySymbol(UserPreference.BaseCurrency)"/>
 
-	</div>
-	
-	<StrategyDataVisualization UserPreference="@UserPreference" GetCurrencySymbol="GetCurrencySymbol" CalculateData="CalculateData" DebtsInBaseCurrency="DebtsInBaseCurrency" SnowflakesInBaseCurrency="SnowflakesInBaseCurrency" />
+</div>
+<br/>
+<br/>
+<StrategyDataVisualization UserPreference="@UserPreference" GetCurrencySymbol="GetCurrencySymbol" CalculateData="CalculateData" DebtsInBaseCurrency="DebtsInBaseCurrency" SnowflakesInBaseCurrency="SnowflakesInBaseCurrency"/>
 
 
 @code {
 
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
 	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
-	
+
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
 
@@ -53,16 +53,16 @@
 
 	[Parameter]
 	public List<LoanDto> DebtsInBaseCurrency { get; set; }
-	
+
 	[Parameter]
 	public List<SnowflakeDto> SnowflakesInBaseCurrency { get; set; }
 
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
-	
+
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
-	
+
 	private async Task SavePreferredBaseCurrency(string selectedCurrency)
 	{
 		Console.WriteLine("Inside SavePreferredBaseCurrency method");
@@ -79,6 +79,7 @@
 			Logger.LogError(ex, "Error saving base currency.");
 		}
 	}
+
 	/*
 	protected override async Task OnInitializedAsync()
 	{
@@ -106,20 +107,21 @@
 	*/
 
 	private async Task UpdatePreferredMonthlyPayment(decimal newValue)
-		{
+	{
 		Console.WriteLine($"Entered UpdatePreferredMonthlyPayment() wit newValue: {newValue}");
 
 		UserPreference.DebtPlanMonthlyPayment = newValue;
-		
+
 		try
-			{
+		{
 			await SaveUserPreference.InvokeAsync(UserPreference);
 			Snackbar.Add("Preferred monthly payment was updated successfully.", Severity.Success);
-			}
+		}
 		catch (Exception ex)
-			{
+		{
 			Snackbar.Add($"Error updating preferred monthly payment : {ex.Message}", Severity.Error);
 			Logger.LogError(ex, "Error saving base currency.");
-			}
+		}
 	}
+
 }

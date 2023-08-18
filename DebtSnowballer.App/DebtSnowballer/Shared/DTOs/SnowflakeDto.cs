@@ -38,7 +38,7 @@ public class SnowflakeDto
 			return ValidationResult.Success;
 
 		if (endingAt > instance.StartingAt.Value.AddYears(45))
-			return new("EndingAt must be less than 45 years from StartingAt.");
+			return new ValidationResult("EndingAt must be less than 45 years from StartingAt.");
 
 		return ValidationResult.Success;
 	}

@@ -4,7 +4,7 @@ public class SolvencyPlan
 {
 	public SolvencyPlan()
 	{
-		PaymentPlans = new();
+		PaymentPlans = new Dictionary<string, List<LoanAmortization>>();
 	}
 
 	public string Auth0UserId { get; set; }

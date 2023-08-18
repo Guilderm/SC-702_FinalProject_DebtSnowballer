@@ -23,13 +23,13 @@
 
 	@if (_isDataCalculated)
 	{
-		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" DebtsInBaseCurrency="@_debtsInBaseCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency" />
+		<StrategyManagement UserPreference="@_userPreference" SaveUserPreference="SaveUserPreference" CalculateData="CalculateData" GetCurrencySymbol="GetCurrencySymbol" DebtsInBaseCurrency="@_debtsInBaseCurrency" SnowflakesInBaseCurrency="@_snowflakesInBaseCurrency"/>
 	}
 }
 else
 {
 	<p>Loading your data...</p>
-	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="_pctComplited" Class="my-7" />
+	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="_pctComplited" Class="my-7"/>
 }
 
 
@@ -43,7 +43,7 @@ else
 	private List<SnowflakeDto> _snowflakesInBaseCurrency;
 	private UserPreferenceDto _userPreference;
 	private IList<ExchangeRateDto> _usersExchangeRates;
-	
+
 	protected override async Task OnInitializedAsync()
 	{
 		Console.WriteLine("Initializing Strategy Planner");
@@ -103,9 +103,9 @@ else
 
 
 	private Task ConvertDebtsToBaseCurrency()
-		{
+	{
 		Console.WriteLine("calling ConvertDebtsToBaseCurrency()");
-		_debtsInBaseCurrency = new();
+		_debtsInBaseCurrency = new List<LoanDto>();
 
 		if (_usersExchangeRates == null)
 		{
@@ -148,9 +148,9 @@ else
 
 
 	private Task ConvertSnowflakesToQuoteCurrency()
-		{
+	{
 		Console.WriteLine("calling ConvertSnowflakesToQuoteCurrency()");
-		_snowflakesInBaseCurrency = new();
+		_snowflakesInBaseCurrency = new List<SnowflakeDto>();
 
 		if (_usersExchangeRates == null)
 		{

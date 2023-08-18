@@ -31,7 +31,7 @@ public class UserPreferenceManagement
 		if (userPreference == null)
 		{
 			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
-			return new(); // Return an empty DTO
+			return new UserPreferenceDto(); // Return an empty DTO
 		}
 
 		_logger.LogInformation($"User preference retrieved for user: {auth0UserId}");
@@ -53,7 +53,7 @@ public class UserPreferenceManagement
 		if (oldUserPreference == null)
 		{
 			_logger.LogWarning($"User preference not found for user: {auth0UserId}");
-			oldUserPreference = new() { Auth0UserId = auth0UserId };
+			oldUserPreference = new UserPreference { Auth0UserId = auth0UserId };
 			// Set any other required properties here
 			await _repository.Insert(oldUserPreference);
 		}

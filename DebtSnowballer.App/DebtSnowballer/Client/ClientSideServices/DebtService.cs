@@ -21,7 +21,7 @@ public class DebtService : IDebtService
 		_logger.LogInformation($"Deleting loan with ID: {id}");
 		HttpResponseMessage response = await _httpClient.DeleteAsync($"{_backendUrl}/{id}");
 		if (!response.IsSuccessStatusCode)
-			throw new($"Error deleting debt: {response.ReasonPhrase}");
+			throw new Exception($"Error deleting debt: {response.ReasonPhrase}");
 		_logger.LogInformation("Deleted debt with id {id}", id);
 	}
 
@@ -39,7 +39,7 @@ public class DebtService : IDebtService
 		_logger.LogInformation($"Adding new loan with ID: {loan.Id} Name: {loan.Name}");
 		HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_backendUrl, loan);
 		if (!response.IsSuccessStatusCode)
-			throw new($"Error posting debt: {response.ReasonPhrase}");
+			throw new Exception($"Error posting debt: {response.ReasonPhrase}");
 		LoanDto result = await response.Content.ReadFromJsonAsync<LoanDto>();
 		_logger.LogInformation($"Added new loan with ID: {loan.Id} Name: {loan.Name}");
 		return result;
@@ -51,7 +51,7 @@ public class DebtService : IDebtService
 		HttpResponseMessage response =
 			await _httpClient.PutAsJsonAsync($"{_backendUrl}/{loanDto.Id}", loanDto);
 		if (!response.IsSuccessStatusCode)
-			throw new($"Error updating debt: {response.ReasonPhrase}");
+			throw new Exception($"Error updating debt: {response.ReasonPhrase}");
 		LoanDto result = await response.Content.ReadFromJsonAsync<LoanDto>();
 		_logger.LogInformation("Updated debt with id {id}", result.Id);
 		return result;
