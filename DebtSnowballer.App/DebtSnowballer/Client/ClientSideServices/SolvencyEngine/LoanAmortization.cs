@@ -1,11 +1,10 @@
 ﻿namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
-public class AmortizationSchedule
+public class LoanAmortization
 {
-	public List<PaymentInstallment> PaymentInstallments { get; set; }
+	public List<PaymentInstallment> Schedule { get; set; }
 
 	public int DebtId { get; set; }
-	public string Auth0UserId { get; set; }
 	public string Name { get; set; }
 	public decimal BankFees { get; set; }
 	public decimal AnnualInterestRate { get; set; }

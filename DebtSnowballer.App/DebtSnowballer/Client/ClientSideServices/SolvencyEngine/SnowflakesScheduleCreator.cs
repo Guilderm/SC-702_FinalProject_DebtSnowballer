@@ -14,7 +14,7 @@ public class SnowflakesScheduleCreator
 		foreach (SnowflakeDto snowflake in snowflakes)
 		{
 			Console.WriteLine(
-				$"Processing snowflake with StartDate: {snowflake.StartingAt} and EndDate: {snowflake.EndingAt}");
+				$"Processing snowflake with MonthPaid: {snowflake.StartingAt} and EndDate: {snowflake.EndingAt}");
 
 			// Determine the start and end dates for this Snowflake
 			DateTime startDate = snowflake.StartingAt ?? DateTime.Today;

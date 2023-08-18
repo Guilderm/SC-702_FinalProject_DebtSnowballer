@@ -5,19 +5,19 @@ namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
 public class SolvencyPlanner : ISolvencyPlanner
 {
-	private readonly DebtPayoffPlanCreator _debtPayoffPlanCreator;
 	private readonly SnowflakesScheduleCreator _snowflakesScheduleCreator;
+	private readonly SolvencyPlanCreator _solvencyPlanCreator;
 
-	public SolvencyPlanner(DebtPayoffPlanCreator debtPayoffPlanCreator,
+	public SolvencyPlanner(SolvencyPlanCreator solvencyPlanCreator,
 		SnowflakesScheduleCreator snowflakesScheduleCreator)
 	{
-		_debtPayoffPlanCreator =
-			debtPayoffPlanCreator ?? throw new ArgumentNullException(nameof(debtPayoffPlanCreator));
+		_solvencyPlanCreator =
+			solvencyPlanCreator ?? throw new ArgumentNullException(nameof(solvencyPlanCreator));
 		_snowflakesScheduleCreator = snowflakesScheduleCreator ??
 		                             throw new ArgumentNullException(nameof(snowflakesScheduleCreator));
 	}
 
-	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(
+	public async Task<SolvencyPlan> CalculatePaymentPlansAsync(
 		List<LoanDto> debts,
 		List<SnowflakeDto> snowflakes,
 		decimal debtPlanMonthlyPayment)
@@ -27,15 +27,19 @@ public class SolvencyPlanner : ISolvencyPlanner
 			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
 
 		if (!IsInputsValid(debts, snowflakes, debtPlanMonthlyPayment))
-			return new DebtPayoffPlan(); // Return empty DebtPayoffPlan if inputs are not valid
+			return new SolvencyPlan(); // Return empty SolvencyPlan if inputs are not valid
 
 		//CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
 
-		DebtPayoffPlan result = await _debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
+		return await CreateSolvencyPlan(debts);
+	}
 
-		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(result)}");
-
-		return result;
+	private async Task<SolvencyPlan> CreateSolvencyPlan(List<LoanDto> debts)
+	{
+		SolvencyPlan solvencyPlan = await _solvencyPlanCreator.CalculatePaymentPlansAsync(debts);
+		solvencyPlan.Auth0UserId = debts.FirstOrDefault()?.Auth0UserId;
+		Console.WriteLine($"Successfully calculated payment plans: {JsonSerializer.Serialize(solvencyPlan)}");
+		return solvencyPlan;
 	}
 
 	private static bool IsInputsValid(List<LoanDto> debts, List<SnowflakeDto> snowflakes,

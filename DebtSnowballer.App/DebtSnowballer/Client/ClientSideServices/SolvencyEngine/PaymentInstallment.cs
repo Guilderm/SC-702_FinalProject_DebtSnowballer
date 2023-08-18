@@ -1,10 +1,14 @@
-﻿using DebtSnowballer.Shared.DTOs;
-
-namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
+﻿namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
 public class PaymentInstallment
 {
-	public LoanDto EndOfMonthLoanState { get; set; }
+	//public LoanDto EndOfMonthLoanState { get; set; }
+	public int LoantId { get; set; }
+	public string Name { get; set; }
+
+	public decimal RemainingPrincipal { get; set; }
+	public DateTime MonthPaid { get; set; }
+	public int RemainingTermInMonths { get; set; }
 
 	public int PaymentMonth { get; set; } = 1;
 	public decimal InterestPaid { get; set; }

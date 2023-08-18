@@ -2,21 +2,21 @@
 
 namespace DebtSnowballer.Client.ClientSideServices.SolvencyEngine;
 
-public class DebtPayoffPlanCreator
+public class SolvencyPlanCreator
 {
-	private readonly AmortizationScheduleCreator _scheduleCreator;
+	private readonly LoanAmortizationCreator _creator;
 
 
-	private readonly DebtPayoffPlan _debtPayoffPlan = new();
+	private readonly SolvencyPlan _solvencyPlan = new();
 
-	public DebtPayoffPlanCreator(AmortizationScheduleCreator amortizationScheduleCreator)
+	public SolvencyPlanCreator(LoanAmortizationCreator loanAmortizationCreator)
 	{
-		_scheduleCreator = amortizationScheduleCreator ??
-		                   throw new ArgumentNullException(nameof(amortizationScheduleCreator));
-		Console.WriteLine("DebtPayoffPlanCreator initialized with AmortizationScheduleCreator");
+		_creator = loanAmortizationCreator ??
+		           throw new ArgumentNullException(nameof(loanAmortizationCreator));
+		Console.WriteLine("SolvencyPlanCreator initialized with LoanAmortizationCreator");
 	}
 
-	public async Task<DebtPayoffPlan> CalculatePaymentPlansAsync(List<LoanDto> debts)
+	public async Task<SolvencyPlan> CalculatePaymentPlansAsync(List<LoanDto> debts)
 	{
 		if (debts == null)
 			throw new ArgumentNullException(nameof(debts));
@@ -33,7 +33,7 @@ public class DebtPayoffPlanCreator
 		//await CalculateAndAddPaymentPlan( "Custom", debts, d => d.CardinalOrder);
 
 		Console.WriteLine("Successfully calculated all payment plans");
-		return _debtPayoffPlan;
+		return _solvencyPlan;
 	}
 
 	private async Task CalculateAndAddPaymentPlan(string planName,
@@ -42,8 +42,8 @@ public class DebtPayoffPlanCreator
 		Console.WriteLine($"Calculating {planName} payment plan...");
 
 		var sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
-		_debtPayoffPlan.PaymentPlans[planName] =
-			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebts));
+		_solvencyPlan.PaymentPlans[planName] =
+			await Task.Run(() => _creator.CreateAmortizationSchedules(sortedDebts));
 		Console.WriteLine($"payment plan {planName}  was calculated");
 	}
 

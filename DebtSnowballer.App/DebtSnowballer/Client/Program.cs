@@ -32,9 +32,9 @@ builder.Services
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 
-builder.Services.AddTransient<AmortizationScheduleCreator>();
-builder.Services.AddTransient<DebtPayoffPlanCreator>();
-builder.Services.AddTransient<PaymentInstallmentCreator>();
+builder.Services.AddTransient<LoanAmortizationCreator>();
+builder.Services.AddTransient<SolvencyPlanCreator>();
+builder.Services.AddTransient<IPaymentInstallmentFactory, PaymentInstallmentFactory>();
 builder.Services.AddTransient<SnowflakesScheduleCreator>();
 builder.Services.AddScoped<ISolvencyPlanner, SolvencyPlanner>();
 
