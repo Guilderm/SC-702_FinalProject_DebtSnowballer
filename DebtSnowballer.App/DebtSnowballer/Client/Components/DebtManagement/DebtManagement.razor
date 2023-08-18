@@ -1,23 +1,21 @@
 ﻿@using DebtSnowballer.Shared.DTOs
-
-
 <h3>
 	<br>
 </h3>
 
 <h3>Loan List</h3>
 <br>
-	<h3>List all your Debts in their respective</h3>
-	<br>
-	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false"/>
+<h3>List all your Debts in their respective</h3>
+<br>
+<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false"/>
 
-	<h3>
-		<br> <br>
-	</h3>
+<h3>
+	<br> <br>
+</h3>
 
-	<h3>Debts converted to base currency</h3>
-	<br>
-	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="true"/>
+<h3>Debts converted to base currency</h3>
+<br>
+<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="true"/>
 
 
 @code {

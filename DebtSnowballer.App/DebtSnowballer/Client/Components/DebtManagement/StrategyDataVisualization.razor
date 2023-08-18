@@ -5,10 +5,21 @@
 
 
 
+@if (Series != null && XAxisLabels != null)
+{
+	<MudText Typo="Typo.h4">Amortization Schedule</MudText>
+	<div>
+		<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()"></MudChart>
+		<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
+	</div>
+}
+
+
 @if (SolvencyPlan != null)
 {
-	string currencySymbol =  GetCurrencySymbol(UserPreference.BaseCurrency)
+	string currencySymbol = GetCurrencySymbol(UserPreference.BaseCurrency)
 		;
+	<MudText Typo="Typo.h4">Amortization Schedule</MudText>
 	<MudTable Items="@TableRows">
 		<HeaderContent>
 			<MudTh>Date</MudTh>
@@ -34,13 +45,13 @@
 
 
 @if (SolvencyPlan != null)
-	{
+{
 	foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
-		{
-		string currencySymbol =  GetCurrencySymbol(UserPreference.BaseCurrency)
-		;
-		<MudDivider />
-			<MudDivider />
+	{
+		string currencySymbol = GetCurrencySymbol(UserPreference.BaseCurrency)
+			;
+		<MudDivider/>
+		<MudDivider/>
 		<MudText Typo="Typo.h4">Strategy Name: @plan.Key</MudText>
 		<MudText Typo="Typo.h5">Loan Details</MudText>
 
@@ -89,16 +100,16 @@
 					<MudTd>@currencySymbol @context.UnallocatedPayment.ToString("N2")</MudTd>
 				</RowTemplate>
 			</MudTable>
-			}
 		}
 	}
-
+}
 
 
 <MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
 
 
 @code {
+
 	private class DataRow
 	{
 		public DateTime Date { get; set; }
@@ -138,7 +149,7 @@
 		await CreateDebtPayoffPlan();
 		PopulateTableRows(); // Only one call needed
 		Console.WriteLine("calling PopulateChartData()");
-		//PopulateChartData();
+		PopulateChartData();
 
 		StateHasChanged();
 	}
@@ -185,7 +196,7 @@
 		{
 			TableRows.Add(new DataRow
 			{
-					Date = yearMonth[month],
+				Date = yearMonth[month],
 				Snowball = snowballInterestSums[month],
 				Avalanche = avalancheInterestSums[month]
 			});
@@ -193,41 +204,23 @@
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	private void PopulateChartData()
 	{
 		Series = new List<ChartSeries>();
 		XAxisLabels = new List<string>();
 
-	// Iterate through the payment plans
-		foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
+		List<double> snowballData = new List<double>();
+		List<double> avalancheData = new List<double>();
+
+		foreach (DataRow row in TableRows)
 		{
-			List<double> interestPaidData = new List<double>();
-
-	// Iterate through the amortization schedules and collect interest paid data
-			foreach (LoanAmortization schedule in plan.Value)
-			{
-				foreach (PaymentInstallment detail in schedule.Schedule)
-				{
-					interestPaidData.Add((double)detail.InterestPaid);
-					XAxisLabels.Add(detail.Date.ToString("MM-yyyy"));
-				}
-			}
-
-	// Add the interest paid data to the series
-			Series.Add(new ChartSeries { Name = plan.Key, Data = interestPaidData.ToArray() });
+			snowballData.Add((double)row.Snowball);
+			avalancheData.Add((double)row.Avalanche);
+			XAxisLabels.Add(row.Date.ToString("MM-yyyy"));
 		}
+
+		Series.Add(new ChartSeries { Name = "Snowball", Data = snowballData.ToArray() });
+		Series.Add(new ChartSeries { Name = "Avalanche", Data = avalancheData.ToArray() });
 	}
 
 
@@ -249,5 +242,4 @@
 		}
 	}
 
-
-	}
+}
