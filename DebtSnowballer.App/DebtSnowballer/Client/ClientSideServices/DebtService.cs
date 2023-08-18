@@ -57,11 +57,11 @@ public class DebtService : IDebtService
 		return result;
 	}
 
-	public async Task<IList<ExchangeRateDto>> GetUsersExchangeRates()
+	public async Task<List<ExchangeRateDto>> GetUsersExchangeRates()
 	{
 		_logger.LogInformation("Fetching exchange rates ");
-		IList<ExchangeRateDto> exchangeRates =
-			await _httpClient.GetFromJsonAsync<IList<ExchangeRateDto>>($"{_backendUrl}/GetUsersExchangeRates");
+		List<ExchangeRateDto> exchangeRates =
+			await _httpClient.GetFromJsonAsync<List<ExchangeRateDto>>($"{_backendUrl}/GetUsersExchangeRates");
 		_logger.LogInformation("Fetched {count} exchange rates", exchangeRates.Count);
 		return exchangeRates;
 	}

@@ -8,5 +8,5 @@ public interface IDebtService
 	Task DeleteLoan(int id);
 	Task<IList<LoanDto>> GetAllDebtsInQuoteCurrency();
 	Task<LoanDto> UpdateLoan(LoanDto loanDto);
-	Task<IList<ExchangeRateDto>> GetUsersExchangeRates();
+	Task<List<ExchangeRateDto>> GetUsersExchangeRates();
 }

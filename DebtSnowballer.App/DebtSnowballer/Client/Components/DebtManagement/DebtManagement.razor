@@ -13,7 +13,7 @@
 	</p>
 }
 else
-{
+	{ }
 	<h3>List all your Debts in their respective</h3>
 	<br>
 	<DebtTable LoanDetails="DebtsInQuoteCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="false"/>
@@ -25,7 +25,7 @@ else
 	<h3>Debts converted to base currency</h3>
 	<br>
 	<DebtTable LoanDetails="DebtsInBaseCurrency" GetCurrencySymbol="GetCurrencySymbol" LoadDebtsInQuoteCurrency="LoadDebtsInQuoteCurrency" CalculateData="CalculateData" IsReadOnly="true"/>
-}
+
 
 
 @code {

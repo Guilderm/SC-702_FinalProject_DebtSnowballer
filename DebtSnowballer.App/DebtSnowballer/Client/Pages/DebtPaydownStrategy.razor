@@ -1,4 +1,6 @@
 ﻿@page "/StrategyManager"
+@page "/DebtPaydownStrategy"
+
 @using DebtSnowballer.Shared.DTOs
 @using DebtSnowballer.Client.ClientSideServices
 @using DebtSnowballer.Shared.Currency
@@ -37,17 +39,21 @@ else
 	private bool _isEssentialDataLoaded;
 	private bool _isDataCalculated;
 	private double _pctComplited;
-	private List<LoanDto> _debtsInQuoteCurrency;
-	private List<LoanDto> _debtsInBaseCurrency;
-	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
-	private List<SnowflakeDto> _snowflakesInBaseCurrency;
-	private UserPreferenceDto _userPreference;
-	private IList<ExchangeRateDto> _usersExchangeRates;
+	private List<LoanDto> _debtsInQuoteCurrency = new();
+	private List<LoanDto> _debtsInBaseCurrency = new();
+	private List<SnowflakeDto> _snowflakesInQuoteCurrency = new();
+	private List<SnowflakeDto> _snowflakesInBaseCurrency = new();
+	private UserPreferenceDto _userPreference = new();
+	private List<ExchangeRateDto> _usersExchangeRates = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		Console.WriteLine("Initializing Strategy Planner");
 		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
+
+		_isEssentialDataLoaded = true;
+		_isDataCalculated = true;
+
 		_pctComplited = 0;
 		Task loadUserPreference = LoadUserPreference();
 		_pctComplited = 10;
@@ -58,14 +64,14 @@ else
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
 		_pctComplited = 70;
 		await Task.WhenAll(loadUserPreference, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
-		_isEssentialDataLoaded = true;
+		
 		StateHasChanged();
 		_pctComplited = 80;
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
 		_pctComplited = 90;
-		_isDataCalculated = true;
+
 		Console.WriteLine("Component initialization complete.");
 	}
 

@@ -7,7 +7,7 @@
 <MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
 
 
-@if (Series != null)
+@if (Series != null && XAxisLabels != null)
 {
 	<h1>Amortization Schedule</h1>
 	<div>
@@ -83,10 +83,10 @@
 }
 
 @code {
-	private SolvencyPlan SolvencyPlan { get; set; } = new();
+	private SolvencyPlan SolvencyPlan { get; set; }
 
-	public List<ChartSeries> Series { get; set; } = new();
-	public List<string> XAxisLabels { get; set; } = new();
+	public List<ChartSeries> Series { get; set; }
+	public List<string> XAxisLabels { get; set; }
 
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
@@ -105,6 +105,9 @@
 
 	private void PopulateChartData()
 	{
+		Series = new List<ChartSeries>();
+		XAxisLabels = new List<string>();
+
 		Series.Clear();
 		XAxisLabels.Clear();
 
@@ -151,6 +154,7 @@
 		await CalculateData();
 		Console.WriteLine("calling CreateDebtPayoffPlan()");
 		await CreateDebtPayoffPlan();
+		Console.WriteLine("calling PopulateChartData()");
+		PopulateChartData();
 	}
-
 }
