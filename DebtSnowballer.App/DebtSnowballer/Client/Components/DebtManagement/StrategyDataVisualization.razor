@@ -5,11 +5,25 @@
 
 
 
-<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
+@if (SolvencyPlan != null)
+{
+	<MudTable Items="@TableRows">
+		<HeaderContent>
+			<MudTh>Date</MudTh>
+			<MudTh>Snowball Interest Paid</MudTh>
+			<MudTh>Avalanche Interest Paid</MudTh>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd>@context.Date</MudTd>
+			<MudTd>@context.SnowballInterestPaid</MudTd>
+			<MudTd>@context.AvalancheInterestPaid</MudTd>
+		</RowTemplate>
+	</MudTable>
+}
 
 @if (Series != null && XAxisLabels != null)
 {
-	<MudText Typo="Typo.h1">Amortization Schedule</MudText>
+	<MudText Typo="Typo.h4">Amortization Schedule</MudText>
 	<div>
 		<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()"></MudChart>
 		<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
@@ -21,7 +35,7 @@
 	{
 	foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
 		{
-		string currencySymbol = "";
+		string currencySymbol = "$";
 		<MudDivider />
 			<MudDivider />
 		<MudText Typo="Typo.h4">Strategy Name: @plan.Key</MudText>
@@ -78,7 +92,19 @@
 
 
 
+<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
+
+
 @code {
+	private class DataRow
+		{
+		public string Date { get; set; }
+		public string Snowball { get; set; }
+		public string Avalanche { get; set; }
+		}
+
+	private List<DataRow> TableRows { get; set; } = new();
+
 	private SolvencyPlan SolvencyPlan { get; set; }
 
 	public List<ChartSeries> Series { get; set; }
@@ -98,6 +124,37 @@
 
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
+
+
+	private async Task CalculateDebtPayoffPlan()
+	{
+		Console.WriteLine("calling CalculateData()");
+		await CalculateData();
+		Console.WriteLine("calling CreateDebtPayoffPlan()");
+		await CreateDebtPayoffPlan();
+		Console.WriteLine("calling PopulateChartData()");
+	//PopulateChartData();
+
+		PopulateDataRow();
+
+		StateHasChanged();
+	}
+
+	private void PopulateDataRow()
+	{
+		for (int i = 0; i < SolvencyPlan.PaymentPlans["Snowball"].Count; i++)
+		{
+			for (int j = 0; j < SolvencyPlan.PaymentPlans["Snowball"][i].Schedule.Count; j++)
+			{
+				TableRows.Add(new DataRow
+				{
+					Date = SolvencyPlan.PaymentPlans["Snowball"][i].Schedule[j].Date.ToString("MM-yyyy"),
+					Snowball = SolvencyPlan.PaymentPlans["Snowball"][i].Schedule[j].TotalInterestPaid.ToString("N2"),
+					Avalanche = SolvencyPlan.PaymentPlans["Avalanche"][i].Schedule[j].TotalInterestPaid.ToString("N2")
+				});
+			}
+		}
+	}
 
 	private void PopulateChartData()
 	{
@@ -150,14 +207,5 @@
 		}
 	}
 
-	private async Task CalculateDebtPayoffPlan()
-	{
-		Console.WriteLine("calling CalculateData()");
-		await CalculateData();
-		Console.WriteLine("calling CreateDebtPayoffPlan()");
-		await CreateDebtPayoffPlan();
-		Console.WriteLine("calling PopulateChartData()");
-		PopulateChartData();
-		StateHasChanged();
+
 	}
-}

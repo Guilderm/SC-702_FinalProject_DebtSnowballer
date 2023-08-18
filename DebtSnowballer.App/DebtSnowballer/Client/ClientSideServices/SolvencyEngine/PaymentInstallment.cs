@@ -2,7 +2,6 @@
 
 public class PaymentInstallment
 {
-	//public LoanDto EndOfMonthLoanState { get; set; }
 	public int LoanId { get; set; }
 	public string Name { get; set; }
 
