@@ -29,7 +29,7 @@ public class SolvencyPlanner : ISolvencyPlanner
 		if (!IsInputsValid(debts, snowflakes, debtPlanMonthlyPayment))
 			return new DebtPayoffPlan(); // Return empty DebtPayoffPlan if inputs are not valid
 
-		CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
+		//CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
 
 		DebtPayoffPlan result = await _debtPayoffPlanCreator.CalculatePaymentPlansAsync(debts);
 

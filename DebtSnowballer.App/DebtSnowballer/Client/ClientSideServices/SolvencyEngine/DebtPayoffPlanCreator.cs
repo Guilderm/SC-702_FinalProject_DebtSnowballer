@@ -6,6 +6,9 @@ public class DebtPayoffPlanCreator
 {
 	private readonly AmortizationScheduleCreator _scheduleCreator;
 
+
+	private readonly DebtPayoffPlan _debtPayoffPlan = new();
+
 	public DebtPayoffPlanCreator(AmortizationScheduleCreator amortizationScheduleCreator)
 	{
 		_scheduleCreator = amortizationScheduleCreator ??
@@ -20,27 +23,26 @@ public class DebtPayoffPlanCreator
 
 		Console.WriteLine($"Entered function 'CalculatePaymentPlansAsync' with debts count: {debts.Count}");
 
-		DebtPayoffPlan debtPayoffPlan = new();
 
-		//await CalculateAndAddPaymentPlan(debtPayoffPlan, "Baseline", debts, d => d.Id);
+		//await CalculateAndAddPaymentPlan( "Baseline", debts, d => d.Id);
 
-		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Snowball", debts, d => d.RemainingPrincipal);
+		await CalculateAndAddPaymentPlan("Snowball", debts, d => d.RemainingPrincipal);
 
-		await CalculateAndAddPaymentPlan(debtPayoffPlan, "Avalanche", debts, d => d.AnnualInterestRate);
+		await CalculateAndAddPaymentPlan("Avalanche", debts, d => d.AnnualInterestRate);
 
-		//await CalculateAndAddPaymentPlan(debtPayoffPlan, "Custom", debts, d => d.CardinalOrder);
+		//await CalculateAndAddPaymentPlan( "Custom", debts, d => d.CardinalOrder);
 
 		Console.WriteLine("Successfully calculated all payment plans");
-		return debtPayoffPlan;
+		return _debtPayoffPlan;
 	}
 
-	private async Task CalculateAndAddPaymentPlan(DebtPayoffPlan debtPayoffPlan, string planName,
+	private async Task CalculateAndAddPaymentPlan(string planName,
 		List<LoanDto> debts, Func<LoanDto, object> orderBy)
 	{
 		Console.WriteLine($"Calculating {planName} payment plan...");
-		var sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
 
-		debtPayoffPlan.PaymentPlans[planName] =
+		var sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
+		_debtPayoffPlan.PaymentPlans[planName] =
 			await Task.Run(() => _scheduleCreator.CreateAmortizationSchedules(sortedDebts));
 		Console.WriteLine($"payment plan {planName}  was calculated");
 	}
