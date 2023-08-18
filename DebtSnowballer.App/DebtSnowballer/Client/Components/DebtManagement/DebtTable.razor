@@ -198,7 +198,7 @@
 
 		ValidationContext validationContext = new(_loanInEditMode, null, null);
 
-		List<ValidationResult> validationResults = new List<ValidationResult>();
+		List<ValidationResult> validationResults = new();
 
 		bool isValid = Validator.TryValidateObject(_loanInEditMode, validationContext, validationResults, true);
 

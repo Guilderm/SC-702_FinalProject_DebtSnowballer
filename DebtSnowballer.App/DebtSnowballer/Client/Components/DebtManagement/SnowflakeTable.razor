@@ -179,7 +179,7 @@
 
 		ValidationContext validationContext = new(_snowflakeInEditMode, null, null);
 
-		List<ValidationResult> validationResults = new List<ValidationResult>();
+		List<ValidationResult> validationResults = new();
 
 		bool isValid = Validator.TryValidateObject(_snowflakeInEditMode, validationContext, validationResults, true);
 

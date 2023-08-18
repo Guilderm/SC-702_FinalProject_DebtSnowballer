@@ -52,7 +52,7 @@ public class ServerSideLogger : ILogger
 
 			// Check the response status code and throw an exception if it's not successful
 			if (!response.IsSuccessStatusCode)
-				throw new Exception($"Failed to send log message to server. Status code: {response.StatusCode}");
+				throw new($"Failed to send log message to server. Status code: {response.StatusCode}");
 		}
 		catch (Exception ex)
 		{

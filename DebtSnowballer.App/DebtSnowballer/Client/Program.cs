@@ -13,22 +13,22 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services
 	.AddHttpClient<IDebtService, DebtService>(client =>
-		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+		client.BaseAddress = new(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services
 	.AddHttpClient<IUserService, UserService>(client =>
-		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+		client.BaseAddress = new(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services
 	.AddHttpClient<ISnowflakeService, SnowflakeService>(client =>
-		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+		client.BaseAddress = new(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services
 	.AddHttpClient<IMultiPurposeService, MultiPurposeService>(client =>
-		client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+		client.BaseAddress = new(builder.HostEnvironment.BaseAddress))
 	.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 

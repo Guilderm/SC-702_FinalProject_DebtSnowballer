@@ -27,7 +27,7 @@ public class SolvencyPlanner : ISolvencyPlanner
 			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
 
 		if (!IsInputsValid(debts, snowflakes, debtPlanMonthlyPayment))
-			return new SolvencyPlan(); // Return empty SolvencyPlan if inputs are not valid
+			return new(); // Return empty SolvencyPlan if inputs are not valid
 
 		//CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
 

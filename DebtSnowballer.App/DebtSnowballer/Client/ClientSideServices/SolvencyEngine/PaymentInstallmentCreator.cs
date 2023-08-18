@@ -93,7 +93,7 @@ public class PaymentInstallmentCreator
 
 	private PaymentInstallment CreateLoanDetailFromAmortization(PaymentInstallment payment)
 	{
-		return new PaymentInstallment
+		return new()
 		{
 			LoantId = payment.LoantId,
 			Name = payment.Name,

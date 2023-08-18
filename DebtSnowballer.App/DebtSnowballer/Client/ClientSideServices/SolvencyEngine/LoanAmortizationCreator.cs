@@ -17,7 +17,7 @@ public class LoanAmortizationCreator
 	{
 		Console.WriteLine($"Entered function 'CalculateAmortizationSchedule' with {debts.Count} debts");
 
-		List<LoanAmortization> amortizationSchedules = new List<LoanAmortization>();
+		List<LoanAmortization> amortizationSchedules = new();
 
 		decimal allocatedPayment = 0;
 		decimal paymentReallocationAmount = 0;

@@ -96,7 +96,7 @@ else
 
 	private Task ConvertDebtsToBaseCurrency()
 	{
-		_debtsInBaseCurrency = new List<LoanDto>();
+		_debtsInBaseCurrency = new();
 
 		if (_usersExchangeRates == null)
 		{
@@ -140,7 +140,7 @@ else
 
 	private Task ConvertSnowflakesToQuoteCurrency()
 	{
-		_snowflakesInBaseCurrency = new List<SnowflakeDto>();
+		_snowflakesInBaseCurrency = new();
 
 		if (_usersExchangeRates == null)
 		{

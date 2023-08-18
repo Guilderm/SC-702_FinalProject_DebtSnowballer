@@ -110,7 +110,7 @@
 				interestPaidData.Add((double)detail.InterestPaid);
 				XAxisLabels.Add(detail.EndOfMonthLoanState.StartDate.ToString("MM-yyyy"));
 			}
-			Series.Add(new ChartSeries { Name = plan.Key, Data = interestPaidData.ToArray() });
+			Series.Add(new() { Name = plan.Key, Data = interestPaidData.ToArray() });
 		}
 	}
 	private async Task CreateDebtPayoffPlan()
