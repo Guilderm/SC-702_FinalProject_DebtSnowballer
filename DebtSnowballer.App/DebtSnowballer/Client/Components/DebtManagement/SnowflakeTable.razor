@@ -223,19 +223,19 @@
 	private async Task OnDelete(int snowflakeId)
 	{
 		Logger.LogInformation($"Attempting to delete Snowflake with ID {snowflakeId}");
-		var parameters = new DialogParameters();
+		DialogParameters parameters = new DialogParameters();
 		parameters.Add("ContentText", "Are you sure you want to delete this Snowflake?");
 		parameters.Add("ButtonText", "Delete");
 		parameters.Add("Color", Color.Error);
 
-		var dialog = DialogService.Show<Dialog>("Delete Confirmation", parameters);
-		var result = await dialog.Result;
+		IDialogReference dialog = DialogService.Show<Dialog>("Delete Confirmation", parameters);
+		DialogResult result = await dialog.Result;
 
 		if (!result.Canceled)
 		{
 			try
 			{
-				var snowflake = GetSnowflakeFromCashe(snowflakeId);
+				SnowflakeDto snowflake = GetSnowflakeFromCashe(snowflakeId);
 				await SnowflakeService.DeleteSnowflake(snowflake.Id);
 				Snowflakes.Remove(snowflake);
 				await RefreshPage();

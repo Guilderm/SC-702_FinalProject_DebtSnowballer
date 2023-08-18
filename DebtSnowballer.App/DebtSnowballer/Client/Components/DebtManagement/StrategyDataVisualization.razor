@@ -57,15 +57,15 @@
 			string currencySymbol = GetCurrencySymbol(detail.EndOfMonthLoanState.CurrencyCode);
 			<tr>
 				<td>@detail.EndOfMonthLoanState.Name</td>
-				<td>@detail.PaymentMonth</td>
+				<td>@detail.Month</td>
 				<td>@detail.EndOfMonthLoanState.StartDate.ToString("yyyy-MM")</td>
 				<td>@currencySymbol @detail.InterestPaid.ToString("N2")</td>
 				<td>@currencySymbol @detail.BankFeesPaid.ToString("N2")</td>
 				<td>@currencySymbol @detail.PrincipalPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.AccumulatedInterestPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.AccumulatedBankFeesPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.AccumulatedPrincipalPaid.ToString("N2")</td>
-				<td>@currencySymbol @detail.AccumulatedExtraPayment.ToString("N2")</td>
+				<td>@currencySymbol @detail.TotalInterestPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.TotalBankFeesPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.TotalPrincipalPaid.ToString("N2")</td>
+				<td>@currencySymbol @detail.TotalExtraPayment.ToString("N2")</td>
 				<td>@currencySymbol @detail.UnallocatedPayment.ToString("N2")</td>
 				<td>@currencySymbol @detail.ExtraPayment.ToString("N2")</td>
 			</tr>

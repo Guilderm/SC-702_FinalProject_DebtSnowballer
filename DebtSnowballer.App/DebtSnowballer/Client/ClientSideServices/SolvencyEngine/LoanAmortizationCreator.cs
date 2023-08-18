@@ -28,17 +28,18 @@ public class LoanAmortizationCreator
 			Console.WriteLine(
 				$"the date for loan {loan.Name} with ID: {loan.Id} in 'LoanAmortizationCreator' is: {loan.StartDate}");
 			LoanAmortization amortization = ConvertLoanDetailToAmortizationDetail(loan);
-			var paymentInstallmentCreator = _paymentInstallmentFactory.Create(amortization.ContractedMonthlyPayment,
+			PaymentInstallmentCreator paymentInstallmentCreator = _paymentInstallmentFactory.Create(
+				amortization.ContractedMonthlyPayment,
 				amortization.AnnualInterestRate, amortization.BankFees);
 			do
 			{
 				PaymentInstallment initialPaymentInstallment = amortization.Schedule.Last();
 				Console.WriteLine(
-					$"Retrieve PaymentInstallment, month {initialPaymentInstallment.PaymentMonth} for {initialPaymentInstallment.Name} whit date of {initialPaymentInstallment.MonthPaid}");
+					$"Retrieve PaymentInstallment, month {initialPaymentInstallment.Month} for {initialPaymentInstallment.Name} whit date of {initialPaymentInstallment.Date}");
 
-				if (paymentReallocationStartDate.Year < initialPaymentInstallment.MonthPaid.Year ||
-				    (paymentReallocationStartDate.Year == initialPaymentInstallment.MonthPaid.Year &&
-				     paymentReallocationStartDate.Month <= initialPaymentInstallment.MonthPaid.Month))
+				if (paymentReallocationStartDate.Year < initialPaymentInstallment.Date.Year ||
+				    (paymentReallocationStartDate.Year == initialPaymentInstallment.Date.Year &&
+				     paymentReallocationStartDate.Month <= initialPaymentInstallment.Date.Month))
 				{
 					allocatedPayment += paymentReallocationAmount;
 					Console.WriteLine(
@@ -58,13 +59,13 @@ public class LoanAmortizationCreator
 
 			PaymentInstallment lastMonthDetail = amortization.Schedule.Last();
 
-			paymentReallocationStartDate = lastMonthDetail.MonthPaid;
+			paymentReallocationStartDate = lastMonthDetail.Date;
 			paymentReallocationAmount += amortization.ContractedMonthlyPayment;
 
-			amortization.TotalBankFeesPaid = lastMonthDetail.AccumulatedBankFeesPaid;
-			amortization.TotalInterestPaid = lastMonthDetail.AccumulatedInterestPaid;
-			amortization.TotalPrincipalPaid = lastMonthDetail.AccumulatedPrincipalPaid;
-			amortization.TotalExtraPayment = lastMonthDetail.AccumulatedExtraPayment;
+			amortization.TotalBankFeesPaid = lastMonthDetail.TotalBankFeesPaid;
+			amortization.TotalInterestPaid = lastMonthDetail.TotalInterestPaid;
+			amortization.TotalPrincipalPaid = lastMonthDetail.TotalPrincipalPaid;
+			amortization.TotalExtraPayment = lastMonthDetail.TotalExtraPayment;
 
 			amortizationSchedules.Add(amortization);
 		}
@@ -94,11 +95,11 @@ public class LoanAmortizationCreator
 	{
 		return new PaymentInstallment
 		{
-			LoantId = loan.Id,
+			LoanId = loan.Id,
 			Name = loan.Name,
 			RemainingPrincipal = loan.RemainingPrincipal,
 			RemainingTermInMonths = loan.RemainingTermInMonths,
-			MonthPaid = loan.StartDate
+			Date = loan.StartDate
 		};
 	}
 }
