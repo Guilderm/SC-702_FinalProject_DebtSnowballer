@@ -14,7 +14,6 @@ public class PaymentInstallment
 	public decimal InterestPaid { get; set; }
 	public decimal BankFeesPaid { get; set; }
 	public decimal PrincipalPaid { get; set; }
-	public decimal ExtraPayment { get; set; }
 
 	public decimal TotalInterestPaid { get; set; }
 	public decimal TotalBankFeesPaid { get; set; }

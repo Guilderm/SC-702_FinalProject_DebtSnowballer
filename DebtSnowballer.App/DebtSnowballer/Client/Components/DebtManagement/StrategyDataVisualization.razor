@@ -11,12 +11,13 @@
 
 @foreach (var plan in SolvencyPlan.PaymentPlans)
 {
+	string currencySymbol = "";
 	<h3>Strategy Name: @plan.Key</h3>
 	<h4>Loan Details</h4>
 
 	@foreach (LoanAmortization schedule in plan.Value)
 	{
-		string currencySymbol = GetCurrencySymbol(schedule.CurrencyCode);
+		currencySymbol = GetCurrencySymbol(schedule.CurrencyCode);
 
 		<h5>
 			<br>@schedule.Name
@@ -53,12 +54,10 @@
 		</thead>
 		<tbody>
 		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.Schedule))
-		{
-			string currencySymbol = GetCurrencySymbol(detail.EndOfMonthLoanState.CurrencyCode);
-			<tr>
-				<td>@detail.EndOfMonthLoanState.Name</td>
+		{	<tr>
+				<td>@detail.Name</td>
 				<td>@detail.Month</td>
-				<td>@detail.EndOfMonthLoanState.StartDate.ToString("yyyy-MM")</td>
+				<td>@detail.Date.ToString("yyyy-MM")</td>
 				<td>@currencySymbol @detail.InterestPaid.ToString("N2")</td>
 				<td>@currencySymbol @detail.BankFeesPaid.ToString("N2")</td>
 				<td>@currencySymbol @detail.PrincipalPaid.ToString("N2")</td>
@@ -67,7 +66,6 @@
 				<td>@currencySymbol @detail.TotalPrincipalPaid.ToString("N2")</td>
 				<td>@currencySymbol @detail.TotalExtraPayment.ToString("N2")</td>
 				<td>@currencySymbol @detail.UnallocatedPayment.ToString("N2")</td>
-				<td>@currencySymbol @detail.ExtraPayment.ToString("N2")</td>
 			</tr>
 		}
 		</tbody>
@@ -108,7 +106,7 @@
 			foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.Schedule))
 			{
 				interestPaidData.Add((double)detail.InterestPaid);
-				XAxisLabels.Add(detail.EndOfMonthLoanState.StartDate.ToString("MM-yyyy"));
+				XAxisLabels.Add(detail.Date.ToString("MM-yyyy"));
 			}
 			Series.Add(new() { Name = plan.Key, Data = interestPaidData.ToArray() });
 		}
