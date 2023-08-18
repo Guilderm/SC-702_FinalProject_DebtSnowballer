@@ -25,7 +25,7 @@ public class DebtController : BaseController
 	{
 		if (!ModelState.IsValid)
 		{
-			var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+			IEnumerable<string> errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
 			string? errorString = string.Join("; ", errors);
 			_logger.LogWarning("Invalid request data for creating a Loan. Errors: {errors}", errorString);
 			return BadRequest(ModelState);

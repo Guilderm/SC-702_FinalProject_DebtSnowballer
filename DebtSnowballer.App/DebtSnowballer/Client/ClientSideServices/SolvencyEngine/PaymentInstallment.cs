@@ -10,7 +10,7 @@ public class PaymentInstallment
 	public DateTime Date { get; set; }
 	public int RemainingTermInMonths { get; set; }
 
-	public int Month { get; set; } = 1;
+	public int Month { get; set; } = 0;
 	public decimal InterestPaid { get; set; }
 	public decimal BankFeesPaid { get; set; }
 	public decimal PrincipalPaid { get; set; }

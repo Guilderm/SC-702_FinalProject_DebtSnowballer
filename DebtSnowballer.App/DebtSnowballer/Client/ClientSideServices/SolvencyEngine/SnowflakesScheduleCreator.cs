@@ -9,7 +9,7 @@ public class SnowflakesScheduleCreator
 		Console.WriteLine(
 			$"Entered function 'CalculateSnowflakes' with snowflakes count: {snowflakes.Count} and maxTime: {maxTime}");
 
-		var snowflakesSchedule = new List<SnowflakesSchedule>();
+		List<SnowflakesSchedule> snowflakesSchedule = new List<SnowflakesSchedule>();
 
 		foreach (SnowflakeDto snowflake in snowflakes)
 		{

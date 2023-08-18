@@ -9,15 +9,6 @@
 @inject IMultiPurposeService MultiPurposeService
 
 
-@if (_strategyTypes == null)
-{
-	<p>
-		<em>Loading strategies...</em>
-		<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
-	</p>
-}
-else
-{
 	<br>
 	<h3>Select your base currency</h3>
 	<p>SupportedCurrencies loans will be converted to your base currency. SupportedCurrencies calculations and reports will also be made using this currency.</p>
@@ -28,50 +19,37 @@ else
 			<MudSelectItem Value="@currency.AlphaCode">@currency.Name (@currency.Symbol)</MudSelectItem>
 		}
 	</MudSelect>
-
-	<h3>Choose your strategy</h3>
-	<select @onchange="OnStrategyChange" value="@UserPreference">
-		@foreach (DebtPayDownMethodDto strategyType in _strategyTypes)
-		{
-			<option value="@strategyType.Id">@strategyType.Name</option>
-		}
-	</select>
-
+<br />
+<br />
 	<div class="summary">
-		<p>Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong></p>
-		<p>Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong></p>
-		@if (DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
-		{
-			<p class="text-danger mt-2">Preferred monthly payment must be greater than or equal to the contracted monthly payment.</p>
-		}
-		<p>
-			Preferred Monthly Payment:
-			<input @bind="DebtPlanMonthlyPayment" @bind:event="oninput" @onchange="UpdatePreferredMonthlyPayment" type="number" min="@AggregatedMonthlyPayment"/>
-		</p>
+		<MudText> Total Amount Owed in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @TotalAmountOwed.ToString("N2")</strong> </MudText>
+		<br/>
+		<MudText> Total Monthly Payment in Base Currency: <strong>@GetCurrencySymbol(UserPreference.BaseCurrency) @AggregatedMonthlyPayment.ToString("N2")</strong> </MudText>
+		<br/>
+
+		<MudText>Preferred Monthly Payment:</MudText>
+		<MudNumericField Value="UserPreference.DebtPlanMonthlyPayment"
+		                 ValueChanged="(decimal newValue) => UpdatePreferredMonthlyPayment(newValue)"
+						 Min="@AggregatedMonthlyPayment" 
+		                 Format="N2" 
+		                 Adornment="Adornment.Start" 
+		                 AdornmentText="@GetCurrencySymbol(UserPreference.BaseCurrency)" />
+
 	</div>
+	
+	<StrategyDataVisualization UserPreference="@UserPreference" GetCurrencySymbol="GetCurrencySymbol" CalculateData="CalculateData" DebtsInBaseCurrency="DebtsInBaseCurrency" SnowflakesInBaseCurrency="SnowflakesInBaseCurrency" />
 
-	<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
-
-	<StrategyDataVisualization UserPreference="@_userPreference" GetCurrencySymbol="GetCurrencySymbol" CalculateData="CalculateData" DebtsInBaseCurrency="DebtsInBaseCurrency" SnowflakesInBaseCurrency="SnowflakesInBaseCurrency"/>
-
-		}
 
 @code {
-	private IList<DebtPayDownMethodDto> _strategyTypes;
 
 	private decimal TotalAmountOwed => DebtsInBaseCurrency.Sum(debt => debt.RemainingPrincipal);
 	private decimal AggregatedMonthlyPayment => DebtsInBaseCurrency.Sum(debt => debt.ContractedMonthlyPayment);
-
-	private UserPreferenceDto _userPreference;
 	
 	[Parameter]
 	public UserPreferenceDto UserPreference { get; set; }
 
 	[Parameter]
 	public EventCallback<UserPreferenceDto> SaveUserPreference { get; set; }
-
-	[Parameter]
-	public decimal DebtPlanMonthlyPayment { get; set; }
 
 	[Parameter]
 	public List<LoanDto> DebtsInBaseCurrency { get; set; }
@@ -82,9 +60,6 @@ else
 	[Parameter]
 	public Func<string, string> GetCurrencySymbol { get; set; }
 	
-	[Parameter]
-	public Func<Task> CalculateDebtPayoffPlan { get; set; }
-
 	[Parameter]
 	public Func<Task> CalculateData { get; set; }
 	
@@ -104,10 +79,10 @@ else
 			Logger.LogError(ex, "Error saving base currency.");
 		}
 	}
-
+	/*
 	protected override async Task OnInitializedAsync()
 	{
-		_strategyTypes = await MultiPurposeService.GetAllStrategyTypes();
+		UserPreference = await MultiPurposeService.GetAllStrategyTypes();
 	}
 
 	private async Task OnStrategyChange(ChangeEventArgs selectedStrategyId)
@@ -119,21 +94,32 @@ else
 		}
 	}
 
+
 	protected override Task OnParametersSetAsync()
 	{
-		if (DebtsInBaseCurrency != null && DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
+		if (DebtsInBaseCurrency != null && _userPreference.DebtPlanMonthlyPayment < AggregatedMonthlyPayment)
 		{
-			DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
+			_userPreference.DebtPlanMonthlyPayment = AggregatedMonthlyPayment;
 		}
 		return Task.CompletedTask;
 	}
+	*/
 
-	private async Task UpdatePreferredMonthlyPayment(ChangeEventArgs e)
-	{
-		if (decimal.TryParse(e.Value?.ToString(), out decimal newDebtPlanMonthlyPayment))
+	private async Task UpdatePreferredMonthlyPayment(decimal newValue)
 		{
-			UserPreference.DebtPlanMonthlyPayment = newDebtPlanMonthlyPayment;
+		Console.WriteLine($"Entered UpdatePreferredMonthlyPayment() wit newValue: {newValue}");
+
+		UserPreference.DebtPlanMonthlyPayment = newValue;
+		
+		try
+			{
 			await SaveUserPreference.InvokeAsync(UserPreference);
-		}
+			Snackbar.Add("Preferred monthly payment was updated successfully.", Severity.Success);
+			}
+		catch (Exception ex)
+			{
+			Snackbar.Add($"Error updating preferred monthly payment : {ex.Message}", Severity.Error);
+			Logger.LogError(ex, "Error saving base currency.");
+			}
 	}
 }

@@ -29,13 +29,14 @@
 else
 {
 	<p>Loading your data...</p>
-	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="75" Class="my-7"/>
+	<MudProgressLinear Color="Color.Primary" Striped="true" Size="Size.Large" Value="_pctComplited" Class="my-7" />
 }
 
 
 @code {
 	private bool _isEssentialDataLoaded;
 	private bool _isDataCalculated;
+	private double _pctComplited;
 	private List<LoanDto> _debtsInQuoteCurrency;
 	private List<LoanDto> _debtsInBaseCurrency;
 	private List<SnowflakeDto> _snowflakesInQuoteCurrency;
@@ -47,16 +48,23 @@ else
 	{
 		Console.WriteLine("Initializing Strategy Planner");
 		Console.WriteLine("Starting concurrent tasks: loading user Preference, exchange rates, debts in quote currency, and snowflakes in quote currency.");
+		_pctComplited = 0;
 		Task loadUserPreference = LoadUserPreference();
+		_pctComplited = 10;
 		Task loadExchangeRatesTask = LoadExchangeRates();
+		_pctComplited = 20;
 		Task loadDebtsInQuoteCurrencyTask = LoadDebtsInQuoteCurrency();
+		_pctComplited = 30;
 		Task loadSnowflakesInQuoteCurrencyTask = LoadSnowflakesInQuoteCurrency();
+		_pctComplited = 70;
 		await Task.WhenAll(loadUserPreference, loadExchangeRatesTask, loadDebtsInQuoteCurrencyTask, loadSnowflakesInQuoteCurrencyTask);
 		_isEssentialDataLoaded = true;
 		StateHasChanged();
+		_pctComplited = 80;
 		Console.WriteLine("Concurrent tasks completed.");
 
 		await CalculateData();
+		_pctComplited = 90;
 		_isDataCalculated = true;
 		Console.WriteLine("Component initialization complete.");
 	}
@@ -95,7 +103,8 @@ else
 
 
 	private Task ConvertDebtsToBaseCurrency()
-	{
+		{
+		Console.WriteLine("calling ConvertDebtsToBaseCurrency()");
 		_debtsInBaseCurrency = new();
 
 		if (_usersExchangeRates == null)
@@ -139,7 +148,8 @@ else
 
 
 	private Task ConvertSnowflakesToQuoteCurrency()
-	{
+		{
+		Console.WriteLine("calling ConvertSnowflakesToQuoteCurrency()");
 		_snowflakesInBaseCurrency = new();
 
 		if (_usersExchangeRates == null)
@@ -191,7 +201,9 @@ else
 
 	private async Task CalculateData()
 	{
+		Console.WriteLine("calling ConvertDebtsToBaseCurrency()");
 		await ConvertDebtsToBaseCurrency();
+		Console.WriteLine("calling ConvertSnowflakesToQuoteCurrency()");
 		await ConvertSnowflakesToQuoteCurrency();
 	}
 

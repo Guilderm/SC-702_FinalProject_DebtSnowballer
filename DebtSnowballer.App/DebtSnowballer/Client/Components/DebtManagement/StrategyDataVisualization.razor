@@ -3,13 +3,22 @@
 @inject ISolvencyPlanner SolvencyPlanner
 @inject NavigationManager NavigationManager
 
+
+
+<MudButton OnClick="CalculateDebtPayoffPlan" Variant="Variant.Filled" Color="Color.Primary">Calculate DebtPayoff Plan</MudButton>
+
+
+@if (Series!=null)
+	{ 
 <h1>Amortization Schedule</h1>
 <div>
 	<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels.ToArray()"></MudChart>
 	<MudText Typo="Typo.h6">Interest Paid Over Time</MudText>
 </div>
-
-@foreach (var plan in SolvencyPlan.PaymentPlans)
+	}
+@if (SolvencyPlan != null)
+{
+@foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
 {
 	string currencySymbol = "";
 	<h3>Strategy Name: @plan.Key</h3>
@@ -54,7 +63,8 @@
 		</thead>
 		<tbody>
 		@foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.Schedule))
-		{	<tr>
+		{
+			<tr>
 				<td>@detail.Name</td>
 				<td>@detail.Month</td>
 				<td>@detail.Date.ToString("yyyy-MM")</td>
@@ -70,6 +80,7 @@
 		}
 		</tbody>
 	</table>
+}
 }
 
 @code {
@@ -95,14 +106,12 @@
 
 	private void PopulateChartData()
 	{
-	// Clear existing data
 		Series.Clear();
 		XAxisLabels.Clear();
 
-	// Iterate through payment plans and extract data
-		foreach (var plan in SolvencyPlan.PaymentPlans)
+		foreach (KeyValuePair<string, List<LoanAmortization>> plan in SolvencyPlan.PaymentPlans)
 		{
-			var interestPaidData = new List<double>();
+			List<double> interestPaidData = new List<double>();
 			foreach (PaymentInstallment detail in plan.Value.SelectMany(a => a.Schedule))
 			{
 				interestPaidData.Add((double)detail.InterestPaid);
@@ -113,9 +122,18 @@
 	}
 	private async Task CreateDebtPayoffPlan()
 	{
-		if (DebtsInBaseCurrency is { Count: > 0 })
+		Console.WriteLine("Starting to create debt payoff plan...");
+
+		Console.WriteLine($"SolvencyPlanner is {(SolvencyPlanner == null ? "null" : "not null")}");
+		Console.WriteLine($"DebtsInBaseCurrency is {(DebtsInBaseCurrency == null ? "null" : $"not null, Count: {DebtsInBaseCurrency.Count}")}");
+		Console.WriteLine($"UserPreference is {(UserPreference == null ? "null" : $"not null, it is {UserPreference.DebtPlanMonthlyPayment}")}");
+		Console.WriteLine($"CalculateData is {(CalculateData == null ? "null" : "not null")}");
+		Console.WriteLine($"GetCurrencySymbol is {(GetCurrencySymbol == null ? "null" : $"not null, it is {GetCurrencySymbol}")}");
+		Console.WriteLine($"SnowflakesInBaseCurrency is {(SnowflakesInBaseCurrency == null ? "null" : $"not null, Count: {SnowflakesInBaseCurrency.Count}")}");
+
+		if (DebtsInBaseCurrency is {Count: > 0 } && SolvencyPlanner != null)
 		{
-			Console.WriteLine("Starting to create debt payoff plan...");
+			Console.WriteLine("Calling Solvency Planner");
 			SolvencyPlan = await SolvencyPlanner.CalculatePaymentPlansAsync(DebtsInBaseCurrency, SnowflakesInBaseCurrency, UserPreference.DebtPlanMonthlyPayment);
 			Console.WriteLine("Debt payoff plan created successfully.");
 			StateHasChanged();
@@ -129,7 +147,9 @@
 
 	private async Task CalculateDebtPayoffPlan()
 		{
+		Console.WriteLine("calling CalculateData()");
 		await CalculateData();
+		Console.WriteLine("calling CreateDebtPayoffPlan()");
 		await CreateDebtPayoffPlan();
 		}
 }

@@ -27,7 +27,7 @@ public class SolvencyPlanner : ISolvencyPlanner
 			$" snowflakes: {JsonSerializer.Serialize(snowflakes)}, debtPlanMonthlyPayment: {debtPlanMonthlyPayment}");
 
 		if (!IsInputsValid(debts, snowflakes, debtPlanMonthlyPayment))
-			return new(); // Return empty SolvencyPlan if inputs are not valid
+			return new SolvencyPlan(); // Return empty SolvencyPlan if inputs are not valid
 
 		//CreateSnowflakesSchedule(debts, snowflakes, debtPlanMonthlyPayment);
 
@@ -73,7 +73,8 @@ public class SolvencyPlanner : ISolvencyPlanner
 	{
 		// Determine the maximum amount of time that the schedule will last based on the remaining term in months across all debts
 		int maxTime = debts.Max(d => d.RemainingTermInMonths);
-		var snowflakesSchedule = _snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
+		List<SnowflakesSchedule> snowflakesSchedule =
+			_snowflakesScheduleCreator.CalculateSnowflakes(snowflakes, maxTime);
 		CalculateExtraPayment(debts, debtPlanMonthlyPayment);
 	}
 

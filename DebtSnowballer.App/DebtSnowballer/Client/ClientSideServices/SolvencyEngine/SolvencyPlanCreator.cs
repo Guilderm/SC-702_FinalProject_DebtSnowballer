@@ -41,7 +41,7 @@ public class SolvencyPlanCreator
 	{
 		Console.WriteLine($"Calculating {planName} payment plan...");
 
-		var sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
+		List<LoanDto> sortedDebts = DeepCopy(debts).OrderByDescending(orderBy).ToList();
 		_solvencyPlan.PaymentPlans[planName] =
 			await Task.Run(() => _creator.CreateAmortizationSchedules(sortedDebts));
 		Console.WriteLine($"payment plan {planName}  was calculated");
