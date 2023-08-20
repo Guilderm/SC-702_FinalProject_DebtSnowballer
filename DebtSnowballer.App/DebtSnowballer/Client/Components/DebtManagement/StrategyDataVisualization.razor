@@ -17,10 +17,10 @@
 
 @if (SolvencyPlan != null)
 {
-	string currencySymbol = GetCurrencySymbol(UserPreference.BaseCurrency)
+
 		;
 	<MudText Typo="Typo.h4">Amortization Schedule</MudText>
-	<MudTable Items="@TableRows">
+	<MudTable Items="@TableRecordRows">
 		<HeaderContent>
 			<MudTh>Date</MudTh>
 			<MudTh>Snowball Interest Paid</MudTh>
@@ -28,8 +28,8 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd>@context.Date.ToString("yyyy-MM")</MudTd>
-			<MudTd>@currencySymbol @context.Snowball.ToString("N2")</MudTd>
-			<MudTd>@currencySymbol @context.Avalanche.ToString("N2")</MudTd>
+			<MudTd>@_currencySymbol @context.Snowball.ToString("N2")</MudTd>
+			<MudTd>@_currencySymbol @context.Avalanche.ToString("N2")</MudTd>
 		</RowTemplate>
 	</MudTable>
 }
@@ -110,7 +110,7 @@
 
 @code {
 
-	private class DataRow
+	private class RecordRow
 	{
 		public DateTime Date { get; set; }
 		public decimal Snowball { get; set; }
@@ -118,7 +118,9 @@
 	}
 
 
-	private List<DataRow> TableRows { get; set; } = new();
+	private string _currencySymbol;
+
+	private List<RecordRow> TableRecordRows { get; set; } = new();
 
 	private SolvencyPlan SolvencyPlan { get; set; }
 
@@ -143,21 +145,18 @@
 
 	private async Task CalculateDebtPayoffPlan()
 	{
-		Console.WriteLine("calling CalculateData()");
+		_currencySymbol = GetCurrencySymbol(UserPreference.BaseCurrency);
 		await CalculateData();
-		Console.WriteLine("calling CreateDebtPayoffPlan()");
 		await CreateDebtPayoffPlan();
-		PopulateTableRows(); // Only one call needed
-		Console.WriteLine("calling PopulateChartData()");
+		PopulateTableRecords();
 		PopulateChartData();
-
 		StateHasChanged();
 	}
 
-	private void PopulateTableRows()
+	private void PopulateTableRecords()
 	{
 	// Clear the existing table rows
-		TableRows.Clear();
+		TableRecordRows.Clear();
 
 	// Find the length of the longest schedule
 		int maxScheduleLength = SolvencyPlan.PaymentPlans.Values
@@ -194,7 +193,7 @@
 	// Populate the table rows with the new data
 		for (int month = 0; month < maxScheduleLength; month++)
 		{
-			TableRows.Add(new DataRow
+			TableRecordRows.Add(new RecordRow
 			{
 				Date = yearMonth[month],
 				Snowball = snowballInterestSums[month],
@@ -212,7 +211,7 @@
 		List<double> snowballData = new List<double>();
 		List<double> avalancheData = new List<double>();
 
-		foreach (DataRow row in TableRows)
+		foreach (RecordRow row in TableRecordRows)
 		{
 			snowballData.Add((double)row.Snowball);
 			avalancheData.Add((double)row.Avalanche);
